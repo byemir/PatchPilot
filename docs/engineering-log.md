@@ -19,3 +19,8 @@
 - Guardrails: tests, run_case.py and golden.json are read-only for the agent; every attempt is recorded under runs/ (git-ignored).
 - Open concern: the patch subtracts a tz-naive epoch, which likely breaks on tz-aware input; the case only covers one recorded input set. To be confirmed by an experiment, then covered by extra probe inputs.
 - Single case, single run: not a benchmark result.
+- Verified experimentally: the first model patch (tz-naive epoch subtraction) raises TypeError on tz-aware input on both pandas versions, yet passed the single-input check. Differential checking only catches deviations on the inputs it runs.
+- Correction: I stated the model could not see the extra probe inputs; it can, via the golden and actual outputs in the prompt. Added a held-out set (hidden_inputs.json / hidden_golden.json) whose inputs and outputs are never put in the prompt; on failure the model only hears that held-out checks failed. Note: the files are in the public repo, hidden only from the model.
+- Three runs of the same case produced three different patches (epoch subtraction, unit lookup table, Timestamp.value), so every case needs repeated runs before reporting a rate.
+- Open hypothesis (not tested): Timestamp.value is nanoseconds and may overflow for dates past 2262 on pandas 3; add such an input to the held-out set.
+- Latest run: success on attempt 1, 5211 tokens, held-out checks passed on both versions.

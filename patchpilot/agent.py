@@ -105,6 +105,7 @@ def repair(case_dir, old_py, new_py, *, lib="pandas", model="muse-spark-1.3", ef
     run_dir.mkdir(parents=True)
     editable, readonly = collect(case_dir)
     old_v, new_v = lib_version(old_py, lib), lib_version(new_py, lib)
+    has_hidden = (case_dir / "hidden_golden.json").exists()
 
     used = 0
     feedback = ""
@@ -132,31 +133,47 @@ def repair(case_dir, old_py, new_py, *, lib="pandas", model="muse-spark-1.3", ef
             continue
 
         ws = sandbox.workspace(case_dir)
+        hid_old = hid_new = None
         try:
             for rel, content in files.items():
                 (ws / rel).write_text(content)
             old_r = check.check(ws, old_py)
             new_r = check.check(ws, new_py)
+            if has_hidden:
+                hid_old = check.check(ws, old_py, "hidden_inputs.json", "hidden_golden.json")
+                hid_new = check.check(ws, new_py, "hidden_inputs.json", "hidden_golden.json")
         finally:
             sandbox.cleanup(ws)
 
-        ok = old_r["verdict"] == "OK" and new_r["verdict"] == "OK"
+        visible_ok = old_r["verdict"] == "OK" and new_r["verdict"] == "OK"
+        hidden_ok = (not has_hidden) or (hid_old["verdict"] == "OK" and hid_new["verdict"] == "OK")
+        ok = visible_ok and hidden_ok
         record.update({"diagnosis": diagnosis, "files": files,
                        "old_verdict": old_r["verdict"], "new_verdict": new_r["verdict"],
-                       "old_actual": old_r["actual"], "new_actual": new_r["actual"], "success": ok})
+                       "old_actual": old_r["actual"], "new_actual": new_r["actual"],
+                       "hidden_old": hid_old and hid_old["verdict"],
+                       "hidden_new": hid_new and hid_new["verdict"],
+                       "hidden_new_actual": hid_new and hid_new["actual"], "success": ok})
         (run_dir / f"attempt_{attempt}.json").write_text(json.dumps(record, indent=2))
 
         if ok:
             diff = make_diff(editable, files)
             (run_dir / "patch.diff").write_text(diff)
-            return {"success": True, "attempts": attempt, "tokens_used": used, "diagnosis": diagnosis,
+            return {"success": True, "attempts": attempt, "tokens_used": used, "hidden_checked": has_hidden,
+                    "diagnosis": diagnosis,
                     "diff": diff, "run_dir": str(run_dir)}
 
-        feedback = (
-            f"After your change: on {old_v} verdict={old_r['verdict']} output={old_r['actual']}; "
-            f"on {new_v} verdict={new_r['verdict']} output={new_r['actual']}. "
-            f"stderr: {new_r['run_stderr'] or old_r['run_stderr']}"
-        )
+        if visible_ok and not hidden_ok:
+            feedback = (
+                "Your patch passes the visible checks but fails held-out checks on other inputs "
+                "(details withheld). Fix the root cause generally instead of special-casing the visible inputs."
+            )
+        else:
+            feedback = (
+                f"After your change: on {old_v} verdict={old_r['verdict']} output={old_r['actual']}; "
+                f"on {new_v} verdict={new_r['verdict']} output={new_r['actual']}. "
+                f"stderr: {new_r['run_stderr'] or old_r['run_stderr']}"
+            )
 
     return {"success": False, "reason": "max attempts reached", "tokens_used": used, "run_dir": str(run_dir)}
 
