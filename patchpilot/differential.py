@@ -22,7 +22,9 @@ from pathlib import Path
 from patchpilot import sandbox
 
 TOKEN = re.compile(r"\d+|\D+")
-WIDE_INTS = [0, 1, -1, 255, 256, 65535, 65536, 2**31 - 1, 2**31, 2**53, 2**63 - 1]
+# Kept small on purpose: a wide integer can land in a size parameter (count, range) and a huge one
+# would exhaust memory, which this local runner cannot limit.
+WIDE_INTS = [0, 1, -1, 255, 256, 65535, 65536]
 MIN_VALID = 20  # fewer valid probes than this -> verdict WEAK (check too thin to trust)
 
 
@@ -39,7 +41,12 @@ class Gen:
         self.tier = "core"
         for s in seeds:
             self._index(s, "")
-        self.ranges = {p: (min(vs), max(vs)) for p, vs in self.leaves.items() if vs and all(_num(x) for x in vs)}
+        # A path can hold mixed types (rows like ["a", 1]); ranges use its numbers, string pools use its strings.
+        self.ranges = {}
+        for p, vs in self.leaves.items():
+            nums = [x for x in vs if _num(x)]
+            if nums:
+                self.ranges[p] = (min(nums), max(nums))
 
     def _index(self, v, path: str) -> None:
         if isinstance(v, dict):
@@ -72,23 +79,23 @@ class Gen:
         r = self.rng
         lo, hi = self.ranges.get(path, (v, v))
         if self.tier == "wide" and isinstance(v, int) and r.random() < 0.7:
-            return r.choice(WIDE_INTS + [hi * 10 ** r.randint(1, 6)])
+            return r.choice(WIDE_INTS + [hi * 10 ** r.randint(1, 2)])
         pick = r.random()
         if isinstance(v, float):
             return r.choice([lo, hi, round(r.uniform(lo, hi), 6)])
-        zero = [0] if lo > 0 and min(self.leaves.get(path, [1])) >= 0 else []
+        zero = [0] if lo > 0 else []
         cands = [lo, hi, r.randint(lo, hi), min(hi, v + 1), max(lo, v - 1)] + zero
         return r.choice(cands) if pick < 0.9 else v
 
     def mut_str(self, v: str, path: str):
         r = self.rng
-        pool = self.leaves.get(path) or [v]
+        pool = [x for x in self.leaves.get(path, []) if isinstance(x, str)] or [v]
         c = r.random()
         if c < 0.35:
-            return self.cross(v, str(r.choice(pool)))
+            return self.cross(v, r.choice(pool))
         if c < 0.8:
             return self.digits(v)
-        return str(r.choice(pool))
+        return r.choice(pool)
 
     def cross(self, a: str, b: str) -> str:
         ta, tb = TOKEN.findall(a), TOKEN.findall(b)
@@ -133,7 +140,7 @@ class Gen:
                 out.pop(r.randrange(len(out)))
             elif op == "dup" and out and len(out) < cap:
                 out.insert(r.randrange(len(out) + 1), r.choice(out))
-            elif op == "shuffle":
+            elif op == "shuffle" and len({type(x) for x in out}) <= 1:  # never swap fields of a mixed row
                 r.shuffle(out)
             elif op == "grow" and len(out) < cap and self.elems.get(path):
                 out.append(self.mut(r.choice(self.elems[path]), path))
@@ -163,13 +170,13 @@ def generate(seeds: list, n: int = 200, seed: int = 0, wide_frac: float = 0.25) 
     return out
 
 
-def _run(case_dir: Path, files: dict | None, python, probes: list):
+def _run(case_dir: Path, files: dict | None, python, probes: list, timeout_s: float = 120):
     ws = sandbox.workspace(case_dir)
     try:
         for rel, content in (files or {}).items():
             (ws / rel).write_text(content)
         (ws / "gen_inputs.json").write_text(json.dumps(probes))
-        r = sandbox.run(python, ["run_case.py", "gen_inputs.json"], ws, timeout_s=120)
+        r = sandbox.run(python, ["run_case.py", "gen_inputs.json"], ws, timeout_s=timeout_s)
     finally:
         sandbox.cleanup(ws)
     if r.returncode != 0:
@@ -200,32 +207,43 @@ def differential(case_dir, old_py, new_py, patched_files: dict | None = None, *,
     gen = generate(seeds, n=n, seed=seed)
     probes = [g["probe"] for g in gen]
 
-    oracle, e0 = _run(case_dir, None, old_py, probes)
-    cand_new, e1 = _run(case_dir, patched_files, new_py, probes)
-    cand_old, e2 = _run(case_dir, patched_files, old_py, probes)
-    if oracle is None or cand_new is None or cand_old is None:
-        return {"verdict": "RUN_ERROR", "reason": e0 or e1 or e2, "generated": len(probes)}
-
+    # Core and wide probes run in separate processes: a wide probe that hangs or crashes must not
+    # take the core verdict down with it (wide results are informational only).
     valid = core_div = wide_div = 0
     examples: list = []
-    for i, g in enumerate(gen):
-        o = oracle[i]
-        if isinstance(o, dict) and "error" in o:
+    wide_error = ""
+    for tier, timeout_s in (("core", 120), ("wide", 30)):
+        part = [g for g in gen if g["tier"] == tier]
+        if not part:
             continue
-        valid += 1
-        for where, got in (("patched@new", cand_new[i]), ("patched@old", cand_old[i])):
-            if _same(got, o):
+        pr = [g["probe"] for g in part]
+        oracle, e0 = _run(case_dir, None, old_py, pr, timeout_s)
+        cand_new, e1 = _run(case_dir, patched_files, new_py, pr, timeout_s)
+        cand_old, e2 = _run(case_dir, patched_files, old_py, pr, timeout_s)
+        if oracle is None or cand_new is None or cand_old is None:
+            if tier == "core":
+                return {"verdict": "RUN_ERROR", "reason": e0 or e1 or e2, "generated": len(probes)}
+            wide_error = e0 or e1 or e2
+            continue
+        for i, g in enumerate(part):
+            o = oracle[i]
+            if isinstance(o, dict) and "error" in o:
                 continue
-            if g["tier"] == "core":
-                core_div += 1
-            else:
-                wide_div += 1
-            examples.append({"tier": g["tier"], "where": where, "probe": g["probe"], "expected": o, "got": got})
+            if tier == "core":
+                valid += 1
+            for where, got in (("patched@new", cand_new[i]), ("patched@old", cand_old[i])):
+                if _same(got, o):
+                    continue
+                if tier == "core":
+                    core_div += 1
+                else:
+                    wide_div += 1
+                examples.append({"tier": tier, "where": where, "probe": g["probe"], "expected": o, "got": got})
     examples.sort(key=lambda e: (e["tier"] != "core", len(json.dumps(e["probe"]))))
     verdict = "DIVERGENCE" if core_div else ("WEAK" if valid < MIN_VALID else "PASS")
     return {"verdict": verdict, "generated": len(probes), "valid": valid,
-            "skipped_oracle_error": len(probes) - valid, "core_divergences": core_div,
-            "wide_divergences": wide_div, "examples": examples[:3], "seed": seed}
+            "skipped_oracle_error": sum(g["tier"] == "core" for g in gen) - valid, "core_divergences": core_div,
+            "wide_divergences": wide_div, "wide_error": wide_error, "examples": examples[:3], "seed": seed}
 
 
 if __name__ == "__main__":
