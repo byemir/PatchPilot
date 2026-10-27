@@ -7,7 +7,21 @@ import statistics
 import time
 from pathlib import Path
 
-from patchpilot import agent
+from patchpilot import agent, differential
+
+DIFF_N = 200
+DIFF_SEED = 0
+SCORE_KEYS = ("verdict", "generated", "valid", "core_divergences", "wide_divergences")
+
+
+def score(case_dir: Path, cfg: dict, r: dict, seed: int) -> dict:
+    """Run the differential on the accepted patch outside the repair loop; the model never sees this."""
+    try:
+        rec = json.loads((Path(r["run_dir"]) / f"attempt_{r['attempts']}.json").read_text())
+        d = differential.differential(case_dir, cfg["old"], cfg["new"], rec["files"], n=DIFF_N, seed=seed)
+        return {k: d.get(k) for k in SCORE_KEYS} | {"seed": seed}
+    except Exception as e:
+        return {"verdict": "SCORE_ERROR", "reason": f"{type(e).__name__}: {e}"[:300], "seed": seed}
 
 
 def main() -> None:
@@ -17,9 +31,16 @@ def main() -> None:
     ap.add_argument("--repeats", type=int, default=3)
     ap.add_argument("--max-attempts", type=int, default=3)
     ap.add_argument("--token-budget", type=int, default=60000)
+    ap.add_argument("--no-differential", action="store_true",
+                    help="do not use the differential as an accept/reject gate inside the repair loop")
+    ap.add_argument("--score-seed", type=int, default=None,
+                    help="after a run is accepted, score its patch with the differential at this seed (not shown to the model)")
     ap.add_argument("--cases", nargs="*", help="case folder names (default: all with case.json)")
     a = ap.parse_args()
 
+    config = {"max_attempts": a.max_attempts, "token_budget": a.token_budget,
+              "diff_check": not a.no_differential, "diff_n": DIFF_N, "diff_seed": DIFF_SEED,
+              "score_seed": a.score_seed}
     root = Path("benchmarks")
     names = a.cases or sorted(p.parent.name for p in root.glob("*/case.json"))
     rows = []
@@ -32,28 +53,36 @@ def main() -> None:
                 r = agent.repair(
                     root / name, cfg["old"], cfg["new"], lib=cfg["lib"], model=a.model,
                     effort=a.effort, max_attempts=a.max_attempts, token_budget=a.token_budget,
+                    diff_check=not a.no_differential, diff_n=DIFF_N, diff_seed=DIFF_SEED,
                 )
             except Exception as e:  # API or network errors count as failures but are recorded
                 r = {"success": False, "reason": f"{type(e).__name__}: {e}"[:300]}
             r.pop("diff", None)
+            if r.get("success") and a.score_seed is not None:
+                r["scored"] = score(root / name, cfg, r, a.score_seed)
             results.append(r)
             print(f"{name} run {i + 1}/{a.repeats}: success={r.get('success')} "
-                  f"attempts={r.get('attempts')} tokens={r.get('tokens_used')}", flush=True)
+                  f"attempts={r.get('attempts')} tokens={r.get('tokens_used')} "
+                  f"scored={r.get('scored', {}).get('verdict')}", flush=True)
         ok = [r for r in results if r.get("success")]
-        rows.append({
+        row = {
             "case": name, "model": a.model, "effort": a.effort, "runs": len(results),
             "successes": len(ok),
             "first_try": sum(1 for r in ok if r.get("attempts") == 1),
             "avg_tokens": round(statistics.mean(r.get("tokens_used", 0) for r in results)),
+            "config": config,
             "results": results,
-        })
+        }
+        if a.score_seed is not None:
+            row["scored_pass"] = sum(1 for r in ok if r.get("scored", {}).get("verdict") in ("PASS", "WEAK"))
+        rows.append(row)
 
     Path("results").mkdir(exist_ok=True)
     out = Path("results") / f"bench_{started}_{a.model}.json"
     out.write_text(json.dumps(rows, indent=2))
-    print("\n| case | runs | solved | first try | avg tokens |\n|---|---|---|---|---|")
+    print("\n| case | runs | solved | first try | avg tokens | scored pass |\n|---|---|---|---|---|---|")
     for r in rows:
-        print(f"| {r['case']} | {r['runs']} | {r['successes']} | {r['first_try']} | {r['avg_tokens']} |")
+        print(f"| {r['case']} | {r['runs']} | {r['successes']} | {r['first_try']} | {r['avg_tokens']} | {r.get('scored_pass', '-')} |")
     print(f"\nsaved {out}")
 
 
