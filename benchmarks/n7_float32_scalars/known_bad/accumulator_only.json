@@ -1,0 +1,6 @@
+{
+ "note": "float64 accumulator but float32 products and comparison",
+ "files": {
+  "app.py": "import numpy as np\n\n\ndef weighted_score(values, rate, bonus):\n    \"\"\"Total of values * rate (float32 samples) and how many weighted values exceed `bonus`.\"\"\"\n    samples = np.asarray(values, dtype=np.float32)\n    total = np.float64(0)\n    hits = 0\n    for v in samples:\n        x = v * rate\n        total += x\n        if x > bonus:\n            hits += 1\n    return [round(float(total), 9), hits]\n"
+ }
+}
