@@ -15,3 +15,7 @@
 - Meta Model API reachable from Turkey with a hackathon key. GET /v1/models lists muse-spark-1.3, muse-wonder-1.0 and -contributor variants (training-use tier, avoided by policy).
 - Assumption corrected: a third-party doc claimed keys have the form LLM|id|secret; ours has no pipe characters. Do not validate key format client-side, let the API decide.
 - Added patchpilot/meta_client.py: stdlib-only Chat Completions client with a fixed base URL so the key can never be sent elsewhere.
+- First end-to-end loop (patchpilot/agent.py): muse-spark-1.3 (reasoning_effort=low) repaired p1_epoch_seconds in 1 attempt, 2608 tokens. Patch verified OK on pandas 2.3.3 and 3.0.6 against the recorded golden output.
+- Guardrails: tests, run_case.py and golden.json are read-only for the agent; every attempt is recorded under runs/ (git-ignored).
+- Open concern: the patch subtracts a tz-naive epoch, which likely breaks on tz-aware input; the case only covers one recorded input set. To be confirmed by an experiment, then covered by extra probe inputs.
+- Single case, single run: not a benchmark result.
