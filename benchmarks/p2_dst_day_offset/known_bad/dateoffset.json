@@ -1,0 +1,6 @@
+{
+ "note": "DateOffset(days=n): wall-clock days, same as the broken pandas 3 behavior",
+ "files": {
+  "app.py": "import pandas as pd\n\n\ndef schedule(start, tz, n_days, count):\n    \"\"\"Repeat a job every `n_days` days from `start` (local time in `tz`).\n\n    Returns local timestamps as strings, once computed one by one and once for a whole index.\n    \"\"\"\n    t0 = pd.Timestamp(start).tz_localize(tz)\n    step = pd.DateOffset(days=n_days)\n    one_by_one = [(t0 + k * step).strftime(\"%Y-%m-%d %H:%M %z\") for k in range(count)]\n    index = pd.DatetimeIndex([t0] * count) + step\n    as_index = [t.strftime(\"%Y-%m-%d %H:%M %z\") for t in index]\n    return {\"one_by_one\": one_by_one, \"as_index\": as_index}\n"
+ }
+}

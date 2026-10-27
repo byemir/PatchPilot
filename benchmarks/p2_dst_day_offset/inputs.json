@@ -1,0 +1,26 @@
+[
+ {
+  "start": "2024-03-09 12:00",
+  "tz": "America/New_York",
+  "n_days": 1,
+  "count": 3
+ },
+ {
+  "start": "2024-06-01 09:00",
+  "tz": "Europe/Istanbul",
+  "n_days": 2,
+  "count": 3
+ },
+ {
+  "start": "2024-03-30 08:30",
+  "tz": "Europe/Berlin",
+  "n_days": 1,
+  "count": 3
+ },
+ {
+  "start": "2024-01-15 22:00",
+  "tz": "UTC",
+  "n_days": 7,
+  "count": 2
+ }
+]

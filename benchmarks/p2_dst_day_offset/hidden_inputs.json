@@ -1,0 +1,32 @@
+[
+ {
+  "start": "2024-11-02 12:00",
+  "tz": "America/New_York",
+  "n_days": 1,
+  "count": 3
+ },
+ {
+  "start": "2024-03-30 23:00",
+  "tz": "Europe/Berlin",
+  "n_days": 2,
+  "count": 4
+ },
+ {
+  "start": "2024-10-04 10:15",
+  "tz": "Australia/Sydney",
+  "n_days": 1,
+  "count": 5
+ },
+ {
+  "start": "2024-03-09 12:00",
+  "tz": "America/New_York",
+  "n_days": 7,
+  "count": 4
+ },
+ {
+  "start": "2024-11-01 01:30",
+  "tz": "America/Chicago",
+  "n_days": 3,
+  "count": 3
+ }
+]
