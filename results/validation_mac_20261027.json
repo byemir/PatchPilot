@@ -1,0 +1,635 @@
+[
+  {
+    "case": "p1_epoch_seconds",
+    "valid": true,
+    "gates": {
+      "old_ok": true,
+      "new_silent_breakage": true,
+      "tests_green_both": true,
+      "hidden_old_ok": true,
+      "hidden_new_breaks": true,
+      "known_good_accepted": true,
+      "has_known_bad": true,
+      "all_known_bad_rejected": true
+    },
+    "naive_passes_visible": false,
+    "known_good": {
+      "stage": "accepted",
+      "visible_ok": true,
+      "hidden_ok": true,
+      "differential": {
+        "verdict": "PASS",
+        "valid": 58,
+        "core_divergences": 0,
+        "reason": null
+      }
+    },
+    "known_bad": {
+      "tz_naive_epoch": {
+        "stage": "visible",
+        "visible_ok": false,
+        "hidden_ok": false,
+        "differential": null
+      }
+    },
+    "old_version_output": [
+      [
+        1711107360,
+        1711152000
+      ],
+      [
+        1711107360
+      ],
+      [
+        1711096560
+      ],
+      [
+        1711107360
+      ],
+      [
+        -1
+      ],
+      []
+    ],
+    "new_version_output": [
+      [
+        1711107,
+        1711152
+      ],
+      [
+        1711107
+      ],
+      [
+        1711096
+      ],
+      [
+        1711107
+      ],
+      [
+        -1
+      ],
+      []
+    ]
+  },
+  {
+    "case": "p2_dst_day_offset",
+    "valid": true,
+    "gates": {
+      "old_ok": true,
+      "new_silent_breakage": true,
+      "tests_green_both": true,
+      "hidden_old_ok": true,
+      "hidden_new_breaks": true,
+      "known_good_accepted": true,
+      "has_known_bad": true,
+      "all_known_bad_rejected": true
+    },
+    "naive_passes_visible": true,
+    "known_good": {
+      "stage": "accepted",
+      "visible_ok": true,
+      "hidden_ok": true,
+      "differential": {
+        "verdict": "PASS",
+        "valid": 138,
+        "core_divergences": 0,
+        "reason": null
+      }
+    },
+    "known_bad": {
+      "dateoffset": {
+        "stage": "visible",
+        "visible_ok": false,
+        "hidden_ok": false,
+        "differential": null
+      },
+      "spring_forward_only": {
+        "stage": "hidden",
+        "visible_ok": true,
+        "hidden_ok": false,
+        "differential": null
+      }
+    },
+    "old_version_output": [
+      {
+        "one_by_one": [
+          "2024-03-09 12:00 -0500",
+          "2024-03-10 13:00 -0400",
+          "2024-03-11 13:00 -0400"
+        ],
+        "as_index": [
+          "2024-03-10 13:00 -0400",
+          "2024-03-10 13:00 -0400",
+          "2024-03-10 13:00 -0400"
+        ]
+      },
+      {
+        "one_by_one": [
+          "2024-06-01 09:00 +0300",
+          "2024-06-03 09:00 +0300",
+          "2024-06-05 09:00 +0300"
+        ],
+        "as_index": [
+          "2024-06-03 09:00 +0300",
+          "2024-06-03 09:00 +0300",
+          "2024-06-03 09:00 +0300"
+        ]
+      },
+      {
+        "one_by_one": [
+          "2024-03-30 08:30 +0100",
+          "2024-03-31 09:30 +0200",
+          "2024-04-01 09:30 +0200"
+        ],
+        "as_index": [
+          "2024-03-31 09:30 +0200",
+          "2024-03-31 09:30 +0200",
+          "2024-03-31 09:30 +0200"
+        ]
+      },
+      {
+        "one_by_one": [
+          "2024-01-15 22:00 +0000",
+          "2024-01-22 22:00 +0000"
+        ],
+        "as_index": [
+          "2024-01-22 22:00 +0000",
+          "2024-01-22 22:00 +0000"
+        ]
+      }
+    ],
+    "new_version_output": [
+      {
+        "one_by_one": [
+          "2024-03-09 12:00 -0500",
+          "2024-03-10 12:00 -0400",
+          "2024-03-11 12:00 -0400"
+        ],
+        "as_index": [
+          "2024-03-10 12:00 -0400",
+          "2024-03-10 12:00 -0400",
+          "2024-03-10 12:00 -0400"
+        ]
+      },
+      {
+        "one_by_one": [
+          "2024-06-01 09:00 +0300",
+          "2024-06-03 09:00 +0300",
+          "2024-06-05 09:00 +0300"
+        ],
+        "as_index": [
+          "2024-06-03 09:00 +0300",
+          "2024-06-03 09:00 +0300",
+          "2024-06-03 09:00 +0300"
+        ]
+      },
+      {
+        "one_by_one": [
+          "2024-03-30 08:30 +0100",
+          "2024-03-31 08:30 +0200",
+          "2024-04-01 08:30 +0200"
+        ],
+        "as_index": [
+          "2024-03-31 08:30 +0200",
+          "2024-03-31 08:30 +0200",
+          "2024-03-31 08:30 +0200"
+        ]
+      },
+      {
+        "one_by_one": [
+          "2024-01-15 22:00 +0000",
+          "2024-01-22 22:00 +0000"
+        ],
+        "as_index": [
+          "2024-01-22 22:00 +0000",
+          "2024-01-22 22:00 +0000"
+        ]
+      }
+    ]
+  },
+  {
+    "case": "p3_groupby_report",
+    "valid": true,
+    "gates": {
+      "old_ok": true,
+      "new_silent_breakage": true,
+      "tests_green_both": true,
+      "hidden_old_ok": true,
+      "hidden_new_breaks": true,
+      "known_good_accepted": true,
+      "has_known_bad": true,
+      "all_known_bad_rejected": true
+    },
+    "naive_passes_visible": false,
+    "known_good": {
+      "stage": "accepted",
+      "visible_ok": true,
+      "hidden_ok": true,
+      "differential": {
+        "verdict": "PASS",
+        "valid": 108,
+        "core_divergences": 0,
+        "reason": null
+      }
+    },
+    "known_bad": {
+      "observed_only": {
+        "stage": "visible",
+        "visible_ok": false,
+        "hidden_ok": false,
+        "differential": null
+      },
+      "width_only": {
+        "stage": "visible",
+        "visible_ok": false,
+        "hidden_ok": false,
+        "differential": null
+      }
+    },
+    "old_version_output": [
+      [
+        [
+          "a",
+          4,
+          2,
+          2
+        ],
+        [
+          "b",
+          2,
+          1,
+          2
+        ],
+        [
+          "c",
+          0,
+          0,
+          2
+        ]
+      ],
+      [
+        [
+          "north",
+          17,
+          2,
+          2
+        ],
+        [
+          "south",
+          5,
+          1,
+          2
+        ],
+        [
+          "east",
+          1,
+          1,
+          2
+        ],
+        [
+          "west",
+          0,
+          0,
+          2
+        ]
+      ],
+      [
+        [
+          "x",
+          4,
+          1,
+          2
+        ],
+        [
+          "y",
+          0,
+          0,
+          2
+        ]
+      ]
+    ],
+    "new_version_output": [
+      [
+        [
+          "a",
+          4,
+          2,
+          1
+        ],
+        [
+          "b",
+          2,
+          1,
+          1
+        ]
+      ],
+      [
+        [
+          "north",
+          17,
+          2,
+          1
+        ],
+        [
+          "south",
+          5,
+          1,
+          1
+        ],
+        [
+          "east",
+          1,
+          1,
+          1
+        ]
+      ],
+      [
+        [
+          "x",
+          4,
+          1,
+          1
+        ]
+      ]
+    ]
+  },
+  {
+    "case": "p4_label_histogram",
+    "valid": true,
+    "gates": {
+      "old_ok": true,
+      "new_silent_breakage": true,
+      "tests_green_both": true,
+      "hidden_old_ok": true,
+      "hidden_new_breaks": true,
+      "known_good_accepted": true,
+      "has_known_bad": true,
+      "all_known_bad_rejected": true
+    },
+    "naive_passes_visible": true,
+    "known_good": {
+      "stage": "accepted",
+      "visible_ok": true,
+      "hidden_ok": true,
+      "differential": {
+        "verdict": "PASS",
+        "valid": 123,
+        "core_divergences": 0,
+        "reason": null
+      }
+    },
+    "known_bad": {
+      "fillna_none": {
+        "stage": "hidden",
+        "visible_ok": true,
+        "hidden_ok": false,
+        "differential": null
+      },
+      "no_sort": {
+        "stage": "visible",
+        "visible_ok": false,
+        "hidden_ok": false,
+        "differential": null
+      }
+    },
+    "old_version_output": [
+      [
+        [
+          "t1",
+          "None",
+          1
+        ],
+        [
+          "t1",
+          "a",
+          2
+        ],
+        [
+          "t2",
+          "b",
+          1
+        ],
+        [
+          "t3",
+          "c",
+          1
+        ]
+      ],
+      [
+        [
+          "y",
+          "w",
+          1
+        ],
+        [
+          "y",
+          "x",
+          1
+        ],
+        [
+          "z",
+          "x",
+          2
+        ]
+      ],
+      [
+        [
+          "t1",
+          "None",
+          1
+        ],
+        [
+          "t1",
+          "a",
+          1
+        ],
+        [
+          "t2",
+          "None",
+          1
+        ],
+        [
+          "t2",
+          "a",
+          1
+        ]
+      ]
+    ],
+    "new_version_output": [
+      [
+        [
+          "t1",
+          "a",
+          2
+        ],
+        [
+          "t2",
+          "b",
+          1
+        ],
+        [
+          "t3",
+          "c",
+          1
+        ]
+      ],
+      [
+        [
+          "z",
+          "x",
+          2
+        ],
+        [
+          "y",
+          "x",
+          1
+        ],
+        [
+          "y",
+          "w",
+          1
+        ]
+      ],
+      [
+        [
+          "t1",
+          "a",
+          1
+        ],
+        [
+          "t2",
+          "a",
+          1
+        ]
+      ]
+    ]
+  },
+  {
+    "case": "n6_uint8_scaling",
+    "valid": true,
+    "gates": {
+      "old_ok": true,
+      "new_silent_breakage": true,
+      "tests_green_both": true,
+      "hidden_old_ok": true,
+      "hidden_new_breaks": true,
+      "known_good_accepted": true,
+      "has_known_bad": true,
+      "all_known_bad_rejected": true
+    },
+    "naive_passes_visible": false,
+    "known_good": {
+      "stage": "accepted",
+      "visible_ok": true,
+      "hidden_ok": true,
+      "differential": {
+        "verdict": "PASS",
+        "valid": 135,
+        "core_divergences": 0,
+        "reason": null
+      }
+    },
+    "known_bad": {
+      "cast_after_multiply": {
+        "stage": "visible",
+        "visible_ok": false,
+        "hidden_ok": false,
+        "differential": null
+      }
+    },
+    "old_version_output": [
+      1350,
+      120,
+      2040,
+      0
+    ],
+    "new_version_output": [
+      70,
+      120,
+      248,
+      0
+    ]
+  },
+  {
+    "case": "n7_float32_scalars",
+    "valid": true,
+    "gates": {
+      "old_ok": true,
+      "new_silent_breakage": true,
+      "tests_green_both": true,
+      "hidden_old_ok": true,
+      "hidden_new_breaks": true,
+      "known_good_accepted": true,
+      "has_known_bad": true,
+      "all_known_bad_rejected": true
+    },
+    "naive_passes_visible": false,
+    "known_good": {
+      "stage": "accepted",
+      "visible_ok": true,
+      "hidden_ok": true,
+      "differential": {
+        "verdict": "PASS",
+        "valid": 154,
+        "core_divergences": 0,
+        "reason": null
+      }
+    },
+    "known_bad": {
+      "accumulator_only": {
+        "stage": "visible",
+        "visible_ok": false,
+        "hidden_ok": false,
+        "differential": null
+      },
+      "cast_only": {
+        "stage": "visible",
+        "visible_ok": false,
+        "hidden_ok": false,
+        "differential": null
+      },
+      "float64_samples": {
+        "stage": "visible",
+        "visible_ok": false,
+        "hidden_ok": false,
+        "differential": null
+      }
+    },
+    "old_version_output": [
+      [
+        1.430000005,
+        3
+      ],
+      [
+        0.300000004,
+        3
+      ],
+      [
+        0.75,
+        1
+      ],
+      [
+        2.700000107,
+        2
+      ]
+    ],
+    "new_version_output": [
+      [
+        1.430000067,
+        3
+      ],
+      [
+        0.300000012,
+        0
+      ],
+      [
+        0.75,
+        1
+      ],
+      [
+        2.700000048,
+        2
+      ]
+    ]
+  }
+]
