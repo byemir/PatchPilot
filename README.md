@@ -1,5 +1,34 @@
 # PatchPilot
-Autonomous agent that repairs Python projects broken by dependency upgrades, focusing on silent behavior changes. Built during the Meta Global AI Developer Hackathon (Oct 26 - Nov 4, 2026).
+Autonomous agent that repairs Python projects broken by dependency upgrades, focusing on **silent** behavior changes: the tests stay green, the output is wrong. Built during the Meta Global AI Developer Hackathon (Oct 26 - Nov 4, 2026).
+
+## How it works
+For each case the agent receives the broken program, the old and the new library environment, and proposes a patch. A patch is accepted only if all three gates pass:
+
+1. **Visible check:** the recorded inputs reproduce the golden output (generated with the OLD library).
+2. **Hidden check:** held-out inputs that are never shown to the model.
+3. **Differential check:** generated inputs run through the original code on the old library and the patched code on the new one; core divergences reject the patch.
+
+Defaults: up to 3 attempts per run, 60000 token budget. Patched code runs in an isolated subprocess (`patchpilot/sandbox.py`) with wall-clock and CPU limits and a minimal environment without inherited secrets. Known gap: no memory limit and no network isolation on the local runner.
+
+## Setup
+Requires Python 3.12 (tested with 3.12.16). One command builds four pinned virtual environments under `.sandboxes/` and validates all cases:
+
+    PYTHON312=/path/to/python3.12 ./scripts/setup_envs.sh
+
+A case is valid only if the old library is OK, the new one silently breaks, tests are green on both, hidden inputs break too, the known-good patch is accepted and the known-bad patches are rejected. Validation of a single case:
+
+    python -m patchpilot.validate_case benchmarks/p1_epoch_seconds
+
+## Run the agent
+    export MODEL_API_KEY=...   # never commit it
+    python -m patchpilot.agent benchmarks/p1_epoch_seconds .sandboxes/pd23/bin/python .sandboxes/pd30/bin/python
+
+Cases n6/n7 use `.sandboxes/np126` and `.sandboxes/np2`. Benchmark runner: `python -m patchpilot.bench --help`.
+
+## Limitations
+All cases are synthetic and have not been tried on real open-source projects. Sample sizes in `results/` are small (n=5 per case and setting), so they show direction only.
+
+Engineering log and technical notes: [`docs/engineering-log.md`](docs/engineering-log.md), [`docs/training-notes.jsonl`](docs/training-notes.jsonl).
 
 ## Benchmark cases
 
