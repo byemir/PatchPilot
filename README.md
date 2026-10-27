@@ -11,7 +11,7 @@ For each case the agent receives the program source, the golden output (from the
 Defaults: up to 3 attempts per run, 60000 token budget. The benchmark runner can switch the differential gate off (`--no-differential`) and score accepted patches with it afterwards at another seed (`--score-seed`). Patched code runs in a subprocess inside a temporary copy of the case (`patchpilot/sandbox.py`) with a wall-clock timeout (the process group is killed), a CPU-time limit and a minimal environment without inherited secrets. This is not a security sandbox: there is no memory limit, no network isolation and no filesystem isolation (the subprocess runs as your user). Run it only on a machine where you accept that.
 
 ## Setup
-Requires Python 3.12 (tested with 3.12.16). One command builds four pinned virtual environments under `.sandboxes/` and validates all cases:
+Requires Python 3.12 (tested with 3.12.16). `PYTHON312` must point to a Python 3.12 interpreter; on the macOS machine used for development `python3.12` was not on `PATH`, so the path was passed explicitly. A fresh clone with this script built the four environments and reported all six cases valid. One command builds four pinned virtual environments under `.sandboxes/` and validates all cases:
 
     PYTHON312=/path/to/python3.12 ./scripts/setup_envs.sh
 
