@@ -57,10 +57,15 @@ def main() -> None:
                 )
             except Exception as e:  # API or network errors count as failures but are recorded
                 r = {"success": False, "reason": f"{type(e).__name__}: {e}"[:300]}
+                if isinstance(e, agent.meta_client.MetaAPIError) and any(
+                        k in str(e) for k in ("HTTP 401", "HTTP 403", "MODEL_API_KEY")):
+                    raise SystemExit(f"Aborting, nothing saved: {e}")
             r.pop("diff", None)
             if r.get("success") and a.score_seed is not None:
                 r["scored"] = score(root / name, cfg, r, a.score_seed)
             results.append(r)
+            if not r.get("success"):
+                print("   reason:", str(r.get("reason"))[:200], flush=True)
             print(f"{name} run {i + 1}/{a.repeats}: success={r.get('success')} "
                   f"attempts={r.get('attempts')} tokens={r.get('tokens_used')} "
                   f"scored={r.get('scored', {}).get('verdict')}", flush=True)
