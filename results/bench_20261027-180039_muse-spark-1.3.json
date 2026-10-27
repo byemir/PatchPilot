@@ -1,0 +1,72 @@
+[
+  {
+    "case": "n6_uint8_scaling",
+    "model": "muse-spark-1.3",
+    "effort": "low",
+    "runs": 3,
+    "successes": 3,
+    "first_try": 3,
+    "avg_tokens": 2455,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3241,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 NEP 50 keeps Python-int + uint8-scalar arithmetic in uint8, so p*gain wraps modulo 256 and total becomes uint8 and wraps, while NumPy 1 promoted to a larger int.",
+        "run_dir": "runs/20261027-180039_n6_uint8_scaling"
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2025,
+        "hidden_checked": true,
+        "diagnosis": "Iterating a uint8 array yields uint8 scalars, and under NumPy 2 NEP 50 weak promotion `uint8_scalar * Python int` and `Python int + uint8_scalar` stay uint8 and wrap modulo 256, whereas NumPy 1 promoted to a larger int so the accumulator stayed correct.",
+        "run_dir": "runs/20261027-180053_n6_uint8_scaling"
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2098,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 NEP 50 made uint8 scalar * Python int stay uint8 (wrapping mod 256) and made Python int + uint8 stay uint8, so the loop accumulated with overflow whereas NumPy 1 promoted to a larger Python/int type.",
+        "run_dir": "runs/20261027-180104_n6_uint8_scaling"
+      }
+    ]
+  },
+  {
+    "case": "p1_epoch_seconds",
+    "model": "muse-spark-1.3",
+    "effort": "low",
+    "runs": 3,
+    "successes": 3,
+    "first_try": 3,
+    "avg_tokens": 3514,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3609,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers non-nano datetime64 resolution (e.g. us), so astype int64 is no longer nanoseconds and //1e9 is off by 1000x; fixed with unit-independent epoch subtraction.",
+        "run_dir": "runs/20261027-180114_p1_epoch_seconds"
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2541,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers non-nano datetime64 units (e.g. s) so astype(int64) is no longer nanoseconds, breaking //1e9; forcing ns with as_unit('ns') restores old behavior on both versions.",
+        "run_dir": "runs/20261027-180131_p1_epoch_seconds"
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 4392,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers non-nano datetime64 resolution (e.g. us/s) so astype('int64') no longer returns nanoseconds, making //10**9 wrong.",
+        "run_dir": "runs/20261027-180143_p1_epoch_seconds"
+      }
+    ]
+  }
+]

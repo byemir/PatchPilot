@@ -1,0 +1,114 @@
+[
+  {
+    "case": "n6_uint8_scaling",
+    "model": "muse-spark-1.3",
+    "effort": "low",
+    "runs": 3,
+    "successes": 3,
+    "first_try": 3,
+    "avg_tokens": 1854,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1818,
+        "hidden_checked": true,
+        "diagnosis": "Iterating a uint8 array yields NumPy uint8 scalars; under NumPy 2 NEP 50 weak promotion uint8_scalar * Python int stays uint8 and wraps modulo 256 (e.g. 1350 -> 70), while NumPy 1.x value-based casting promoted to a larger int.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 200,
+          "core_divergences": 0,
+          "wide_divergences": 15
+        },
+        "run_dir": "runs/20261027-181429_n6_uint8_scaling"
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1946,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 (NEP 50) made Python ints weak, so `np.uint8_scalar * python_int` stays `uint8` and wraps modulo 256, whereas NumPy 1 value-based casting promoted to a larger int.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 200,
+          "core_divergences": 0,
+          "wide_divergences": 15
+        },
+        "run_dir": "runs/20261027-181436_n6_uint8_scaling"
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1798,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 (NEP 50) keeps uint8 scalar * Python int as uint8 so it wraps modulo 256, while NumPy 1 promoted to a larger int; accumulating the wrapped value gives the wrong sum.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 200,
+          "core_divergences": 0,
+          "wide_divergences": 15
+        },
+        "run_dir": "runs/20261027-181445_n6_uint8_scaling"
+      }
+    ]
+  },
+  {
+    "case": "p1_epoch_seconds",
+    "model": "muse-spark-1.3",
+    "effort": "low",
+    "runs": 3,
+    "successes": 3,
+    "first_try": 3,
+    "avg_tokens": 4086,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 4003,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers non-nano datetime resolution (e.g. us) so astype int64 is no longer nanoseconds, making //10**9 wrong by 1000x.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 78,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261027-181453_p1_epoch_seconds"
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 4573,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers non-nano datetime64 resolution (e.g. seconds), so astype('int64') is no longer nanoseconds and //10**9 is ~1000x too small; normalizing to ns restores old semantics.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 78,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261027-181511_p1_epoch_seconds"
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3681,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers non-nano datetime64 resolution (e.g. s/ms/us) instead of always ns, so astype('int64') is no longer nanoseconds and //10**9 undercounts by 1000x.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 78,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261027-181531_p1_epoch_seconds"
+      }
+    ]
+  }
+]

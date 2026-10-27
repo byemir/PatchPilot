@@ -1,0 +1,72 @@
+[
+  {
+    "case": "n6_uint8_scaling",
+    "model": "muse-wonder-1.0",
+    "effort": "low",
+    "runs": 3,
+    "successes": 3,
+    "first_try": 3,
+    "avg_tokens": 1001,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 993,
+        "hidden_checked": true,
+        "diagnosis": "Under NumPy 2's NEP 50 promotion rules, a uint8 scalar multiplied by a Python int stays uint8 and wraps modulo 256, whereas NumPy 1 promoted it to a wider integer type, so large products overflowed silently.",
+        "run_dir": "runs/20261027-180204_n6_uint8_scaling"
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 955,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 NEP 50 keeps uint8 scalar * Python int in uint8, wrapping modulo 256, whereas NumPy 1.x value-based casting promoted it to a wider integer; the accumulation therefore overflows per-pixel.",
+        "run_dir": "runs/20261027-180212_n6_uint8_scaling"
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1055,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2.0's NEP 50 promotion rules keep a uint8 scalar multiplied by a Python int in uint8, so products overflow and wrap modulo 256, whereas NumPy 1.x promoted them to a wider type. Tests with small values do not trigger the overflow.",
+        "run_dir": "runs/20261027-180221_n6_uint8_scaling"
+      }
+    ]
+  },
+  {
+    "case": "p1_epoch_seconds",
+    "model": "muse-wonder-1.0",
+    "effort": "low",
+    "runs": 3,
+    "successes": 3,
+    "first_try": 3,
+    "avg_tokens": 3415,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2942,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 changed pd.to_datetime's inferred datetime resolution from ns to us (or another non-ns unit), so ts.astype('int64') no longer returns nanoseconds and dividing by 10**9 scales the result incorrectly; tests only check length/type, not values.",
+        "run_dir": "runs/20261027-180231_p1_epoch_seconds"
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 4104,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3.0 no longer always stores parsed datetimes as nanoseconds (e.g. it uses microseconds), so astype('int64') // 10**9 assumed ns and truncated the epoch by 1000x; computing the duration since the epoch and floor-dividing by one second is resolution-independent and also correct on pandas 2.3.",
+        "run_dir": "runs/20261027-180304_p1_epoch_seconds"
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3198,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers coarser datetime resolution (e.g. us) instead of ns, so astype('int64') yields microseconds and dividing by 10**9 truncates by 1000; explicitly normalizing to ns restores version-independent epoch seconds.",
+        "run_dir": "runs/20261027-180348_p1_epoch_seconds"
+      }
+    ]
+  }
+]
