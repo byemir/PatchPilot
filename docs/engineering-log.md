@@ -9,3 +9,6 @@
 - Added patchpilot/sandbox.py (isolated subprocess with wall-clock and CPU limits, minimal env) and patchpilot/check.py (verdicts: OK, LOUD_FAILURE, SILENT_BREAKAGE, RUN_ERROR). Verified: p1_epoch_seconds is OK on pandas 2.3.3 and SILENT_BREAKAGE on 3.0.6.
 - Design fix: use os.path.abspath instead of Path.resolve for the interpreter path, because a venv python is a symlink and resolving it would likely bypass the venv (not reproduced, avoided by design).
 - Known gaps: no memory limit and no network isolation on this local runner (macOS); planned for the Modal Sandboxes runner.
+- Added patchpilot/sandbox.py (isolated subprocess with wall-clock and CPU limits, minimal env) and patchpilot/check.py (verdicts: OK, LOUD_FAILURE, SILENT_BREAKAGE, RUN_ERROR). Verified: p1_epoch_seconds is OK on pandas 2.3.3 and SILENT_BREAKAGE on 3.0.6.
+- Design fix: use os.path.abspath instead of Path.resolve for the interpreter path, because a venv python is a symlink and resolving it would likely bypass the venv (not reproduced, avoided by design).
+- Known gaps: no memory limit and no network isolation on this local runner (macOS); planned for the Modal Sandboxes runner.
