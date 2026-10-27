@@ -1,0 +1,52 @@
+[
+  {
+    "case": "p4_label_histogram",
+    "model": "muse-wonder-1.0",
+    "effort": "low",
+    "runs": 5,
+    "successes": 1,
+    "first_try": 0,
+    "avg_tokens": 16939,
+    "results": [
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 19116,
+        "run_dir": "runs/20261027-191342_p4_label_histogram"
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 14461,
+        "run_dir": "runs/20261027-191634_p4_label_histogram"
+      },
+      {
+        "success": true,
+        "attempts": 3,
+        "tokens_used": 20217,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers a NaN-sentinel string dtype and preserves missing values through astype(str), so labels formerly stringified to \"None\"/\"nan\" are dropped by value_counts, and DataFrame.value_counts(sort=False) no longer returns keys in sorted order. Forcing object dtype preserves the original Python None/\"\" distinction, explicitly stringifying restores the old labels, and sorting the counted index restores the old order on both versions, while retaining DataFrame handling of ragged rows.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 123,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261027-191829_p4_label_histogram"
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 15528,
+        "run_dir": "runs/20261027-192138_p4_label_histogram"
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 15374,
+        "run_dir": "runs/20261027-192354_p4_label_histogram"
+      }
+    ]
+  }
+]

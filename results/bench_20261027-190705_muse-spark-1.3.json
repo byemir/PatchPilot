@@ -1,0 +1,43 @@
+[
+  {
+    "case": "p4_label_histogram",
+    "model": "muse-spark-1.3",
+    "effort": "low",
+    "runs": 5,
+    "successes": 0,
+    "first_try": 0,
+    "avg_tokens": 20672,
+    "results": [
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 22054,
+        "run_dir": "runs/20261027-190706_p4_label_histogram"
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 22205,
+        "run_dir": "runs/20261027-190833_p4_label_histogram"
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 15644,
+        "run_dir": "runs/20261027-190954_p4_label_histogram"
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 19857,
+        "run_dir": "runs/20261027-191051_p4_label_histogram"
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 23601,
+        "run_dir": "runs/20261027-191209_p4_label_histogram"
+      }
+    ]
+  }
+]
