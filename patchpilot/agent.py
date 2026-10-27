@@ -133,18 +133,12 @@ def repair(case_dir, old_py, new_py, *, lib="pandas", model="muse-spark-1.3", ef
             (run_dir / f"attempt_{attempt}.json").write_text(json.dumps(record, indent=2))
             continue
 
-        ws = sandbox.workspace(case_dir)
+        old_r = check.check(case_dir, old_py, files=files)
+        new_r = check.check(case_dir, new_py, files=files)
         hid_old = hid_new = None
-        try:
-            for rel, content in files.items():
-                (ws / rel).write_text(content)
-            old_r = check.check(ws, old_py)
-            new_r = check.check(ws, new_py)
-            if has_hidden:
-                hid_old = check.check(ws, old_py, "hidden_inputs.json", "hidden_golden.json")
-                hid_new = check.check(ws, new_py, "hidden_inputs.json", "hidden_golden.json")
-        finally:
-            sandbox.cleanup(ws)
+        if has_hidden:
+            hid_old = check.check(case_dir, old_py, "hidden_inputs.json", "hidden_golden.json", files=files)
+            hid_new = check.check(case_dir, new_py, "hidden_inputs.json", "hidden_golden.json", files=files)
 
         visible_ok = old_r["verdict"] == "OK" and new_r["verdict"] == "OK"
         hidden_ok = (not has_hidden) or (hid_old["verdict"] == "OK" and hid_new["verdict"] == "OK")

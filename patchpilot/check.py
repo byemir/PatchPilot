@@ -9,11 +9,20 @@ from patchpilot import sandbox
 
 
 def check(case_dir: str | Path, python: str | Path,
-          inputs: str = "inputs.json", golden: str = "golden.json") -> dict:
+          inputs: str = "inputs.json", golden: str = "golden.json", files: dict | None = None) -> dict:
+    """case_dir must be the ORIGINAL case directory: the expected output is read from it and never from
+    the workspace. `files` (editable path -> content) is written into the workspace before running."""
     case_dir = Path(case_dir)
     expected = json.loads((case_dir / golden).read_text())
-    ws = sandbox.workspace(case_dir)
+    hide = sandbox.ANSWER_KEYS + (() if inputs == sandbox.HIDDEN_INPUTS else (sandbox.HIDDEN_INPUTS,))
+    ws = sandbox.workspace(case_dir, exclude=hide)
     try:
+        root = ws.resolve()
+        for rel, content in (files or {}).items():
+            target = (ws / rel).resolve()
+            if root not in target.parents:
+                raise ValueError(f"path outside the workspace: {rel}")
+            target.write_text(content)
         tests = sandbox.run(python, ["-m", "pytest", "-q", "-p", "no:cacheprovider"], ws, timeout_s=120)
         run = sandbox.run(python, ["run_case.py", inputs], ws, timeout_s=60)
     finally:

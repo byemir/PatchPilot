@@ -18,15 +18,9 @@ from patchpilot import check, differential, sandbox
 
 
 def evaluate(case_dir: Path, old_py: str, new_py: str, files: dict, n: int = 200) -> dict:
-    ws = sandbox.workspace(case_dir)
-    try:
-        for rel, content in files.items():
-            (ws / rel).write_text(content)
-        vo, vn = check.check(ws, old_py), check.check(ws, new_py)
-        ho = check.check(ws, old_py, "hidden_inputs.json", "hidden_golden.json")
-        hn = check.check(ws, new_py, "hidden_inputs.json", "hidden_golden.json")
-    finally:
-        sandbox.cleanup(ws)
+    vo, vn = check.check(case_dir, old_py, files=files), check.check(case_dir, new_py, files=files)
+    ho = check.check(case_dir, old_py, "hidden_inputs.json", "hidden_golden.json", files=files)
+    hn = check.check(case_dir, new_py, "hidden_inputs.json", "hidden_golden.json", files=files)
     visible = vo["verdict"] == "OK" and vn["verdict"] == "OK"
     hidden = ho["verdict"] == "OK" and hn["verdict"] == "OK"
     diff = differential.differential(case_dir, old_py, new_py, files, n=n) if visible and hidden else None

@@ -42,12 +42,21 @@ def _limits(cpu_s: int):
     return apply
 
 
-def workspace(case_dir: str | Path) -> Path:
-    """Copy a case into a fresh temp dir so the original is never modified."""
+# Files that patched code must never see: expected outputs and reference patches.
+ANSWER_KEYS = ("golden.json", "hidden_golden.json", "known_good.json", "known_bad")
+HIDDEN_INPUTS = "hidden_inputs.json"
+
+
+def workspace(case_dir: str | Path, exclude: tuple = ()) -> Path:
+    """Copy a case into a fresh temp dir so the original is never modified.
+
+    `exclude` lists file or directory names that are not copied (matched anywhere in the tree).
+    """
     tmp = Path(tempfile.mkdtemp(prefix="patchpilot_"))
     dst = tmp / Path(case_dir).name
     shutil.copytree(
-        case_dir, dst, ignore=shutil.ignore_patterns("__pycache__", ".pytest_cache")
+        case_dir, dst,
+        ignore=shutil.ignore_patterns("__pycache__", ".pytest_cache", *exclude),
     )
     return dst
 

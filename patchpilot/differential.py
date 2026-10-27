@@ -171,7 +171,7 @@ def generate(seeds: list, n: int = 200, seed: int = 0, wide_frac: float = 0.25) 
 
 
 def _run(case_dir: Path, files: dict | None, python, probes: list, timeout_s: float = 120):
-    ws = sandbox.workspace(case_dir)
+    ws = sandbox.workspace(case_dir, exclude=sandbox.ANSWER_KEYS + (sandbox.HIDDEN_INPUTS,))
     try:
         for rel, content in (files or {}).items():
             (ws / rel).write_text(content)
