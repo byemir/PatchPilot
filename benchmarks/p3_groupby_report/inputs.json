@@ -1,0 +1,61 @@
+[
+ {
+  "rows": [
+   [
+    "a",
+    1
+   ],
+   [
+    "b",
+    2
+   ],
+   [
+    "a",
+    3
+   ]
+  ],
+  "categories": [
+   "a",
+   "b",
+   "c"
+  ]
+ },
+ {
+  "rows": [
+   [
+    "north",
+    10
+   ],
+   [
+    "south",
+    5
+   ],
+   [
+    "north",
+    7
+   ],
+   [
+    "east",
+    1
+   ]
+  ],
+  "categories": [
+   "north",
+   "south",
+   "east",
+   "west"
+  ]
+ },
+ {
+  "rows": [
+   [
+    "x",
+    4
+   ]
+  ],
+  "categories": [
+   "x",
+   "y"
+  ]
+ }
+]

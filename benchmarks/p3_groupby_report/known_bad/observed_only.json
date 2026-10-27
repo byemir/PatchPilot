@@ -1,0 +1,6 @@
+{
+ "note": "restores unobserved categories but not the group width",
+ "files": {
+  "app.py": "import pandas as pd\n\n\ndef category_report(rows, categories):\n    \"\"\"Per-category totals and the number of columns each group carries.\n\n    rows: [[category, amount], ...]; categories: every known category, in report order.\n    \"\"\"\n    df = pd.DataFrame(rows, columns=[\"cat\", \"amount\"])\n    df[\"cat\"] = pd.Categorical(df[\"cat\"], categories=categories)\n    grouped = df.groupby(\"cat\", observed=False)\n    totals = grouped[\"amount\"].sum()\n    counts = grouped.size()\n    widths = grouped.apply(lambda part: part.shape[1])\n    return [[str(c), int(totals[c]), int(counts[c]), int(widths.get(c, -1))] for c in totals.index]\n"
+ }
+}
