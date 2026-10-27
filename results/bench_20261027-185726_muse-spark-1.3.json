@@ -1,0 +1,28 @@
+[
+  {
+    "case": "n6_uint8_scaling",
+    "model": "muse-spark-1.3",
+    "effort": "minimal",
+    "runs": 1,
+    "successes": 1,
+    "first_try": 1,
+    "avg_tokens": 753,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 753,
+        "hidden_checked": true,
+        "diagnosis": "Iterating a uint8 array yields NumPy uint8 scalars, and under NumPy 2 NEP 50 `uint8_scalar * Python_int` stays uint8 and wraps modulo 256, whereas NumPy 1 upcast it.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 13
+        },
+        "run_dir": "runs/20261027-185726_n6_uint8_scaling"
+      }
+    ]
+  }
+]
