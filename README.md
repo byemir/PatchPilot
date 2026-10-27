@@ -20,6 +20,8 @@ A case is valid only if the old library is OK, the new one silently breaks, test
     python -m patchpilot.validate_case benchmarks/p1_epoch_seconds
 
 ## Run the agent
+The runner (`patchpilot/*.py`) imports only the Python standard library, including `urllib` for the model API; pandas and NumPy are needed only inside the four sandbox environments.
+
     export MODEL_API_KEY=...   # never commit it
     python -m patchpilot.agent benchmarks/p1_epoch_seconds .sandboxes/pd23/bin/python .sandboxes/pd30/bin/python
 
