@@ -8,7 +8,7 @@ For each case the agent receives the program source, the golden output (from the
 2. **Hidden check:** held-out inputs that are never shown to the model.
 3. **Differential check:** generated inputs run through the original code on the old library and the patched code on both libraries; core divergences reject the patch.
 
-Defaults: up to 3 attempts per run, 60000 token budget. The benchmark runner can switch the differential gate off (`--no-differential`) and score accepted patches with it afterwards at another seed (`--score-seed`). Patched code runs in a subprocess inside a temporary copy of the case (`patchpilot/sandbox.py`) with a wall-clock timeout (the process group is killed), a CPU-time limit and a minimal environment without inherited secrets. This is not a security sandbox: there is no memory limit, no network isolation and no filesystem isolation (the subprocess runs as your user). Run it only on a machine where you accept that.
+Defaults: up to 3 attempts per run, 60000 token budget. The benchmark runner can switch the differential gate off (`--no-differential`) and score accepted patches with it afterwards at another seed (`--score-seed`). Patched code runs in a subprocess inside a temporary copy of the case (`patchpilot/sandbox.py`) with a wall-clock timeout (the process group is killed), a CPU-time limit and a minimal environment without inherited secrets. Model code runs on your machine with your user's privileges; this runner is not a hardened security boundary. On macOS, `bench` and `agent` additionally wrap model code in `sandbox-exec` (no read or write access to the home directory and the repository except the sandbox environments, no network), re-exec themselves with a minimal environment, read the API key from a file instead of the environment, and refuse to run model code if the harness environment holds secret-looking variables or the isolation self-test fails. Shown on one macOS machine with fake secrets (`patchpilot/isolation_test.py`, `patchpilot/negative_test.py`, details in the engineering log): a fake secret file under `~/.config`, the repository's `hidden_golden.json` (absolute path), a home directory listing and a loopback connection were blocked. Reading the harness's initial environment through `sysctl` was NOT blocked by the profile, which is why the environment must not hold secrets. Not tested: memory inspection tools (`lldb`, `vmmap`, `gcore`), other same-user processes that hold secrets, Linux, external network. On other platforms `bench` and `agent` are written to refuse to run unless `--no-fs-deny` is given (only the missing `sandbox-exec` case was tested); such runs are marked `fs_deny=false` and are not counted. There is no memory limit.
 
 ## Setup
 Requires Python 3.12 (tested with 3.12.16). `PYTHON312` must point to a Python 3.12 interpreter; on the macOS machine used for development `python3.12` was not on `PATH`, so the path was passed explicitly. A fresh clone with this script built the four environments and reported all six cases valid. One command builds four pinned virtual environments under `.sandboxes/` and validates all cases:
@@ -22,7 +22,9 @@ A case is valid only if the old library is OK, the new one silently breaks, test
 ## Run the agent
 The runner (`patchpilot/*.py`) imports only the Python standard library, including `urllib` for the model API; pandas and NumPy are needed only inside the four sandbox environments.
 
-    export MODEL_API_KEY=...   # never commit it
+    # one-time, from your own terminal: the key is typed hidden and goes only into this file
+    ( umask 077; mkdir -p ~/.config/patchpilot && chmod 700 ~/.config/patchpilot; printf 'Meta API key: '; stty -echo; read -r K; stty echo; echo; printf '%s\n' "$K" > ~/.config/patchpilot/meta_key; chmod 600 ~/.config/patchpilot/meta_key; unset K )
+    python -m patchpilot.meta_client keycheck   # prints the file mode and the key length, never the key
     python -m patchpilot.agent benchmarks/p1_epoch_seconds .sandboxes/pd23/bin/python .sandboxes/pd30/bin/python
 
 Cases n6/n7 use `.sandboxes/np126` and `.sandboxes/np2`. Benchmark runner: `python -m patchpilot.bench --help`.
@@ -34,7 +36,7 @@ Engineering log and technical notes: [`docs/engineering-log.md`](docs/engineerin
 
 ## Results so far
 
-All numbers come from the files in `results/`. Cases are synthetic, samples are small, only token counts were recorded.
+All numbers come from the files in `results/`. Cases are synthetic, samples are small, only token counts were recorded. All rows below were produced before the isolation layer existed: model code ran without the OS layer and the API key was in the process environment (none of the files listed below has an `fs_deny` field). The 126 patches in `runs/` at the time of the check import only pandas, numpy, collections and math (import lines only), so no sign of file or environment access was found; that scan cannot rule it out.
 
 | setting | model | result | file |
 |---|---|---|---|

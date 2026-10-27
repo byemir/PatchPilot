@@ -6,6 +6,7 @@ import os
 import sys
 import urllib.error
 import urllib.request
+from pathlib import Path
 
 BASE_URL = "https://api.meta.ai/v1"  # fixed on purpose: the key must never be sent elsewhere
 
@@ -14,10 +15,26 @@ class MetaAPIError(RuntimeError):
     pass
 
 
+class MetaAuthError(MetaAPIError):
+    pass
+
+
+KEY_PATH = Path.home() / ".config" / "patchpilot" / "meta_key"
+
+
 def _key() -> str:
-    key = os.environ.get("MODEL_API_KEY") or os.environ.get("META_API_KEY")
+    # The key lives in a file outside the repository, is read at call time, is never read from or written
+    # to the environment and is never passed to a subprocess.
+    try:
+        file_mode = KEY_PATH.stat().st_mode & 0o777
+        dir_mode = KEY_PATH.parent.stat().st_mode & 0o777
+    except OSError:
+        raise MetaAuthError(f"Key file not found: {KEY_PATH} (directory mode 0700, file mode 0600; never commit it).") from None
+    if file_mode & 0o077 or dir_mode & 0o077:
+        raise MetaAuthError(f"Key file permissions are too open (file {oct(file_mode)}, directory {oct(dir_mode)}); use 0600 and 0700.")
+    key = KEY_PATH.read_text().strip()
     if not key:
-        raise MetaAPIError("Set MODEL_API_KEY in your shell environment (never commit it).")
+        raise MetaAuthError("Key file is empty.")
     return key
 
 
@@ -133,6 +150,9 @@ if __name__ == "__main__":
         resp = chat([{"role": "user", "content": "Reply with exactly: pong"}], model, reasoning_effort="low")
         print(text_of(resp))
         print("usage:", json.dumps(resp.get("usage")))
+    elif cmd == "keycheck":
+        k = _key()
+        print(f"key file ok: {KEY_PATH} (mode {oct(KEY_PATH.stat().st_mode & 0o777)}, {len(k)} characters)")
     elif cmd == "toolprobe":
         if len(sys.argv) < 3:
             sys.exit("usage: python -m patchpilot.meta_client toolprobe <model>")

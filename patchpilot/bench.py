@@ -7,7 +7,7 @@ import statistics
 import time
 from pathlib import Path
 
-from patchpilot import agent, differential
+from patchpilot import agent, differential, sandbox
 
 DIFF_N = 200
 DIFF_SEED = 0
@@ -20,11 +20,14 @@ def score(case_dir: Path, cfg: dict, r: dict, seed: int) -> dict:
         rec = json.loads((Path(r["run_dir"]) / f"attempt_{r['attempts']}.json").read_text())
         d = differential.differential(case_dir, cfg["old"], cfg["new"], rec["files"], n=DIFF_N, seed=seed)
         return {k: d.get(k) for k in SCORE_KEYS} | {"seed": seed, "examples": [e for e in d.get("examples", []) if e.get("tier") == "core"][:3]}
+    except sandbox.SandboxUnavailable:
+        raise
     except Exception as e:
         return {"verdict": "SCORE_ERROR", "reason": f"{type(e).__name__}: {e}"[:300], "seed": seed}
 
 
 def main() -> None:
+    sandbox.ensure_clean_env()
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default="muse-spark-1.3")
     ap.add_argument("--effort", default="low")
@@ -35,12 +38,15 @@ def main() -> None:
                     help="do not use the differential as an accept/reject gate inside the repair loop")
     ap.add_argument("--score-seed", type=int, default=None,
                     help="after a run is accepted, score its patch with the differential at this seed (not shown to the model)")
+    ap.add_argument("--no-fs-deny", action="store_true",
+                    help="run model code without OS file-system isolation (unsafe; results are marked and not counted)")
     ap.add_argument("--cases", nargs="*", help="case folder names (default: all with case.json)")
     a = ap.parse_args()
+    sandbox.set_fs_deny(not a.no_fs_deny)
 
     config = {"max_attempts": a.max_attempts, "token_budget": a.token_budget,
               "diff_check": not a.no_differential, "diff_n": DIFF_N, "diff_seed": DIFF_SEED,
-              "score_seed": a.score_seed}
+              "score_seed": a.score_seed, "fs_deny": not a.no_fs_deny}
     root = Path("benchmarks")
     names = a.cases or sorted(p.parent.name for p in root.glob("*/case.json"))
     rows = []
@@ -57,10 +63,13 @@ def main() -> None:
                 )
             except Exception as e:  # API or network errors count as failures but are recorded
                 r = {"success": False, "reason": f"{type(e).__name__}: {e}"[:300]}
+                if isinstance(e, sandbox.SandboxUnavailable):
+                    raise SystemExit(f"Aborting, nothing saved: {e}")
                 if isinstance(e, agent.meta_client.MetaAPIError) and any(
-                        k in str(e) for k in ("HTTP 401", "HTTP 403", "MODEL_API_KEY")):
+                        k in str(e) for k in ("HTTP 401", "HTTP 403", "Key file")):
                     raise SystemExit(f"Aborting, nothing saved: {e}")
             r.pop("diff", None)
+            r["fs_deny"] = sandbox.FS_DENY
             if r.get("success") and a.score_seed is not None:
                 r["scored"] = score(root / name, cfg, r, a.score_seed)
             results.append(r)
@@ -76,6 +85,7 @@ def main() -> None:
             "first_try": sum(1 for r in ok if r.get("attempts") == 1),
             "avg_tokens": round(statistics.mean(r.get("tokens_used", 0) for r in results)),
             "config": config,
+            "counted": not a.no_fs_deny,
             "results": results,
         }
         if a.score_seed is not None:
@@ -83,7 +93,7 @@ def main() -> None:
         rows.append(row)
 
     Path("results").mkdir(exist_ok=True)
-    out = Path("results") / f"bench_{started}_{a.model}.json"
+    out = Path("results") / f"bench_{started}_{a.model}{'_NOFSDENY' if a.no_fs_deny else ''}.json"
     out.write_text(json.dumps(rows, indent=2))
     print("\n| case | runs | solved | first try | avg tokens | scored pass |\n|---|---|---|---|---|---|")
     for r in rows:

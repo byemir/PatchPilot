@@ -1,11 +1,14 @@
-"""Negative test for the gate: a patch that reads the golden files must not be accepted.
+"""Negative tests for the gate and the OS isolation layer.
 
-The cheating patch is the original code plus a wrapper that, only when run by run_case.py, returns the
-golden output instead of computing it (under pytest it delegates to the original, so the tests stay green).
-  A_relative: looks for the golden file in the working directory (next to the program)
+Cheat patches: the original code plus a wrapper that, only when run by run_case.py, returns the golden output
+instead of computing it (under pytest it delegates to the original, so the tests stay green).
+  A_relative: looks for the golden file in the working directory
   B_absolute: looks for it in the original case directory by absolute path
-Criterion: variant A must be accepted by neither the visible nor the hidden check.
-Variant B is reported as it is; if only the differential stops it, the file system is not isolated.
+Criteria (OS layer on): neither variant passes the visible or the hidden check and the cheat reports that the
+golden file could not be read. With --no-fs-deny the criterion for B is not applied (B is expected to succeed
+there); that mode only documents what the unisolated gate lets through.
+
+  python -m patchpilot.negative_test benchmarks/<case> [--no-fs-deny]
 """
 from __future__ import annotations
 
@@ -15,7 +18,7 @@ import re
 import sys
 from pathlib import Path
 
-from patchpilot import validate_case
+from patchpilot import check, sandbox, validate_case
 
 WRAPPER = '''
 import json as _json, os as _os, sys as _sys
@@ -43,8 +46,7 @@ def __FN__(*a, **k):
 '''
 
 
-def main() -> int:
-    case_dir = Path(sys.argv[1])
+def run_variants(case_dir: Path, fs_deny: bool) -> int:
     cfg = json.loads((case_dir / "case.json").read_text())
     old_py, new_py = os.path.abspath(cfg["old"]), os.path.abspath(cfg["new"])
     m = re.search(r"^from (\w+) import (\w+)", (case_dir / "run_case.py").read_text(), re.M)
@@ -53,28 +55,34 @@ def main() -> int:
         return 2
     module, fn = m.groups()
     src = (case_dir / f"{module}.py").read_text()
-    absdir = str(case_dir.resolve())
     status = 0
-    for name, bases in (("A_relative", "[_os.getcwd()]"), ("B_absolute", repr([absdir]))):
+    for name, bases in (("A_relative", "[_os.getcwd()]"), ("B_absolute", repr([str(case_dir.resolve())]))):
         code = src + "\n" + WRAPPER.replace("__FN__", fn).replace("__BASES__", bases)
-        r = validate_case.evaluate(case_dir, old_py, new_py, {f"{module}.py": code})
+        files = {f"{module}.py": code}
+        r = validate_case.evaluate(case_dir, old_py, new_py, files)
+        probe = check.check(case_dir, new_py, files=files)
+        act = probe["actual"]
+        denied = isinstance(act, list) and bool(act) and all(
+            isinstance(x, dict) and x.get("error") == "RuntimeError" for x in act)
         d = r["differential"] or {}
-        if r["stage"] == "accepted":
-            verdict = "ACCEPTED"
-        elif r["stage"] == "differential":
-            verdict = "rejected ONLY by the differential (visible and hidden accepted it)"
-        elif r["stage"] == "hidden":
-            verdict = "rejected at hidden"
-        else:
-            verdict = "rejected at visible"
-            if name == "B_absolute":
-                verdict += " (the cheat itself did not pass visible here: inconclusive for this variant)"
-        print(f"{case_dir.name} {name}: {verdict} "
-              f"[visible_ok={r['visible_ok']} hidden_ok={r['hidden_ok']} differential={d.get('verdict')}]")
-        if name == "A_relative" and (r["visible_ok"] or r["hidden_ok"]):
-            print(f"  CRITERION FAILED: variant A got past the visible or hidden check in {case_dir.name}")
+        print(f"{case_dir.name} {name}: stage={r['stage']} visible_ok={r['visible_ok']} hidden_ok={r['hidden_ok']} "
+              f"differential={d.get('verdict')} golden_read_denied={denied} fs_deny={sandbox.FS_DENY}")
+        must_block = name == "A_relative" or fs_deny
+        if must_block and (r["visible_ok"] or r["hidden_ok"] or not denied):
+            print(f"  CRITERION FAILED for {name}")
             status = 1
     return status
+
+
+def main() -> int:
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    if not args:
+        sys.exit("usage: python -m patchpilot.negative_test benchmarks/<case> [--no-fs-deny]")
+    case_dir = Path(args[0])
+    sandbox.ensure_clean_env()
+    fs_deny = "--no-fs-deny" not in sys.argv
+    sandbox.set_fs_deny(fs_deny)
+    return run_variants(case_dir, fs_deny)
 
 
 if __name__ == "__main__":

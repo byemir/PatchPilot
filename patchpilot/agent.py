@@ -147,7 +147,7 @@ def repair(case_dir, old_py, new_py, *, lib="pandas", model="muse-spark-1.3", ef
             diff = differential.differential(case_dir, old_py, new_py, files, n=diff_n, seed=diff_seed)
         diff_ok = diff is None or diff["verdict"] in ("PASS", "WEAK")
         ok = visible_ok and hidden_ok and diff_ok
-        record.update({"diagnosis": diagnosis, "files": files,
+        record.update({"fs_deny": sandbox.FS_DENY, "diagnosis": diagnosis, "files": files,
                        "old_verdict": old_r["verdict"], "new_verdict": new_r["verdict"],
                        "old_actual": old_r["actual"], "new_actual": new_r["actual"],
                        "hidden_old": hid_old and hid_old["verdict"],
@@ -188,6 +188,7 @@ def repair(case_dir, old_py, new_py, *, lib="pandas", model="muse-spark-1.3", ef
 
 
 if __name__ == "__main__":
+    sandbox.ensure_clean_env()
     ap = argparse.ArgumentParser()
     ap.add_argument("case_dir")
     ap.add_argument("old_python")
@@ -197,7 +198,10 @@ if __name__ == "__main__":
     ap.add_argument("--effort", default="low")
     ap.add_argument("--max-attempts", type=int, default=3)
     ap.add_argument("--token-budget", type=int, default=60000)
+    ap.add_argument("--no-fs-deny", action="store_true",
+                    help="run model code without OS file-system isolation (unsafe; runs are marked fs_deny=false)")
     a = ap.parse_args()
+    sandbox.set_fs_deny(not a.no_fs_deny)
     result = repair(a.case_dir, a.old_python, a.new_python, lib=a.lib, model=a.model, effort=a.effort,
                     max_attempts=a.max_attempts, token_budget=a.token_budget)
     diff = result.pop("diff", "")

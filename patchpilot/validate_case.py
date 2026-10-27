@@ -68,7 +68,12 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("cases", nargs="+")
     ap.add_argument("--out", help="also write the full JSON report here")
+    ap.add_argument("--fs-deny", action="store_true",
+                    help="also run the fixtures under the OS file-system isolation (default: off, fixtures are trusted)")
     a = ap.parse_args()
+    sandbox.set_fs_deny(a.fs_deny)
+    if a.fs_deny:
+        sandbox.ensure_clean_env()
     reports = [validate(c) for c in a.cases]
     if a.out:
         Path(a.out).write_text(json.dumps(reports, indent=2))
