@@ -1,0 +1,85 @@
+[
+  {
+    "case": "p4_label_histogram",
+    "model": "muse-wonder-1.0",
+    "effort": "low",
+    "runs": 5,
+    "successes": 3,
+    "first_try": 1,
+    "avg_tokens": 10936,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": false,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1
+    },
+    "results": [
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 13576,
+        "run_dir": "runs/20261027-205731_p4_label_histogram"
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3839,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers a NaN-sentinel string dtype, so astype(str) keeps None/empty-derived labels missing and value_counts(dropna=True) drops them instead of producing 'None'; value_counts(sort=False) also now returns appearance order rather than the previous sorted order.",
+        "differential": null,
+        "run_dir": "runs/20261027-205842_p4_label_histogram",
+        "scored": {
+          "verdict": "DIVERGENCE",
+          "generated": 200,
+          "valid": 119,
+          "core_divergences": 60,
+          "wide_divergences": 24,
+          "seed": 1
+        }
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 13727,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers a nullable string dtype, so None becomes a missing value that astype(str) no longer renders as 'None' and value_counts drops, and value_counts(sort=False) no longer yields the old sorted key order.",
+        "differential": null,
+        "run_dir": "runs/20261027-205905_p4_label_histogram",
+        "scored": {
+          "verdict": "DIVERGENCE",
+          "generated": 200,
+          "valid": 119,
+          "core_divergences": 60,
+          "wide_divergences": 24,
+          "seed": 1
+        }
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 12398,
+        "run_dir": "runs/20261027-210030_p4_label_histogram"
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 11140,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers the new string dtype, so astype(str) keeps None/''-turned-NaN as missing instead of the pandas 2 object-dtype strings 'None'/'nan', and value_counts then drops them; value_counts(sort=False) also changed from sorted-unique-key order to appearance order.",
+        "differential": null,
+        "run_dir": "runs/20261027-210146_p4_label_histogram",
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 119,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1
+        }
+      }
+    ],
+    "scored_pass": 1
+  }
+]
