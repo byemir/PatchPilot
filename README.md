@@ -8,7 +8,7 @@ For each case the agent receives the program source, the golden output (from the
 2. **Hidden check:** held-out inputs that are never shown to the model.
 3. **Differential check:** generated inputs run through the original code on the old library and the patched code on both libraries; core divergences reject the patch.
 
-Defaults: up to 3 attempts per run, 60000 token budget. The benchmark runner can switch the differential gate off (`--no-differential`) and score accepted patches with it afterwards at another seed (`--score-seed`). Patched code runs in an isolated subprocess (`patchpilot/sandbox.py`) with wall-clock and CPU limits and a minimal environment without inherited secrets. Known gap: no memory limit and no network isolation on the local runner.
+Defaults: up to 3 attempts per run, 60000 token budget. The benchmark runner can switch the differential gate off (`--no-differential`) and score accepted patches with it afterwards at another seed (`--score-seed`). Patched code runs in a subprocess inside a temporary copy of the case (`patchpilot/sandbox.py`) with a wall-clock timeout (the process group is killed), a CPU-time limit and a minimal environment without inherited secrets. This is not a security sandbox: there is no memory limit, no network isolation and no filesystem isolation (the subprocess runs as your user). Run it only on a machine where you accept that.
 
 ## Setup
 Requires Python 3.12 (tested with 3.12.16). One command builds four pinned virtual environments under `.sandboxes/` and validates all cases:
