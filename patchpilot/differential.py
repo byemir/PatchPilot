@@ -1,0 +1,242 @@
+"""Differential check on generated inputs (standard library only).
+
+Oracle   : the ORIGINAL code running on the OLD library version.
+Candidate: the PATCHED code running on the NEW (and also the OLD) library version.
+
+Inputs are mutated from seed probes with a seeded PRNG, so a run is reproducible and costs no model tokens.
+Two tiers:
+  core - numbers stay inside the value range seen in the seeds; any divergence fails the check.
+  wide - numbers may leave that range; divergences are only reported, because out-of-contract
+         inputs (for example 300 in a uint8 array) can legitimately differ between versions.
+Probes where the oracle itself raised are skipped (undefined behavior, nothing to preserve).
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import random
+import re
+import sys
+from pathlib import Path
+
+from patchpilot import sandbox
+
+TOKEN = re.compile(r"\d+|\D+")
+WIDE_INTS = [0, 1, -1, 255, 256, 65535, 65536, 2**31 - 1, 2**31, 2**53, 2**63 - 1]
+MIN_VALID = 20  # fewer valid probes than this -> verdict WEAK (check too thin to trust)
+
+
+def _num(v) -> bool:
+    return isinstance(v, (int, float)) and not isinstance(v, bool)
+
+
+class Gen:
+    def __init__(self, seeds: list, seed: int):
+        self.rng = random.Random(seed)
+        self.leaves: dict = {}  # path -> numbers and strings seen there
+        self.elems: dict = {}   # list path -> elements seen there (any type)
+        self.maxlen: dict = {}  # list path -> longest list seen
+        self.tier = "core"
+        for s in seeds:
+            self._index(s, "")
+        self.ranges = {p: (min(vs), max(vs)) for p, vs in self.leaves.items() if vs and all(_num(x) for x in vs)}
+
+    def _index(self, v, path: str) -> None:
+        if isinstance(v, dict):
+            for k, x in v.items():
+                self._index(x, f"{path}.{k}")
+        elif isinstance(v, list):
+            p = path + "[]"
+            self.maxlen[p] = max(self.maxlen.get(p, 0), len(v))
+            for x in v:
+                self.elems.setdefault(p, []).append(x)
+                self._index(x, p)
+        elif _num(v) or isinstance(v, str):
+            self.leaves.setdefault(path, []).append(v)
+
+    def mut(self, v, path: str):
+        r = self.rng
+        if isinstance(v, bool):
+            return v if r.random() < 0.8 else not v
+        if _num(v):
+            return self.mut_num(v, path)
+        if isinstance(v, str):
+            return self.mut_str(v, path)
+        if isinstance(v, dict):
+            return {k: (self.mut(x, f"{path}.{k}") if r.random() < 0.6 else x) for k, x in v.items()}
+        if isinstance(v, list):
+            return self.mut_list(v, path + "[]")
+        return v
+
+    def mut_num(self, v, path: str):
+        r = self.rng
+        lo, hi = self.ranges.get(path, (v, v))
+        if self.tier == "wide" and isinstance(v, int) and r.random() < 0.7:
+            return r.choice(WIDE_INTS + [hi * 10 ** r.randint(1, 6)])
+        pick = r.random()
+        if isinstance(v, float):
+            return r.choice([lo, hi, round(r.uniform(lo, hi), 6)])
+        zero = [0] if lo > 0 and min(self.leaves.get(path, [1])) >= 0 else []
+        cands = [lo, hi, r.randint(lo, hi), min(hi, v + 1), max(lo, v - 1)] + zero
+        return r.choice(cands) if pick < 0.9 else v
+
+    def mut_str(self, v: str, path: str):
+        r = self.rng
+        pool = self.leaves.get(path) or [v]
+        c = r.random()
+        if c < 0.35:
+            return self.cross(v, str(r.choice(pool)))
+        if c < 0.8:
+            return self.digits(v)
+        return str(r.choice(pool))
+
+    def cross(self, a: str, b: str) -> str:
+        ta, tb = TOKEN.findall(a), TOKEN.findall(b)
+        n = self.rng.choice([len(ta), len(tb)])
+        out = []
+        for i in range(n):
+            cands = [t[i] for t in (ta, tb) if i < len(t)]
+            cands = [t for t in cands if t.isdigit() == cands[0].isdigit()]
+            out.append(self.rng.choice(cands))
+        return "".join(out)
+
+    def digits(self, s: str) -> str:
+        toks = TOKEN.findall(s)
+        idx = [i for i, t in enumerate(toks) if t.isdigit()]
+        if not idx:
+            return s
+        i = self.rng.choice(idx)
+        t = toks[i]
+        mode = self.rng.choice(["rand", "zeros", "nines", "inc", "dec"])
+        if mode == "rand":
+            new = "".join(self.rng.choice("0123456789") for _ in t)
+        elif mode == "zeros":
+            new = "0" * len(t)
+        elif mode == "nines":
+            new = "9" * len(t)
+        elif mode == "inc":
+            new = str(int(t) + 1).zfill(len(t))
+        else:
+            new = str(max(0, int(t) - 1)).zfill(len(t))
+        toks[i] = new
+        return "".join(toks)
+
+    def mut_list(self, v: list, path: str):
+        r = self.rng
+        out = list(v)
+        cap = max(32, self.maxlen.get(path, 0))
+        for _ in range(r.randint(1, 2)):
+            op = r.choice(["mutate", "mutate", "drop", "dup", "shuffle", "grow", "trunc", "single", "empty"])
+            if op == "mutate":
+                out = [self.mut(x, path) if r.random() < 0.5 else x for x in out]
+            elif op == "drop" and out:
+                out.pop(r.randrange(len(out)))
+            elif op == "dup" and out and len(out) < cap:
+                out.insert(r.randrange(len(out) + 1), r.choice(out))
+            elif op == "shuffle":
+                r.shuffle(out)
+            elif op == "grow" and len(out) < cap and self.elems.get(path):
+                out.append(self.mut(r.choice(self.elems[path]), path))
+            elif op == "trunc" and out:
+                out = out[: r.randint(0, len(out))]
+            elif op == "single" and out:
+                out = [r.choice(out)]
+            elif op == "empty" and r.random() < 0.3:
+                out = []
+        return out
+
+
+def generate(seeds: list, n: int = 200, seed: int = 0, wide_frac: float = 0.25) -> list:
+    g = Gen(seeds, seed)
+    seen = {json.dumps(s, sort_keys=True) for s in seeds}
+    out: list = []
+    tries = 0
+    while len(out) < n and tries < n * 30:
+        tries += 1
+        g.tier = "wide" if g.rng.random() < wide_frac else "core"
+        p = g.mut(g.rng.choice(seeds), "")
+        k = json.dumps(p, sort_keys=True)
+        if k in seen:
+            continue
+        seen.add(k)
+        out.append({"tier": g.tier, "probe": p})
+    return out
+
+
+def _run(case_dir: Path, files: dict | None, python, probes: list):
+    ws = sandbox.workspace(case_dir)
+    try:
+        for rel, content in (files or {}).items():
+            (ws / rel).write_text(content)
+        (ws / "gen_inputs.json").write_text(json.dumps(probes))
+        r = sandbox.run(python, ["run_case.py", "gen_inputs.json"], ws, timeout_s=120)
+    finally:
+        sandbox.cleanup(ws)
+    if r.returncode != 0:
+        return None, f"exit {r.returncode}: {r.stderr[-300:]}"
+    try:
+        res = json.loads(r.stdout)
+    except json.JSONDecodeError:
+        return None, "output is not JSON"
+    if not isinstance(res, list) or len(res) != len(probes):
+        return None, "output length mismatch"
+    return res, ""
+
+
+def _same(a, b) -> bool:
+    return json.dumps(a, sort_keys=True) == json.dumps(b, sort_keys=True)
+
+
+def differential(case_dir, old_py, new_py, patched_files: dict | None = None, *, n: int = 200,
+                 seed: int = 0, seed_files=("inputs.json", "hidden_inputs.json")) -> dict:
+    case_dir = Path(case_dir)
+    seeds: list = []
+    for name in seed_files:
+        p = case_dir / name
+        if p.exists():
+            seeds.extend(json.loads(p.read_text()))
+    if not seeds:
+        return {"verdict": "RUN_ERROR", "reason": "no seed inputs"}
+    gen = generate(seeds, n=n, seed=seed)
+    probes = [g["probe"] for g in gen]
+
+    oracle, e0 = _run(case_dir, None, old_py, probes)
+    cand_new, e1 = _run(case_dir, patched_files, new_py, probes)
+    cand_old, e2 = _run(case_dir, patched_files, old_py, probes)
+    if oracle is None or cand_new is None or cand_old is None:
+        return {"verdict": "RUN_ERROR", "reason": e0 or e1 or e2, "generated": len(probes)}
+
+    valid = core_div = wide_div = 0
+    examples: list = []
+    for i, g in enumerate(gen):
+        o = oracle[i]
+        if isinstance(o, dict) and "error" in o:
+            continue
+        valid += 1
+        for where, got in (("patched@new", cand_new[i]), ("patched@old", cand_old[i])):
+            if _same(got, o):
+                continue
+            if g["tier"] == "core":
+                core_div += 1
+            else:
+                wide_div += 1
+            examples.append({"tier": g["tier"], "where": where, "probe": g["probe"], "expected": o, "got": got})
+    examples.sort(key=lambda e: (e["tier"] != "core", len(json.dumps(e["probe"]))))
+    verdict = "DIVERGENCE" if core_div else ("WEAK" if valid < MIN_VALID else "PASS")
+    return {"verdict": verdict, "generated": len(probes), "valid": valid,
+            "skipped_oracle_error": len(probes) - valid, "core_divergences": core_div,
+            "wide_divergences": wide_div, "examples": examples[:3], "seed": seed}
+
+
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser(description="Differential check; without --attempt it measures the ORIGINAL code.")
+    ap.add_argument("case_dir")
+    ap.add_argument("old_python")
+    ap.add_argument("new_python")
+    ap.add_argument("--attempt", help="runs/<dir>/attempt_N.json whose 'files' are the candidate patch")
+    ap.add_argument("--n", type=int, default=200)
+    ap.add_argument("--seed", type=int, default=0)
+    a = ap.parse_args()
+    files = json.loads(Path(a.attempt).read_text()).get("files") if a.attempt else None
+    print(json.dumps(differential(a.case_dir, a.old_python, a.new_python, files, n=a.n, seed=a.seed),
+                     indent=2, default=str))

@@ -9,7 +9,7 @@ import tempfile
 import time
 from pathlib import Path
 
-from patchpilot import check, meta_client, sandbox
+from patchpilot import check, differential, meta_client, sandbox
 
 # The agent may never edit tests, the runner or the golden output (no "fixing" by cheating).
 PROTECTED = {"golden.json", "run_case.py"}
@@ -93,7 +93,8 @@ def make_diff(original: dict, files: dict) -> str:
 
 
 def repair(case_dir, old_py, new_py, *, lib="pandas", model="muse-spark-1.3", effort="low",
-           max_attempts=3, token_budget=60000, runs_root="runs") -> dict:
+           max_attempts=3, token_budget=60000, runs_root="runs", diff_check=True, diff_n=200,
+           diff_seed=0) -> dict:
     case_dir = Path(case_dir)
     old0 = check.check(case_dir, old_py)
     new0 = check.check(case_dir, new_py)
@@ -147,23 +148,37 @@ def repair(case_dir, old_py, new_py, *, lib="pandas", model="muse-spark-1.3", ef
 
         visible_ok = old_r["verdict"] == "OK" and new_r["verdict"] == "OK"
         hidden_ok = (not has_hidden) or (hid_old["verdict"] == "OK" and hid_new["verdict"] == "OK")
-        ok = visible_ok and hidden_ok
+        diff = None
+        if visible_ok and hidden_ok and diff_check:
+            diff = differential.differential(case_dir, old_py, new_py, files, n=diff_n, seed=diff_seed)
+        diff_ok = diff is None or diff["verdict"] in ("PASS", "WEAK")
+        ok = visible_ok and hidden_ok and diff_ok
         record.update({"diagnosis": diagnosis, "files": files,
                        "old_verdict": old_r["verdict"], "new_verdict": new_r["verdict"],
                        "old_actual": old_r["actual"], "new_actual": new_r["actual"],
                        "hidden_old": hid_old and hid_old["verdict"],
                        "hidden_new": hid_new and hid_new["verdict"],
-                       "hidden_new_actual": hid_new and hid_new["actual"], "success": ok})
+                       "hidden_new_actual": hid_new and hid_new["actual"], "differential": diff, "success": ok})
         (run_dir / f"attempt_{attempt}.json").write_text(json.dumps(record, indent=2))
 
         if ok:
-            diff = make_diff(editable, files)
-            (run_dir / "patch.diff").write_text(diff)
+            patch = make_diff(editable, files)
+            (run_dir / "patch.diff").write_text(patch)
             return {"success": True, "attempts": attempt, "tokens_used": used, "hidden_checked": has_hidden,
                     "diagnosis": diagnosis,
-                    "diff": diff, "run_dir": str(run_dir)}
+                    "differential": diff and {k: diff[k] for k in ("verdict", "generated", "valid",
+                                                                    "core_divergences", "wide_divergences")},
+                    "diff": patch, "run_dir": str(run_dir)}
 
-        if visible_ok and not hidden_ok:
+        if visible_ok and hidden_ok and not diff_ok:
+            ex = next((e for e in diff.get("examples", []) if e["tier"] == "core"), None) or {}
+            feedback = (
+                "Your patch passes the recorded checks but diverges from the original behavior on a generated "
+                f"input. Input: {json.dumps(ex.get('probe'))}; expected (original code on {old_v}): "
+                f"{json.dumps(ex.get('expected'))}; got (your code, {ex.get('where')}): {json.dumps(ex.get('got'))}. "
+                f"{diff.get('core_divergences')} generated inputs diverge in total. Fix the root cause generally."
+            ) if ex else f"Differential check could not run: {diff.get('reason')}"
+        elif visible_ok and not hidden_ok:
             feedback = (
                 "Your patch passes the visible checks but fails held-out checks on other inputs "
                 "(details withheld). Fix the root cause generally instead of special-casing the visible inputs."
