@@ -1,0 +1,6 @@
+{
+ "note": "first model patch observed on 2026-10-27 (runs/20261027-175206): passes the single recorded input set, fails tz-aware input",
+ "files": {
+  "app.py": "import pandas as pd\n\n\ndef to_epoch_seconds(timestamps):\n    \"\"\"Convert timestamp strings to integer Unix seconds.\"\"\"\n    ts = pd.to_datetime(list(timestamps))\n    epoch = pd.Timestamp(\"1970-01-01\")\n    return [int(x) for x in (ts - epoch) // pd.Timedelta(seconds=1)]\n"
+ }
+}

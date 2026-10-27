@@ -1,0 +1,5 @@
+{
+ "files": {
+  "app.py": "import pandas as pd\n\n\ndef to_epoch_seconds(timestamps):\n    \"\"\"Convert timestamp strings to integer Unix seconds.\"\"\"\n    ts = pd.to_datetime(list(timestamps))\n    return (ts.as_unit(\"ns\").astype(\"int64\") // 10**9).tolist()\n"
+ }
+}
