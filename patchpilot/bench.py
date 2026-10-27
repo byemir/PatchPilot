@@ -19,7 +19,7 @@ def score(case_dir: Path, cfg: dict, r: dict, seed: int) -> dict:
     try:
         rec = json.loads((Path(r["run_dir"]) / f"attempt_{r['attempts']}.json").read_text())
         d = differential.differential(case_dir, cfg["old"], cfg["new"], rec["files"], n=DIFF_N, seed=seed)
-        return {k: d.get(k) for k in SCORE_KEYS} | {"seed": seed}
+        return {k: d.get(k) for k in SCORE_KEYS} | {"seed": seed, "examples": [e for e in d.get("examples", []) if e.get("tier") == "core"][:3]}
     except Exception as e:
         return {"verdict": "SCORE_ERROR", "reason": f"{type(e).__name__}: {e}"[:300], "seed": seed}
 
