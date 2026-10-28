@@ -45,9 +45,13 @@ The runner (`patchpilot/*.py`) imports only the Python standard library, includi
 
 Cases n6/n7 use `.sandboxes/np126` and `.sandboxes/np2`. Benchmark runner: `python -m patchpilot.bench --help`.
 
+## Cost
+
+Meta Model API credits: $150 granted, balance $144.54 on 2026-10-28 around 19:00 local time (read from the Billing page by the project owner), so about $5.46 was spent on all runs until then. [`docs/COST.md`](docs/COST.md) estimates the cost from the recorded token usage and the official Standard-mode prices (https://dev.meta.ai/docs/pricing-rate-limits, read on 2026-10-28). The estimates bracket the billed figure: USD 2.22 if reasoning tokens are not billed and USD 10.85 if they are billed as output. The pricing page does not say which applies and the balance may lag, so no dollar cost per run is claimed. In the five-case batches, where every batch solved 25 of 25 runs, muse-wonder-1.0 cost roughly 3.5 to 4.5 times as much per run as muse-spark-1.3 under both scenarios.
+
 ## Limitations
-All cases are synthetic and have not been tried on real open-source projects. Sample sizes in `results/` are small (1 to 5 runs per case and setting; the first three files have 3 runs per case, one smoke test has 1), so they show direction only. Only token counts were recorded, no dollar cost (official prices were not verified). The first two bench files and earlier runs ran without the differential gate (see the engineering log).
-Not tested or not measured: dollar cost (official prices were not verified; only token counts were recorded), Linux and other non-macOS platforms, memory inspection tools (`lldb`, `vmmap`, `gcore`), other same-user processes that hold secrets, external network, real open-source projects, any model other than muse-spark-1.3 and muse-wonder-1.0, effort levels other than low (one minimal-effort batch) and a tools run with a larger token budget.
+All cases are synthetic and have not been tried on real open-source projects. Sample sizes in `results/` are small (1 to 5 runs per case and setting; the first three files have 3 runs per case, one smoke test has 1), so they show direction only. Dollar cost was not recorded per run; see the Cost section. The first two bench files and earlier runs ran without the differential gate (see the engineering log).
+Not tested or not measured: how reasoning tokens are billed (so the dollar cost is only bracketed, see Cost), run time (not recorded), Linux and other non-macOS platforms, memory inspection tools (`lldb`, `vmmap`, `gcore`), other same-user processes that hold secrets, external network, real open-source projects, any model other than muse-spark-1.3 and muse-wonder-1.0, effort levels other than low (one minimal-effort batch) and a tools run with a larger token budget.
 
 Engineering log and technical notes: [`docs/engineering-log.md`](docs/engineering-log.md), [`docs/training-notes.jsonl`](docs/training-notes.jsonl).
 
