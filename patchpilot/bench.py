@@ -40,13 +40,15 @@ def main() -> None:
                     help="after a run is accepted, score its patch with the differential at this seed (not shown to the model)")
     ap.add_argument("--no-fs-deny", action="store_true",
                     help="run model code without OS file-system isolation (unsafe; results are marked and not counted)")
+    ap.add_argument("--tools", action="store_true",
+                    help="let the model call run_tests and run_probe (a tool conversation per attempt)")
     ap.add_argument("--cases", nargs="*", help="case folder names (default: all with case.json)")
     a = ap.parse_args()
     sandbox.set_fs_deny(not a.no_fs_deny)
 
     config = {"max_attempts": a.max_attempts, "token_budget": a.token_budget,
               "diff_check": not a.no_differential, "diff_n": DIFF_N, "diff_seed": DIFF_SEED,
-              "score_seed": a.score_seed, "fs_deny": not a.no_fs_deny}
+              "score_seed": a.score_seed, "fs_deny": not a.no_fs_deny, "tools": a.tools}
     root = Path("benchmarks")
     names = a.cases or sorted(p.parent.name for p in root.glob("*/case.json"))
     rows = []
@@ -60,6 +62,7 @@ def main() -> None:
                     root / name, cfg["old"], cfg["new"], lib=cfg["lib"], model=a.model,
                     effort=a.effort, max_attempts=a.max_attempts, token_budget=a.token_budget,
                     diff_check=not a.no_differential, diff_n=DIFF_N, diff_seed=DIFF_SEED,
+                    tools=a.tools,
                 )
             except Exception as e:  # API or network errors count as failures but are recorded
                 r = {"success": False, "reason": f"{type(e).__name__}: {e}"[:300]}
@@ -93,7 +96,7 @@ def main() -> None:
         rows.append(row)
 
     Path("results").mkdir(exist_ok=True)
-    out = Path("results") / f"bench_{started}_{a.model}{'_NOFSDENY' if a.no_fs_deny else ''}.json"
+    out = Path("results") / f"bench_{started}_{a.model}{'_NOFSDENY' if a.no_fs_deny else ''}{'_tools' if a.tools else ''}.json"
     out.write_text(json.dumps(rows, indent=2))
     print("\n| case | runs | solved | first try | avg tokens | scored pass |\n|---|---|---|---|---|---|")
     for r in rows:

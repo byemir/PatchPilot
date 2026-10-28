@@ -10,6 +10,7 @@ import time
 from pathlib import Path
 
 from patchpilot import check, differential, meta_client, sandbox
+from patchpilot import tools as tools_mod
 
 # The agent may never edit tests, the runner or the golden output (no "fixing" by cheating).
 PROTECTED = {"golden.json", "run_case.py"}
@@ -17,6 +18,12 @@ PROTECTED = {"golden.json", "run_case.py"}
 SYSTEM = (
     "You are a careful Python maintainer repairing code that broke silently after a library upgrade. "
     "Reply with a single JSON object and nothing else."
+)
+SYSTEM_TOOLS = (
+    SYSTEM[: -len("Reply with a single JSON object and nothing else.")]
+    + "You may call the provided tools to run the tests and to compare the original code (old library) with your "
+    "candidate (new library) on inputs you choose; pass your candidate files to each tool call in the files argument. "
+    "When you are done, reply with the final JSON object and nothing else."
 )
 
 
@@ -94,7 +101,7 @@ def make_diff(original: dict, files: dict) -> str:
 
 def repair(case_dir, old_py, new_py, *, lib="pandas", model="muse-spark-1.3", effort="low",
            max_attempts=3, token_budget=60000, runs_root="runs", diff_check=True, diff_n=200,
-           diff_seed=0) -> dict:
+           diff_seed=0, tools=False) -> dict:
     case_dir = Path(case_dir)
     old0 = check.check(case_dir, old_py)
     new0 = check.check(case_dir, new_py)
@@ -105,6 +112,7 @@ def repair(case_dir, old_py, new_py, *, lib="pandas", model="muse-spark-1.3", ef
     run_dir = Path(runs_root) / f"{time.strftime('%Y%m%d-%H%M%S')}_{case_dir.name}"
     run_dir.mkdir(parents=True)
     editable, readonly = collect(case_dir)
+    tool_ctx = {"case_dir": case_dir, "old_py": old_py, "new_py": new_py, "editable": editable}
     old_v, new_v = lib_version(old_py, lib), lib_version(new_py, lib)
     has_hidden = (case_dir / "hidden_golden.json").exists()
 
@@ -114,16 +122,33 @@ def repair(case_dir, old_py, new_py, *, lib="pandas", model="muse-spark-1.3", ef
         if used >= token_budget:
             return {"success": False, "reason": "token budget exhausted", "tokens_used": used, "run_dir": str(run_dir)}
         messages = [
-            {"role": "system", "content": SYSTEM},
+            {"role": "system", "content": SYSTEM_TOOLS if tools else SYSTEM},
             {"role": "user", "content": build_prompt(lib, old_v, new_v, new0["golden"], new0["actual"],
                                                      editable, readonly, feedback)},
         ]
-        resp = meta_client.chat(messages, model, reasoning_effort=effort, timeout_s=240)
-        usage = resp.get("usage") or {}
-        used += int(usage.get("total_tokens", 0))
-        text = meta_client.text_of(resp)
+        if tools:
+            conv = tools_mod.converse(messages, model, effort, tool_ctx, token_left=token_budget - used)
+            usage = {"total_tokens": conv["usage_total"], "per_call": conv["usages"]}
+            used += conv["usage_total"]
+            text = conv["text"]
+            try:
+                parse_reply(text, editable)
+            except ValueError:
+                if conv["last_files"]:
+                    text = json.dumps({"diagnosis": "(final reply missing or invalid; the last files passed to a tool "
+                                                    "were submitted)", "files": conv["last_files"]})
+                    conv["submitted_from"] = "last_tool_files"
+        else:
+            conv = None
+            resp = meta_client.chat(messages, model, reasoning_effort=effort, timeout_s=240)
+            usage = resp.get("usage") or {}
+            used += int(usage.get("total_tokens", 0))
+            text = meta_client.text_of(resp)
         record = {"attempt": attempt, "model": model, "effort": effort, "messages": messages,
                   "reply": text, "usage": usage}
+        if conv:
+            record.update({"tools": True, "tool_calls": conv["tool_calls"], "tool_log": conv["tool_log"],
+                           "turn_stop": conv["stop"], "submitted_from": conv["submitted_from"]})
 
         try:
             diagnosis, files = parse_reply(text, editable)
@@ -200,10 +225,12 @@ if __name__ == "__main__":
     ap.add_argument("--token-budget", type=int, default=60000)
     ap.add_argument("--no-fs-deny", action="store_true",
                     help="run model code without OS file-system isolation (unsafe; runs are marked fs_deny=false)")
+    ap.add_argument("--tools", action="store_true",
+                    help="let the model call run_tests and run_probe (a tool conversation per attempt)")
     a = ap.parse_args()
     sandbox.set_fs_deny(not a.no_fs_deny)
     result = repair(a.case_dir, a.old_python, a.new_python, lib=a.lib, model=a.model, effort=a.effort,
-                    max_attempts=a.max_attempts, token_budget=a.token_budget)
+                    max_attempts=a.max_attempts, token_budget=a.token_budget, tools=a.tools)
     diff = result.pop("diff", "")
     print(json.dumps(result, indent=2))
     if diff:
