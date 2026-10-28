@@ -1,0 +1,159 @@
+[
+  {
+    "case": "p3_groupby_report",
+    "model": "muse-glimmer",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 4,
+    "avg_tokens": 2755,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "local_server": {
+        "build_info": "b11960-8642541b2",
+        "model_file": "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf",
+        "served_models": [
+          "muse-glimmer"
+        ]
+      },
+      "max_tokens": 12000
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2144,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 changed the default `observed` behaviour for groupby on a Categorical, so empty categories are dropped and `groupby.apply` returns a different shape. Keeping all categories with `observed=False` and using the known column width of 2 restores the golden output on both pandas 2.3 and 3.0.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 108,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-213059_p3_groupby_report",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 108,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1550,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed GroupBy semantics so that grouping on a Categorical drops unobserved categories and `grouped.apply` is evaluated differently, causing missing categories and a width of 1. Reindex the aggregations to the full `categories` list and use a constant column width of 2 for compatibility with both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 108,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-213153_p3_groupby_report",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 108,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 3,
+        "tokens_used": 6211,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3.0 changed groupby observed default to True, dropping unobserved categorical levels, and the groupby.apply width computation is unstable across versions. Forcing observed=False preserves zero-count categories and returning a constant width of 2 matches the golden output on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 108,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-213226_p3_groupby_report",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 108,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1937,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed the default for groupby on categoricals to drop unused categories and observed behavior, so totals/counts no longer include categories with zero rows and the shape-based width calculation is affected. Forcing observed=False and re-indexing over the explicit categories list restores the full report and makes the width constant.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 108,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-213425_p3_groupby_report",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 108,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1935,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed groupby on a Categorical to drop unused categories and the apply-based width calculation no longer returns the expected DataFrame shape, so missing categories disappear and widths become 1. Reindexing the aggregations to the full categories list and using a constant column width restores the golden output on both pandas versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 108,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-213510_p3_groupby_report",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 108,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  }
+]

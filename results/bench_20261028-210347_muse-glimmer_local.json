@@ -1,0 +1,159 @@
+[
+  {
+    "case": "n6_uint8_scaling",
+    "model": "muse-glimmer",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 5,
+    "avg_tokens": 1187,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "local_server": {
+        "build_info": "b11960-8642541b2",
+        "model_file": "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf",
+        "served_models": [
+          "muse-glimmer"
+        ]
+      },
+      "max_tokens": 12000
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1060,
+        "hidden_checked": true,
+        "diagnosis": "Iterating over a uint8 NumPy array yields NumPy uint8 scalars. In NumPy 2.x, `p * gain` is performed with NumPy ufunc semantics and wraps modulo 256, so the accumulated sum is reduced modulo 256. Casting each scalar to Python int before multiplication forces Python big-int arithmetic and removes the overflow.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 13
+        },
+        "run_dir": "runs/20261028-210348_n6_uint8_scaling",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 8,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1268,
+        "hidden_checked": true,
+        "diagnosis": "Iterating over a uint8 NumPy array yields uint8 scalars. In NumPy 2.x `p * gain` is performed in uint8 arithmetic and wraps modulo 256, so the summed values are truncated. NumPy 1.26 promoted the operation to a Python int, giving the correct sums. Casting each element to Python int before multiplication avoids the overflow on both versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 13
+        },
+        "run_dir": "runs/20261028-210417_n6_uint8_scaling",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 8,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1126,
+        "hidden_checked": true,
+        "diagnosis": "Iterating over a NumPy uint8 array yields NumPy scalars. In NumPy 2.x `numpy.uint8 * int` stays in uint8 and wraps modulo 256, so `p * gain` overflows while NumPy 1.x promoted the operation. Converting each scalar to a Python int before multiplication removes the dtype-dependent overflow and makes the result stable across versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 13
+        },
+        "run_dir": "runs/20261028-210452_n6_uint8_scaling",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 8,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1302,
+        "hidden_checked": true,
+        "diagnosis": "In NumPy 2.x NumPy scalar multiplication stays in the uint8 domain and wraps modulo 256, so `p * gain` overflows for values >255. NumPy 1.x promoted the operation to Python ints, giving the correct sums. Converting the uint8 view to Python ints before the multiplication removes the wrap-around on both versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 13
+        },
+        "run_dir": "runs/20261028-210521_n6_uint8_scaling",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 8,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1177,
+        "hidden_checked": true,
+        "diagnosis": "In NumPy 2.x iterating over a uint8 array yields NumPy uint8 scalars; `p * gain` is performed in uint8 arithmetic and wraps modulo 256 before being added to the Python int accumulator. This causes the summed brightness to be reduced modulo 256, giving 70 and 248 instead of 1350 and 2040. Converting each scalar to a Python int before multiplication forces unbounded arithmetic.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 13
+        },
+        "run_dir": "runs/20261028-210556_n6_uint8_scaling",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 8,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  }
+]
