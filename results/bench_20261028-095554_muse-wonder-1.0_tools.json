@@ -1,0 +1,96 @@
+[
+  {
+    "case": "p4_label_histogram",
+    "model": "muse-wonder-1.0",
+    "effort": "low",
+    "runs": 5,
+    "successes": 2,
+    "first_try": 1,
+    "avg_tokens": 67056,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": true
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 74988,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3, astype(str) turns missing values into NaN instead of the old 'None'/'nan' strings so value_counts drops them, and value_counts(sort=False) uses first-seen order instead of the old always-sorted order; the fix reproduces the old string conversion and sorted counting explicitly.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 123,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-095555_p4_label_histogram",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 119,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 65711,
+        "hidden_checked": true,
+        "diagnosis": "(final reply missing or invalid; the last files passed to a tool were submitted)",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 123,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-095834_p4_label_histogram",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 119,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": false,
+        "reason": "token budget exhausted",
+        "tokens_used": 64513,
+        "run_dir": "runs/20261028-100029_p4_label_histogram",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "token budget exhausted",
+        "tokens_used": 60329,
+        "run_dir": "runs/20261028-100305_p4_label_histogram",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "token budget exhausted",
+        "tokens_used": 69737,
+        "run_dir": "runs/20261028-100543_p4_label_histogram",
+        "fs_deny": true
+      }
+    ],
+    "scored_pass": 2
+  }
+]

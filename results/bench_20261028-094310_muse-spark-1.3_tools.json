@@ -1,0 +1,96 @@
+[
+  {
+    "case": "p4_label_histogram",
+    "model": "muse-spark-1.3",
+    "effort": "low",
+    "runs": 5,
+    "successes": 2,
+    "first_try": 1,
+    "avg_tokens": 53834,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": true
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 61126,
+        "hidden_checked": true,
+        "diagnosis": "(final reply missing or invalid; the last files passed to a tool were submitted)",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 123,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-094311_p4_label_histogram",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 119,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": false,
+        "reason": "token budget exhausted",
+        "tokens_used": 60652,
+        "run_dir": "runs/20261028-094520_p4_label_histogram",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "token budget exhausted",
+        "tokens_used": 63322,
+        "run_dir": "runs/20261028-094722_p4_label_histogram",
+        "fs_deny": true
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 22101,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 changed NaN handling so astype(str) after where() no longer preserves null labels (they become missing and value_counts drops them, with \"\" mapping lost too), and value_counts(sort=False) no longer returns sorted-group order. Fix by converting labels in plain Python (None->\"None\", \"\"->\"nan\") with object dtype and sorting the result explicitly.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 123,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-094936_p4_label_histogram",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 119,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": false,
+        "reason": "token budget exhausted",
+        "tokens_used": 61970,
+        "run_dir": "runs/20261028-095029_p4_label_histogram",
+        "fs_deny": true
+      }
+    ],
+    "scored_pass": 2
+  }
+]
