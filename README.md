@@ -1,14 +1,18 @@
 # PatchPilot
-Autonomous agent that repairs Python projects broken by dependency upgrades, focusing on **silent** behavior changes: the tests stay green, the output is wrong. Built during the Meta Global AI Developer Hackathon (Oct 26 - Nov 4, 2026).
+Agent that proposes and verifies patches for Python code that broke silently after a dependency upgrade: the tests stay green, the output is wrong. Built during the Meta Global AI Developer Hackathon (Oct 26 - Nov 4, 2026); the first commit of this repository is from Oct 27.
 
 ## How it works
-For each case the agent receives the program source, the golden output (from the old library) and the actual output on the new library, and proposes a patch (one model call per attempt, JSON reply, no tool use; a rejected attempt returns feedback to the model). A patch is accepted only if all three gates pass:
+For each case the agent receives the program source, the golden output (from the old library) and the actual output on the new library, and proposes a patch. By default this is one model call per attempt with a JSON reply and no tool use; `--tools` mode (see below) adds a tool conversation per attempt. A rejected attempt returns feedback to the model. A patch is accepted only if all three gates pass:
 
 1. **Visible check:** the recorded inputs reproduce the golden output (generated with the OLD library).
 2. **Hidden check:** held-out inputs that are never shown to the model.
 3. **Differential check:** generated inputs run through the original code on the old library and the patched code on both libraries; core divergences reject the patch.
 
-Defaults: up to 3 attempts per run, 60000 token budget. The benchmark runner can switch the differential gate off (`--no-differential`) and score accepted patches with it afterwards at another seed (`--score-seed`). Patched code runs in a subprocess inside a temporary copy of the case (`patchpilot/sandbox.py`) with a wall-clock timeout (the process group is killed), a CPU-time limit and a minimal environment without inherited secrets. Model code runs on your machine with your user's privileges; this runner is not a hardened security boundary. On macOS, `bench` and `agent` additionally wrap model code in `sandbox-exec` (no read or write access to the home directory and the repository except the sandbox environments, no network), re-exec themselves with a minimal environment, read the API key from a file instead of the environment, and refuse to run model code if the harness environment holds secret-looking variables or the isolation self-test fails. Shown on one macOS machine with fake secrets (`patchpilot/isolation_test.py`, `patchpilot/negative_test.py`, details in the engineering log): a fake secret file under `~/.config`, the repository's `hidden_golden.json` (absolute path), a home directory listing and a loopback connection were blocked. Reading the harness's initial environment through `sysctl` was NOT blocked by the profile, which is why the environment must not hold secrets. Not tested: memory inspection tools (`lldb`, `vmmap`, `gcore`), other same-user processes that hold secrets, Linux, external network. On other platforms `bench` and `agent` are written to refuse to run unless `--no-fs-deny` is given (only the missing `sandbox-exec` case was tested); such runs are marked `fs_deny=false` and are not counted. There is no memory limit.
+Defaults: up to 3 attempts per run, 60000 token budget (checked before each model call, so a run can exceed it by one call). The benchmark runner can switch the differential gate off (`--no-differential`) and score accepted patches with it afterwards at another seed (`--score-seed`).
+
+## Isolation of model code
+
+Patched code runs in a subprocess inside a temporary copy of the case (`patchpilot/sandbox.py`) with a wall-clock timeout (the process group is killed), a CPU-time limit and a minimal environment without inherited secrets. Model code runs on your machine with your user's privileges; this runner is not a hardened security boundary. On macOS, `bench` and `agent` additionally wrap model code in `sandbox-exec` (no read or write access to the home directory and the repository except the sandbox environments, no network), re-exec themselves with a minimal environment, read the API key from a file instead of the environment, and refuse to run model code if the harness environment holds secret-looking variables or the isolation self-test fails. Shown on one macOS machine with fake secrets (`patchpilot/isolation_test.py`, `patchpilot/negative_test.py`, details in the engineering log): a fake secret file under `~/.config`, the repository's `hidden_golden.json` (absolute path), a home directory listing and a loopback connection were blocked. Reading the harness's initial environment through `sysctl` was NOT blocked by the profile, which is why the environment must not hold secrets. Not tested: memory inspection tools (`lldb`, `vmmap`, `gcore`), other same-user processes that hold secrets, Linux, external network. On other platforms `bench` and `agent` are written to refuse to run unless `--no-fs-deny` is given (only the missing `sandbox-exec` case was tested); such runs are marked `fs_deny=false` and are not counted. There is no memory limit. With the key file present, `bench` and `agent` refuse `--no-fs-deny` (checked once each; the check lives in the argument handling).
 
 ## Setup
 Requires Python 3.12 (tested with 3.12.16). `PYTHON312` must point to a Python 3.12 interpreter; on the macOS machine used for development `python3.12` was not on `PATH`, so the path was passed explicitly. A fresh clone with this script built the four environments and reported all six cases valid. One command builds four pinned virtual environments under `.sandboxes/` and validates all cases:
@@ -31,6 +35,7 @@ Cases n6/n7 use `.sandboxes/np126` and `.sandboxes/np2`. Benchmark runner: `pyth
 
 ## Limitations
 All cases are synthetic and have not been tried on real open-source projects. Sample sizes in `results/` are small (1 to 5 runs per case and setting; the first three files have 3 runs per case, one smoke test has 1), so they show direction only. Only token counts were recorded, no dollar cost (official prices were not verified). The first two bench files and earlier runs ran without the differential gate (see the engineering log).
+Not tested or not measured: dollar cost (official prices were not verified; only token counts were recorded), Linux and other non-macOS platforms, memory inspection tools (`lldb`, `vmmap`, `gcore`), other same-user processes that hold secrets, external network, real open-source projects, any model other than muse-spark-1.3 and muse-wonder-1.0, effort levels other than low (one minimal-effort batch) and a tools run with a larger token budget.
 
 Engineering log and technical notes: [`docs/engineering-log.md`](docs/engineering-log.md), [`docs/training-notes.jsonl`](docs/training-notes.jsonl).
 
@@ -48,7 +53,7 @@ All numbers come from the files in `results/`. Cases are synthetic, samples are 
 
 Observed in two wonder-1.0 runs (n=2; one before and one after the isolation layer): with the gate on, the differential rejected an attempt that had passed the visible and hidden checks, the counterexample was returned to the model and the next attempt passed. p4 is mostly unsolved; with the gate off, 4 of the 5 accepted patches failed the differential, which is why accepted counts and differential-scored counts are reported separately. Details and caveats: the engineering log.
 
-## Results under the isolation layer
+## Results under the isolation layer: p4
 
 p4_label_histogram only, effort=low, 5 runs per model, differential used as a gate and accepted patches re-scored with the differential at another seed, one invocation per model (the result files have counted=true and fs_deny=true).
 
@@ -61,25 +66,27 @@ First failing gate per attempt: spark-1.3 (15 attempts) visible 7, hidden 6, dif
 
 ## Results under the isolation layer: the other five cases
 
-effort=low, 5 runs per case in each batch, one-shot protocol (no tools), differential used as a gate, accepted patches re-scored with the differential at another seed; every row has counted=true and fs_deny=true. muse-spark-1.3 was run twice with the same command, so both of its batches are listed; muse-wonder-1.0 was run once. The cases are synthetic.
+effort=low, 5 runs per case in each batch, one-shot protocol (no tools), differential used as a gate, accepted patches re-scored with the differential at another seed; every row has counted=true and fs_deny=true. muse-spark-1.3 was run 4 times with the same command, so all 4 of its batches are listed; muse-wonder-1.0 was run once. The cases are synthetic.
 
 | batch (file in `results/`) | model | runs | solved | first try | re-scored differential pass | avg tokens per run | total tokens |
 |---|---|---|---|---|---|---|---|
 | `bench_20261028-174452_muse-wonder-1.0.json` | muse-wonder-1.0 | 25 | 25 | 22 | 25 | 2832 | 70797 |
+| `bench_20261028-102955_muse-spark-1.3.json` | muse-spark-1.3 | 25 | 25 | 22 | 25 | 3440 | 85994 |
+| `bench_20261028-173617_muse-spark-1.3.json` | muse-spark-1.3 | 25 | 25 | 24 | 25 | 3122 | 78048 |
 | `bench_20261028-180119_muse-spark-1.3.json` | muse-spark-1.3 | 25 | 25 | 22 | 25 | 3221 | 80536 |
 | `bench_20261028-181000_muse-spark-1.3.json` | muse-spark-1.3 | 25 | 25 | 22 | 25 | 3565 | 89137 |
 
 Per case (solved / first try / average tokens per run):
 
-| case | wonder-1.0 | spark-1.3 batch 1 | spark-1.3 batch 2 |
-|---|---|---|---|
-| n6_uint8_scaling | 5/5 / 5 / 1205 | 5/5 / 5 / 2081 | 5/5 / 5 / 1930 |
-| n7_float32_scalars | 5/5 / 5 / 2436 | 5/5 / 3 / 4917 | 5/5 / 4 / 4493 |
-| p1_epoch_seconds | 5/5 / 4 / 4660 | 5/5 / 5 / 3436 | 5/5 / 4 / 3984 |
-| p2_dst_day_offset | 5/5 / 3 / 3787 | 5/5 / 5 / 3018 | 5/5 / 4 / 5139 |
-| p3_groupby_report | 5/5 / 5 / 2071 | 5/5 / 4 / 2655 | 5/5 / 5 / 2281 |
+| case | wonder-1.0 | spark-1.3 batch 1 | spark-1.3 batch 2 | spark-1.3 batch 3 | spark-1.3 batch 4 |
+|---|---|---|---|---|---|
+| n6_uint8_scaling | 5/5 / 5 / 1205 | 5/5 / 5 / 1789 | 5/5 / 5 / 2114 | 5/5 / 5 / 2081 | 5/5 / 5 / 1930 |
+| n7_float32_scalars | 5/5 / 5 / 2436 | 5/5 / 5 / 3852 | 5/5 / 5 / 3753 | 5/5 / 3 / 4917 | 5/5 / 4 / 4493 |
+| p1_epoch_seconds | 5/5 / 4 / 4660 | 5/5 / 4 / 4365 | 5/5 / 4 / 4179 | 5/5 / 5 / 3436 | 5/5 / 4 / 3984 |
+| p2_dst_day_offset | 5/5 / 3 / 3787 | 5/5 / 4 / 4115 | 5/5 / 5 / 2934 | 5/5 / 5 / 3018 | 5/5 / 4 / 5139 |
+| p3_groupby_report | 5/5 / 5 / 2071 | 5/5 / 4 / 3078 | 5/5 / 5 / 2629 | 5/5 / 4 / 2655 | 5/5 / 5 / 2281 |
 
-75 of 75 runs were solved and 75 of 75 accepted patches passed the re-scored differential; 9 runs needed more than one attempt. These five cases were solved in every run, unlike p4 (see above). The two spark batches differ from each other in first-try counts and token averages, which shows the run-to-run variation at n=5; no comparison between the models is drawn from these rows. Only token counts were recorded.
+125 of 125 runs were solved and 125 of 125 accepted patches passed the re-scored differential; 13 runs needed more than one attempt. These five cases were solved in every run, unlike p4 (see above). The spark batches differ from each other in first-try counts and token averages, which shows the run-to-run variation at n=5; no comparison between the models is drawn from these rows. Only token counts were recorded.
 
 ## Tools mode (experimental, p4 only)
 

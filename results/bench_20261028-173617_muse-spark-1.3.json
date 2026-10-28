@@ -1,0 +1,742 @@
+[
+  {
+    "case": "n6_uint8_scaling",
+    "model": "muse-spark-1.3",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 5,
+    "avg_tokens": 2114,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1801,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2.0 adopted NEP 50, so uint8 scalar * Python int stays uint8 with wraparound instead of promoting to a larger int, and `total += uint8` then converts Python int total to uint8 causing modulo-256 accumulation.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 13
+        },
+        "run_dir": "runs/20261028-173618_n6_uint8_scaling",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 8,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1888,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2.0 NEP 50 made Python int weak, so `total += p * gain` with uint8 scalar wraps modulo 256 (total becomes uint8), while NumPy 1.x promoted to Python/int64 and did not overflow.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 13
+        },
+        "run_dir": "runs/20261028-173627_n6_uint8_scaling",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 8,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2288,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 NEP 50 makes uint8 scalar * Python int stay uint8 (wrapping mod 256) whereas NumPy 1 promoted to a larger int, so p*gain and accumulation in total overflowed.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 13
+        },
+        "run_dir": "runs/20261028-173636_n6_uint8_scaling",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 8,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2343,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 NEP 50 keeps uint8 scalar * Python int as uint8, so p * gain wraps modulo 256 before accumulation, whereas NumPy 1 promoted to a larger int.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 13
+        },
+        "run_dir": "runs/20261028-173648_n6_uint8_scaling",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 8,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2252,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 NEP50 made Python int weak, so uint8 scalar * Python int stays uint8 and `0 + uint8` stays uint8, so the accumulator wraps modulo 256 instead of promoting to a larger int as in NumPy 1.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 13
+        },
+        "run_dir": "runs/20261028-173659_n6_uint8_scaling",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 8,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  },
+  {
+    "case": "n7_float32_scalars",
+    "model": "muse-spark-1.3",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 5,
+    "avg_tokens": 3753,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3809,
+        "hidden_checked": true,
+        "diagnosis": "NEP 50 weak promotion in NumPy 2 keeps float32*Python-float as float32, while NumPy 1 promoted to float64, changing the sum rounding and making x>bonus false when bonus rounds to the same float32.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 154,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-173710_n7_float32_scalars",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3459,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 (NEP 50) changed np.float32 scalar * Python float from float64 to float32, so products, float32 accumulation, and x > bonus comparisons changed precision.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 154,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-173726_n7_float32_scalars",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 4525,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 NEP 50 made Python floats weak, so float32 scalar * Python float stays float32 instead of upcasting to float64, changing product precision, the `x > bonus` count, and keeping `total += x` in float32 instead of upcasting to float64.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 154,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-173741_n7_float32_scalars",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3773,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 NEP 50 made Python floats weak so float32 scalar * Python float stays float32 (and float32 > Python float compares in float32) instead of upcasting to float64, changing the accumulated total and threshold hits.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 154,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-173803_n7_float32_scalars",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3200,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 NEP 50 weak promotion: np.float32 scalar * Python float is now float32 instead of float64, so x and the total accumulation lose precision and the x>bonus comparison changes.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 154,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-173819_n7_float32_scalars",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  },
+  {
+    "case": "p1_epoch_seconds",
+    "model": "muse-spark-1.3",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 4,
+    "avg_tokens": 4179,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3148,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers non-nano datetime64 resolution (s/ms/us) so astype(int64) is no longer always nanoseconds, and dividing by 1e9 truncates by 1000x.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 58,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-173834_p1_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 60,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2927,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers a non-nano datetime64 unit for to_datetime, so astype('int64') is no longer always nanoseconds and //10**9 undercounts by 1000x.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 58,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-173854_p1_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 60,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3246,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers non-nano datetime64 resolution (e.g. us), so astype int64 counts micro-not-nanoseconds and //1e9 is 1000x too small.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 58,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-173911_p1_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 60,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3328,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers non-nano datetime64 units (e.g. us) so astype('int64') is no longer nanoseconds, and dividing by 1e9 truncates to milliseconds-like values.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 58,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-173930_p1_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 60,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 8248,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers non-nano datetime units so astype(int64) is no longer nanoseconds, and //1e9 truncates; fix with resolution-independent epoch subtraction and utc=True to preserve naive-as-UTC and aware-to-UTC semantics.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 58,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-173949_p1_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 60,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  },
+  {
+    "case": "p2_dst_day_offset",
+    "model": "muse-spark-1.3",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 5,
+    "avg_tokens": 2934,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2918,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 changed `Timestamp/DatetimeIndex + Day(n)` to preserve wall-clock time across DST, while pandas 2 added absolute 24h*n; using `Timedelta` restores absolute-time arithmetic on both versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-174027_p2_dst_day_offset",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 118,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2987,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 changed tz-aware `Timestamp/DatetimeIndex + Day` from absolute 24h elapsed time to wall-clock calendar-day preservation across DST, shifting 13:00/09:30 to 12:00/08:30.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-174102_p2_dst_day_offset",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 118,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2985,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 changed Day offset addition on tz-aware timestamps from absolute 24h to wall-time preserving across DST, so t0+Day and DatetimeIndex+Day now keep 12:00/08:30 instead of shifting to 13:00/09:30.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-174137_p2_dst_day_offset",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 118,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2789,
+        "hidden_checked": true,
+        "diagnosis": "pd.offsets.Day changed from absolute 24h elapsed time to calendar-day wall-time preserving across DST in pandas 3, so t0+Day keeps 12:00/08:30 instead of adding 24h; using pd.Timedelta(days=) restores absolute-time arithmetic on both versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-174212_p2_dst_day_offset",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 118,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2989,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 changed `Day` offset arithmetic on tz-aware timestamps from absolute 24h to wall-clock preserving local time across DST, so `t0 + Day` no longer adds 24h.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-174246_p2_dst_day_offset",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 118,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  },
+  {
+    "case": "p3_groupby_report",
+    "model": "muse-spark-1.3",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 5,
+    "avg_tokens": 2629,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2643,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 changed groupby(observed) default to True so unobserved categories are dropped, and groupby.apply now excludes grouping columns by default so part.shape[1] went from 2 to 1.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 108,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-174324_p3_groupby_report",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 108,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2241,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 changed groupby to observe only observed categorical values (observed=True by default) dropping zero-count rows, and changed groupby.apply to exclude grouping columns so part.shape[1] went from 2 to 1.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 108,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-174340_p3_groupby_report",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 108,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3599,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 defaults groupby observed to True (dropping unobserved categorical groups) and excludes grouping columns from apply (shrinking part.shape[1] from 2 to 1).",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 108,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-174354_p3_groupby_report",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 108,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2145,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 changed groupby observed default from False to True so unobserved categories are dropped, and changed apply to exclude grouping columns by default so part.shape[1] went 2->1.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 108,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-174410_p3_groupby_report",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 108,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2517,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 defaults categorical groupby to observed=True so unobserved categories disappear, and groupby.apply now excludes the grouping column so part.shape[1] dropped from 2 to 1.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 108,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-174423_p3_groupby_report",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 108,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  }
+]
