@@ -72,7 +72,7 @@ Path(ROOT / "docs" / "RESULTS.md").write_text("\n".join(L) + "\n")
 ex = ROOT / "examples"
 ex.mkdir(exist_ok=True)
 index = ["# Example patches", "",
-         "Patches produced by the models in recorded runs (`results/` has the matching rows). Each folder has `patch.diff` (the accepted "
+         "Patches produced by the models in recorded runs, chosen to show the cases and the gates (not a random sample); `results/` has the matching rows. Each folder has `patch.diff` (the accepted "
          "patch), `attempts.md` (gate outcome per attempt, the model's own diagnosis, the differential counterexample where there was "
          "one) and `meta.json`. Accepted means: passed the gates that were on in that run. It does not mean the patch is correct beyond "
          "those checks. The folder `p4-spark-gate-off-accepted-but-diverges` shows a patch accepted without the differential gate that "
