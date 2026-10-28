@@ -1,0 +1,26 @@
+--- a/app.py
++++ b/app.py
+@@ -3,12 +3,19 @@
+ 
+ def weighted_score(values, rate, bonus):
+     """Total of values * rate (float32 samples) and how many weighted values exceed `bonus`."""
+-    samples = np.asarray(values, dtype=np.float32)
+-    total = np.float32(0)
++    # Materialise samples as float32 for compatibility, then convert to Python float
++    # to obtain deterministic arithmetic independent of NumPy version promotion rules.
++    arr = np.asarray(values, dtype=np.float32)
++    # Convert to plain Python floats
++    samples = [float(v) for v in arr]
++    # Use Python float arithmetic for stable rounding/comparison
++    rate_f = float(rate)
++    bonus_f = float(bonus)
++    total = 0.0
+     hits = 0
+     for v in samples:
+-        x = v * rate
++        x = v * rate_f
+         total += x
+-        if x > bonus:
++        if x > bonus_f:
+             hits += 1
+     return [round(float(total), 9), hits]

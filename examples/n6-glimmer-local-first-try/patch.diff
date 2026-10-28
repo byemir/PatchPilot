@@ -1,0 +1,9 @@
+--- a/app.py
++++ b/app.py
+@@ -6,5 +6,5 @@
+     arr = np.asarray(pixels, dtype=np.uint8)
+     total = 0
+     for p in arr:
+-        total += p * gain
++        total += int(p) * gain
+     return int(total)

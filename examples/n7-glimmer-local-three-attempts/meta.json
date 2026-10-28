@@ -1,0 +1,21 @@
+{
+  "folder": "n7-glimmer-local-three-attempts",
+  "result_file": "bench_20261028-210626_muse-glimmer_local.json",
+  "run_number": 2,
+  "case": "n7_float32_scalars",
+  "model": "muse-glimmer",
+  "effort": "low",
+  "mode": "one-shot (local endpoint)",
+  "layer": "isolation layer on, counted",
+  "gate": "differential gate on",
+  "attempts": 3,
+  "tokens_used": 6697,
+  "gate_per_attempt": [
+    "rejected at visible check",
+    "rejected at visible check",
+    "accepted"
+  ],
+  "rescored_verdict": "PASS",
+  "rescored_seed": 1,
+  "submitted_from": null
+}

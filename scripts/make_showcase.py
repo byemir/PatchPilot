@@ -15,6 +15,8 @@ PICKS = [  # (folder, result file, case, run number inside that file)
     ("p4-wonder-differential-recovery-before-layer", "bench_20261027-191341_muse-wonder-1.0.json", "p4_label_histogram", 3),
     ("p4-wonder-tools-two-attempts", "bench_20261028-095554_muse-wonder-1.0_tools.json", "p4_label_histogram", 2),
     ("p4-spark-gate-off-accepted-but-diverges", "bench_20261027-204730_muse-spark-1.3.json", "p4_label_histogram", 2),
+    ("n6-glimmer-local-first-try", "bench_20261028-210347_muse-glimmer_local.json", "n6_uint8_scaling", 1),
+    ("n7-glimmer-local-three-attempts", "bench_20261028-210626_muse-glimmer_local.json", "n7_float32_scalars", 2),
 ]
 
 
@@ -44,7 +46,8 @@ def layer(row):
 
 
 def mode(row):
-    return "tools" if (row.get("config") or {}).get("tools") else "one-shot"
+    c = row.get("config") or {}
+    return ("tools" if c.get("tools") else "one-shot") + (" (local endpoint)" if c.get("endpoint") else "")
 
 
 def gate_setting(row):

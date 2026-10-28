@@ -38,6 +38,7 @@ def attempt_cost(path):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--billed", type=float, help="USD spent according to the Billing page (read by hand)")
+    ap.add_argument("--billed-at", default="", help="when the Billing page was read, for example '2026-10-28 22:10 local time'")
     args = ap.parse_args()
     rows = ["| result file | model | mode | runs | solved | tokens | USD A | USD B |", "|---|---|---|---|---|---|---|---|"]
     tot_a = tot_b = tot_t = 0.0
@@ -82,7 +83,7 @@ def main():
             f"Sum over every attempt file found in runs/ ({n_attempts} attempts, includes runs that are in no result file): "
             f"{all_t:.0f} tokens, USD {all_a:.2f} (A) / {all_b:.2f} (B)."]
     if args.billed is not None:
-        note.append(f"Spend shown on the Billing page: USD {args.billed:.2f}.")
+        note.append(f"Spend shown on the Billing page: USD {args.billed:.2f}" + (f" (read {args.billed_at})" if args.billed_at else "") + ".")
     note += ["", "Not covered: the ping and tool probe calls, and any request that failed before an attempt file was written."]
     text = "\n".join(note) + "\n"
     (ROOT / "docs" / "COST.md").write_text(text)
