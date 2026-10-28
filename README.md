@@ -59,6 +59,28 @@ p4_label_histogram only, effort=low, 5 runs per model, differential used as a ga
 
 First failing gate per attempt: spark-1.3 (15 attempts) visible 7, hidden 6, differential 2; wonder-1.0 (13 attempts) visible 6, hidden 3, differential 1, accepted 3. n=5 per model, one synthetic case; these runs differ from the earlier p4 rows, so this is not a controlled comparison. Only token counts were recorded.
 
+## Results under the isolation layer: the other five cases
+
+effort=low, 5 runs per case in each batch, one-shot protocol (no tools), differential used as a gate, accepted patches re-scored with the differential at another seed; every row has counted=true and fs_deny=true. muse-spark-1.3 was run twice with the same command, so both of its batches are listed; muse-wonder-1.0 was run once. The cases are synthetic.
+
+| batch (file in `results/`) | model | runs | solved | first try | re-scored differential pass | avg tokens per run | total tokens |
+|---|---|---|---|---|---|---|---|
+| `bench_20261028-174452_muse-wonder-1.0.json` | muse-wonder-1.0 | 25 | 25 | 22 | 25 | 2832 | 70797 |
+| `bench_20261028-180119_muse-spark-1.3.json` | muse-spark-1.3 | 25 | 25 | 22 | 25 | 3221 | 80536 |
+| `bench_20261028-181000_muse-spark-1.3.json` | muse-spark-1.3 | 25 | 25 | 22 | 25 | 3565 | 89137 |
+
+Per case (solved / first try / average tokens per run):
+
+| case | wonder-1.0 | spark-1.3 batch 1 | spark-1.3 batch 2 |
+|---|---|---|---|
+| n6_uint8_scaling | 5/5 / 5 / 1205 | 5/5 / 5 / 2081 | 5/5 / 5 / 1930 |
+| n7_float32_scalars | 5/5 / 5 / 2436 | 5/5 / 3 / 4917 | 5/5 / 4 / 4493 |
+| p1_epoch_seconds | 5/5 / 4 / 4660 | 5/5 / 5 / 3436 | 5/5 / 4 / 3984 |
+| p2_dst_day_offset | 5/5 / 3 / 3787 | 5/5 / 5 / 3018 | 5/5 / 4 / 5139 |
+| p3_groupby_report | 5/5 / 5 / 2071 | 5/5 / 4 / 2655 | 5/5 / 5 / 2281 |
+
+75 of 75 runs were solved and 75 of 75 accepted patches passed the re-scored differential; 9 runs needed more than one attempt. These five cases were solved in every run, unlike p4 (see above). The two spark batches differ from each other in first-try counts and token averages, which shows the run-to-run variation at n=5; no comparison between the models is drawn from these rows. Only token counts were recorded.
+
 ## Tools mode (experimental, p4 only)
 
 `--tools` lets the model call `run_tests` and `run_probe` during an attempt (one conversation per attempt, at most 12 tool calls, and the same 60000-token run budget, which is checked only before each model call and was exceeded in several runs). `run_probe` runs inputs chosen by the model through the original code on the old library and through the candidate on the new library; it is an oracle for the original behavior on those inputs. The gate is unchanged and is not available to the model.
