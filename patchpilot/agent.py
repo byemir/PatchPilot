@@ -228,6 +228,9 @@ if __name__ == "__main__":
     ap.add_argument("--tools", action="store_true",
                     help="let the model call run_tests and run_probe (a tool conversation per attempt)")
     a = ap.parse_args()
+    if a.no_fs_deny and meta_client.KEY_PATH.exists():
+        raise SystemExit("--no-fs-deny is refused while the key file exists (" + str(meta_client.KEY_PATH) +
+                         "): model code run without the OS layer could read it.")
     sandbox.set_fs_deny(not a.no_fs_deny)
     result = repair(a.case_dir, a.old_python, a.new_python, lib=a.lib, model=a.model, effort=a.effort,
                     max_attempts=a.max_attempts, token_budget=a.token_budget, tools=a.tools)

@@ -26,6 +26,13 @@ def score(case_dir: Path, cfg: dict, r: dict, seed: int) -> dict:
         return {"verdict": "SCORE_ERROR", "reason": f"{type(e).__name__}: {e}"[:300], "seed": seed}
 
 
+def refuse_unisolated_with_key(no_fs_deny: bool) -> None:
+    """Model code run without the OS layer can read the key file; refuse that combination."""
+    if no_fs_deny and agent.meta_client.KEY_PATH.exists():
+        raise SystemExit("--no-fs-deny is refused while the key file exists (" + str(agent.meta_client.KEY_PATH) +
+                         "): model code run without the OS layer could read it.")
+
+
 def main() -> None:
     sandbox.ensure_clean_env()
     ap = argparse.ArgumentParser()
@@ -44,6 +51,7 @@ def main() -> None:
                     help="let the model call run_tests and run_probe (a tool conversation per attempt)")
     ap.add_argument("--cases", nargs="*", help="case folder names (default: all with case.json)")
     a = ap.parse_args()
+    refuse_unisolated_with_key(a.no_fs_deny)
     sandbox.set_fs_deny(not a.no_fs_deny)
 
     config = {"max_attempts": a.max_attempts, "token_budget": a.token_budget,
