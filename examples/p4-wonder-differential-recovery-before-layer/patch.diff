@@ -1,0 +1,23 @@
+--- a/app.py
++++ b/app.py
+@@ -7,8 +7,18 @@
+ 
+     records: [[team, label], ...]. Returns [[team, label, count], ...] in the library's own order.
+     """
+-    df = pd.DataFrame(records, columns=["team", "label"])
++    # dtype=object preserves the pandas 2 representation: strings stay
++    # strings, None stays None, and missing/ragged entries stay NaN.
++    # pandas 3 would otherwise infer its new string dtype, in which None
++    # is lost (becomes NaN) and astype(str) keeps values missing instead
++    # of rendering them as "None"/"nan", causing value_counts to drop them.
++    df = pd.DataFrame(records, columns=["team", "label"], dtype=object)
+     df["label"] = df["label"].where(df["label"] != "", np.nan)
+-    df["label"] = df["label"].astype(str)
++    # Explicit elementwise str() reproduces pandas 2 astype(str) for an
++    # object column (None -> "None", NaN -> "nan") on both versions.
++    df["label"] = df["label"].map(str)
+     counts = df.value_counts(sort=False)
++    # pandas 2 returned value_counts(sort=False) keyed in sorted order;
++    # pandas 3 returns order of appearance, so sort explicitly.
++    counts = counts.sort_index()
+     return [[team, label, int(n)] for (team, label), n in counts.items()]

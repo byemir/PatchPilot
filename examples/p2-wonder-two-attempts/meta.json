@@ -1,0 +1,20 @@
+{
+  "folder": "p2-wonder-two-attempts",
+  "result_file": "bench_20261028-174452_muse-wonder-1.0.json",
+  "run_number": 3,
+  "case": "p2_dst_day_offset",
+  "model": "muse-wonder-1.0",
+  "effort": "low",
+  "mode": "one-shot",
+  "layer": "isolation layer on, counted",
+  "gate": "differential gate on",
+  "attempts": 2,
+  "tokens_used": 5882,
+  "gate_per_attempt": [
+    "rejected at differential",
+    "accepted"
+  ],
+  "rescored_verdict": "PASS",
+  "rescored_seed": 1,
+  "submitted_from": null
+}

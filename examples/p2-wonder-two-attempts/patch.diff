@@ -1,0 +1,30 @@
+--- a/app.py
++++ b/app.py
+@@ -8,7 +8,24 @@
+     """
+     t0 = pd.Timestamp(start).tz_localize(tz)
+     step = pd.offsets.Day(n_days)
+-    one_by_one = [(t0 + k * step).strftime("%Y-%m-%d %H:%M %z") for k in range(count)]
+-    index = pd.DatetimeIndex([t0] * count) + step
+-    as_index = [t.strftime("%Y-%m-%d %H:%M %z") for t in index]
++    if t0.tz is None:
++        one_by_one = [(t0 + k * step).strftime("%Y-%m-%d %H:%M %z") for k in range(count)]
++        index = pd.DatetimeIndex([t0] * count) + step
++        as_index = [t.strftime("%Y-%m-%d %H:%M %z") for t in index]
++        return {"one_by_one": one_by_one, "as_index": as_index}
++    # pandas >= 3 makes Day a wall-clock offset for tz-aware timestamps,
++    # whereas pandas 2 added an absolute 24h per day. Do the arithmetic
++    # in UTC (where wall clock == absolute time) and convert back.
++    target_tz = t0.tz
++    t0_utc = t0.tz_convert("UTC")
++    one_by_one = [
++        (t0_utc + pd.Timedelta(days=k * n_days)).tz_convert(target_tz).strftime("%Y-%m-%d %H:%M %z")
++        for k in range(count)
++    ]
++    if count == 0:
++        as_index = []
++    else:
++        index_utc = pd.DatetimeIndex([t0] * count).tz_convert("UTC") + pd.Timedelta(days=n_days)
++        index = index_utc.tz_convert(target_tz)
++        as_index = [t.strftime("%Y-%m-%d %H:%M %z") for t in index]
+     return {"one_by_one": one_by_one, "as_index": as_index}

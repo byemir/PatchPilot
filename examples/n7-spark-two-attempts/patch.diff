@@ -1,0 +1,15 @@
+--- a/app.py
++++ b/app.py
+@@ -4,10 +4,10 @@
+ def weighted_score(values, rate, bonus):
+     """Total of values * rate (float32 samples) and how many weighted values exceed `bonus`."""
+     samples = np.asarray(values, dtype=np.float32)
+-    total = np.float32(0)
++    total = 0.0
+     hits = 0
+     for v in samples:
+-        x = v * rate
++        x = float(v) * rate
+         total += x
+         if x > bonus:
+             hits += 1

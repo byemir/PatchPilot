@@ -1,0 +1,13 @@
+--- a/app.py
++++ b/app.py
+@@ -3,8 +3,8 @@
+ 
+ def total_brightness(pixels, gain):
+     """Sum of pixel values scaled by an integer gain."""
+-    arr = np.asarray(pixels, dtype=np.uint8)
++    arr = np.asarray(pixels, dtype=np.int64)
+     total = 0
+     for p in arr:
+-        total += p * gain
++        total += int(p) * gain
+     return int(total)

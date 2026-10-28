@@ -1,0 +1,19 @@
+{
+  "folder": "p4-wonder-one-shot-first-try",
+  "result_file": "bench_20261027-225746_muse-wonder-1.0.json",
+  "run_number": 3,
+  "case": "p4_label_histogram",
+  "model": "muse-wonder-1.0",
+  "effort": "low",
+  "mode": "one-shot",
+  "layer": "isolation layer on, counted",
+  "gate": "differential gate on",
+  "attempts": 1,
+  "tokens_used": 4865,
+  "gate_per_attempt": [
+    "accepted"
+  ],
+  "rescored_verdict": "PASS",
+  "rescored_seed": 1,
+  "submitted_from": null
+}

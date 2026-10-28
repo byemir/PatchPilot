@@ -1,0 +1,20 @@
+{
+  "folder": "p4-wonder-tools-two-attempts",
+  "result_file": "bench_20261028-095554_muse-wonder-1.0_tools.json",
+  "run_number": 2,
+  "case": "p4_label_histogram",
+  "model": "muse-wonder-1.0",
+  "effort": "low",
+  "mode": "tools",
+  "layer": "isolation layer on, counted",
+  "gate": "differential gate on",
+  "attempts": 2,
+  "tokens_used": 65711,
+  "gate_per_attempt": [
+    "rejected at differential",
+    "accepted"
+  ],
+  "rescored_verdict": "PASS",
+  "rescored_seed": 1,
+  "submitted_from": "last_tool_files"
+}

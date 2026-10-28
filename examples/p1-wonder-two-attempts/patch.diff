@@ -1,0 +1,56 @@
+--- a/app.py
++++ b/app.py
+@@ -1,7 +1,51 @@
++import numpy as np
+ import pandas as pd
++
++
++_UNITS_PER_SECOND = {
++    "s": 1,
++    "ms": 10**3,
++    "us": 10**6,
++    "ns": 10**9,
++    "ps": 10**12,
++    "fs": 10**15,
++    "as": 10**18,
++}
++
++
++def _datetime_unit(dtype):
++    unit = getattr(dtype, "unit", None)
++    if unit in _UNITS_PER_SECOND:
++        return unit
++    try:
++        unit = np.datetime_data(dtype)[0]
++    except Exception:
++        unit = None
++    if unit in _UNITS_PER_SECOND:
++        return unit
++    # Fallback: parse representations such as 'datetime64[ns, UTC]'.
++    text = str(dtype)
++    for candidate in ("ns", "us", "ms", "ps", "fs", "as", "s"):
++        if f"[{candidate}" in text or f"[{candidate}," in text:
++            return candidate
++    raise ValueError(f"Unsupported datetime dtype: {dtype!r}")
+ 
+ 
+ def to_epoch_seconds(timestamps):
+     """Convert timestamp strings to integer Unix seconds."""
+-    ts = pd.to_datetime(list(timestamps))
+-    return (ts.astype("int64") // 10**9).tolist()
++    timestamps = list(timestamps)
++    if not timestamps:
++        return []
++    # utc=True preserves the instant for timezone-aware inputs (converting
++    # them to UTC) and treats naive inputs as UTC, matching the epoch
++    # interpretation of the original code on both pandas versions.
++    ts = pd.to_datetime(timestamps, utc=True)
++    if len(ts) == 0:
++        return []
++    # astype('int64') yields values in the dtype's own resolution, which
++    # is ns on pandas 2 but may be us/ms/s on pandas 3. Scale by that
++    # resolution instead of assuming nanoseconds. Integer // floors,
++    # matching the original // 10**9 behaviour for pre-epoch times.
++    divisor = _UNITS_PER_SECOND[_datetime_unit(ts.dtype)]
++    values = ts.astype("int64")
++    return (values // divisor).tolist()

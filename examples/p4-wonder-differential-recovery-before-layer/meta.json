@@ -1,0 +1,21 @@
+{
+  "folder": "p4-wonder-differential-recovery-before-layer",
+  "result_file": "bench_20261027-191341_muse-wonder-1.0.json",
+  "run_number": 3,
+  "case": "p4_label_histogram",
+  "model": "muse-wonder-1.0",
+  "effort": "low",
+  "mode": "one-shot",
+  "layer": "before the isolation layer",
+  "gate": "not recorded",
+  "attempts": 3,
+  "tokens_used": 20217,
+  "gate_per_attempt": [
+    "rejected at visible check",
+    "rejected at differential",
+    "accepted"
+  ],
+  "rescored_verdict": null,
+  "rescored_seed": null,
+  "submitted_from": null
+}

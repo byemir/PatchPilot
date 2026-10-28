@@ -1,0 +1,20 @@
+{
+  "folder": "p1-wonder-two-attempts",
+  "result_file": "bench_20261028-174452_muse-wonder-1.0.json",
+  "run_number": 1,
+  "case": "p1_epoch_seconds",
+  "model": "muse-wonder-1.0",
+  "effort": "low",
+  "mode": "one-shot",
+  "layer": "isolation layer on, counted",
+  "gate": "differential gate on",
+  "attempts": 2,
+  "tokens_used": 8068,
+  "gate_per_attempt": [
+    "rejected at visible check",
+    "accepted"
+  ],
+  "rescored_verdict": "PASS",
+  "rescored_seed": 1,
+  "submitted_from": null
+}

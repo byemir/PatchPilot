@@ -1,0 +1,14 @@
+--- a/app.py
++++ b/app.py
+@@ -7,8 +7,8 @@
+ 
+     records: [[team, label], ...]. Returns [[team, label, count], ...] in the library's own order.
+     """
+-    df = pd.DataFrame(records, columns=["team", "label"])
++    df = pd.DataFrame(records, columns=["team", "label"], dtype=object)
+     df["label"] = df["label"].where(df["label"] != "", np.nan)
+-    df["label"] = df["label"].astype(str)
+-    counts = df.value_counts(sort=False)
++    df["label"] = [str(value) for value in df["label"].tolist()]
++    counts = df.value_counts(sort=False).sort_index()
+     return [[team, label, int(n)] for (team, label), n in counts.items()]

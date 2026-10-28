@@ -1,0 +1,44 @@
+--- a/app.py
++++ b/app.py
+@@ -1,5 +1,6 @@
+ import numpy as np
+ import pandas as pd
++from collections import Counter
+ 
+ 
+ def label_histogram(records):
+@@ -7,8 +8,29 @@
+ 
+     records: [[team, label], ...]. Returns [[team, label, count], ...] in the library's own order.
+     """
+-    df = pd.DataFrame(records, columns=["team", "label"])
+-    df["label"] = df["label"].where(df["label"] != "", np.nan)
+-    df["label"] = df["label"].astype(str)
+-    counts = df.value_counts(sort=False)
+-    return [[team, label, int(n)] for (team, label), n in counts.items()]
++    # Emulate pandas 2.3.3 behaviour in a version-independent way:
++    #  - "" becomes np.nan then str(np.nan) == "nan"
++    #  - None becomes str(None) == "None" (same as old astype(str) on object dtype)
++    #  - other missing scalars (NaN/NA) are stringified with str(), not kept as NA
++    #  - rows with missing team were dropped by DataFrame.value_counts (dropna=True)
++    #  - old value_counts(sort=False) returned rows in sorted order -> sort explicitly.
++    counter = Counter()
++    for team, label in records:
++        try:
++            if pd.isna(team):
++                continue
++        except Exception:
++            pass
++        if isinstance(label, str) and label == "":
++            label_s = str(np.nan)
++        else:
++            try:
++                # pd.NA == ""-style ambiguities avoided: only special-case ""
++                label_s = str(label)
++            except Exception:
++                label_s = str(label)
++            # str(pd.NA) is "<NA>" in pure python; old astype(str) on object
++            # dtype also stringified NA scalars instead of keeping them missing,
++            # so keep the stringified form so the row is counted, not dropped.
++        counter[(team, label_s)] += 1
++    return [[team, label, int(counter[(team, label)])] for (team, label) in sorted(counter)]

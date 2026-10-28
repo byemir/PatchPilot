@@ -1,0 +1,19 @@
+--- a/app.py
++++ b/app.py
+@@ -3,12 +3,9 @@
+ 
+ 
+ def label_histogram(records):
+-    """Count (team, label) pairs. A label of "" means "not set"; null means "never provided".
+-
+-    records: [[team, label], ...]. Returns [[team, label, count], ...] in the library's own order.
+-    """
+-    df = pd.DataFrame(records, columns=["team", "label"])
++    df = pd.DataFrame(records, columns=["team", "label"], dtype=object)
+     df["label"] = df["label"].where(df["label"] != "", np.nan)
+-    df["label"] = df["label"].astype(str)
+-    counts = df.value_counts(sort=False)
++    df["label"] = [str(x) for x in df["label"]]
++    counts = df.value_counts(sort=False, dropna=True)
++    counts = counts.sort_index()
+     return [[team, label, int(n)] for (team, label), n in counts.items()]

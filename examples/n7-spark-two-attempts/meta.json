@@ -1,0 +1,20 @@
+{
+  "folder": "n7-spark-two-attempts",
+  "result_file": "bench_20261028-180119_muse-spark-1.3.json",
+  "run_number": 4,
+  "case": "n7_float32_scalars",
+  "model": "muse-spark-1.3",
+  "effort": "low",
+  "mode": "one-shot",
+  "layer": "isolation layer on, counted",
+  "gate": "differential gate on",
+  "attempts": 2,
+  "tokens_used": 7150,
+  "gate_per_attempt": [
+    "rejected at visible check",
+    "accepted"
+  ],
+  "rescored_verdict": "PASS",
+  "rescored_seed": 1,
+  "submitted_from": null
+}

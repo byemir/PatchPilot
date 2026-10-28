@@ -1,0 +1,19 @@
+{
+  "folder": "n6-wonder-first-try",
+  "result_file": "bench_20261028-174452_muse-wonder-1.0.json",
+  "run_number": 1,
+  "case": "n6_uint8_scaling",
+  "model": "muse-wonder-1.0",
+  "effort": "low",
+  "mode": "one-shot",
+  "layer": "isolation layer on, counted",
+  "gate": "differential gate on",
+  "attempts": 1,
+  "tokens_used": 1081,
+  "gate_per_attempt": [
+    "accepted"
+  ],
+  "rescored_verdict": "PASS",
+  "rescored_seed": 1,
+  "submitted_from": null
+}
