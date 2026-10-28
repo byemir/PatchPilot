@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 RATES = {  # USD per 1M tokens: (cached input, input, output); Standard mode; https://dev.meta.ai/docs/pricing-rate-limits
     "muse-spark-1.3": (0.15, 1.25, 4.25),
     "muse-wonder-1.0": (0.20, 4.00, 20.00),
+    "muse-glimmer": (0.0, 0.0, 0.0),  # runs locally: no API cost; electricity is not counted
 }
 
 

@@ -101,8 +101,10 @@ def make_diff(original: dict, files: dict) -> str:
 
 def repair(case_dir, old_py, new_py, *, lib="pandas", model="muse-spark-1.3", effort="low",
            max_attempts=3, token_budget=60000, runs_root="runs", diff_check=True, diff_n=200,
-           diff_seed=0, tools=False) -> dict:
+           diff_seed=0, tools=False, endpoint=None) -> dict:
     case_dir = Path(case_dir)
+    if tools and endpoint:
+        raise ValueError("tools mode is not supported with a local endpoint")
     old0 = check.check(case_dir, old_py)
     new0 = check.check(case_dir, new_py)
     if old0["verdict"] != "OK" or new0["verdict"] != "SILENT_BREAKAGE":
@@ -140,12 +142,13 @@ def repair(case_dir, old_py, new_py, *, lib="pandas", model="muse-spark-1.3", ef
                     conv["submitted_from"] = "last_tool_files"
         else:
             conv = None
-            resp = meta_client.chat(messages, model, reasoning_effort=effort, timeout_s=240)
+            resp = meta_client.chat(messages, model, reasoning_effort=effort, timeout_s=900 if endpoint else 240,
+                                    endpoint=endpoint)
             usage = resp.get("usage") or {}
             used += int(usage.get("total_tokens", 0))
             text = meta_client.text_of(resp)
         record = {"attempt": attempt, "model": model, "effort": effort, "messages": messages,
-                  "reply": text, "usage": usage}
+                  "reply": text, "usage": usage, "endpoint": endpoint}
         if conv:
             record.update({"tools": True, "tool_calls": conv["tool_calls"], "tool_log": conv["tool_log"],
                            "turn_stop": conv["stop"], "submitted_from": conv["submitted_from"]})
@@ -219,7 +222,7 @@ if __name__ == "__main__":
     ap.add_argument("old_python")
     ap.add_argument("new_python")
     ap.add_argument("--lib", default="pandas")
-    ap.add_argument("--model", default="muse-spark-1.3")
+    ap.add_argument("--model", default=None)
     ap.add_argument("--effort", default="low")
     ap.add_argument("--max-attempts", type=int, default=3)
     ap.add_argument("--token-budget", type=int, default=60000)
@@ -227,13 +230,15 @@ if __name__ == "__main__":
                     help="run model code without OS file-system isolation (unsafe; runs are marked fs_deny=false)")
     ap.add_argument("--tools", action="store_true",
                     help="let the model call run_tests and run_probe (a tool conversation per attempt)")
+    ap.add_argument("--endpoint", help="base URL of a local OpenAI-compatible server (loopback only, no API key is sent)")
     a = ap.parse_args()
+    a.model = a.model or ("muse-glimmer" if a.endpoint else "muse-spark-1.3")
     if a.no_fs_deny and meta_client.KEY_PATH.exists():
         raise SystemExit("--no-fs-deny is refused while the key file exists (" + str(meta_client.KEY_PATH) +
                          "): model code run without the OS layer could read it.")
     sandbox.set_fs_deny(not a.no_fs_deny)
     result = repair(a.case_dir, a.old_python, a.new_python, lib=a.lib, model=a.model, effort=a.effort,
-                    max_attempts=a.max_attempts, token_budget=a.token_budget, tools=a.tools)
+                    max_attempts=a.max_attempts, token_budget=a.token_budget, tools=a.tools, endpoint=a.endpoint)
     diff = result.pop("diff", "")
     print(json.dumps(result, indent=2))
     if diff:

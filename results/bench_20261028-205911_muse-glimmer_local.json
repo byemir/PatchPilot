@@ -1,0 +1,58 @@
+[
+  {
+    "case": "n6_uint8_scaling",
+    "model": "muse-glimmer",
+    "effort": "low",
+    "runs": 1,
+    "successes": 1,
+    "first_try": 1,
+    "avg_tokens": 1054,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "local_server": {
+        "build_info": "b11960-8642541b2",
+        "model_file": "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf",
+        "served_models": [
+          "muse-glimmer"
+        ]
+      }
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1054,
+        "hidden_checked": true,
+        "diagnosis": "Iterating over a uint8 numpy array yields numpy uint8 scalars; multiplying by a Python int performs NumPy ufunc arithmetic which wraps modulo 256 in NumPy 2.x, producing overflow. Casting each element to a Python int before multiplication avoids the wrap and matches the intended scalar arithmetic on both NumPy 1.26 and 2.5.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 13
+        },
+        "run_dir": "runs/20261028-205912_n6_uint8_scaling",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 8,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 1
+  }
+]

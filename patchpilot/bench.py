@@ -36,7 +36,7 @@ def refuse_unisolated_with_key(no_fs_deny: bool) -> None:
 def main() -> None:
     sandbox.ensure_clean_env()
     ap = argparse.ArgumentParser()
-    ap.add_argument("--model", default="muse-spark-1.3")
+    ap.add_argument("--model", default=None)
     ap.add_argument("--effort", default="low")
     ap.add_argument("--repeats", type=int, default=3)
     ap.add_argument("--max-attempts", type=int, default=3)
@@ -49,14 +49,31 @@ def main() -> None:
                     help="run model code without OS file-system isolation (unsafe; results are marked and not counted)")
     ap.add_argument("--tools", action="store_true",
                     help="let the model call run_tests and run_probe (a tool conversation per attempt)")
+    ap.add_argument("--endpoint", help="base URL of a local OpenAI-compatible server on this machine, for example "
+                    "http://127.0.0.1:8080/v1 (loopback only, no API key is sent; effort must be low, medium, high or xhigh)")
     ap.add_argument("--cases", nargs="*", help="case folder names (default: all with case.json)")
     a = ap.parse_args()
+    a.model = a.model or ("muse-glimmer" if a.endpoint else "muse-spark-1.3")
     refuse_unisolated_with_key(a.no_fs_deny)
     sandbox.set_fs_deny(not a.no_fs_deny)
+    local_info = None
+    if a.endpoint:
+        try:
+            agent.meta_client._check_local(a.endpoint)
+        except agent.meta_client.MetaAPIError as e:
+            raise SystemExit(str(e))
+        if a.effort not in agent.meta_client.LOCAL_REASONING:
+            raise SystemExit(f"--effort must be one of {agent.meta_client.LOCAL_REASONING} with --endpoint")
+        if a.tools:
+            raise SystemExit("--tools is not supported with --endpoint")
+        local_info = agent.meta_client.local_server_info(a.endpoint)
+        print("local server:", local_info, flush=True)
 
     config = {"max_attempts": a.max_attempts, "token_budget": a.token_budget,
               "diff_check": not a.no_differential, "diff_n": DIFF_N, "diff_seed": DIFF_SEED,
-              "score_seed": a.score_seed, "fs_deny": not a.no_fs_deny, "tools": a.tools}
+              "score_seed": a.score_seed, "fs_deny": not a.no_fs_deny, "tools": a.tools,
+              "endpoint": a.endpoint, "local_server": local_info,
+              "max_tokens": agent.meta_client.LOCAL_MAX_TOKENS if a.endpoint else None}
     root = Path("benchmarks")
     names = a.cases or sorted(p.parent.name for p in root.glob("*/case.json"))
     rows = []
@@ -70,7 +87,7 @@ def main() -> None:
                     root / name, cfg["old"], cfg["new"], lib=cfg["lib"], model=a.model,
                     effort=a.effort, max_attempts=a.max_attempts, token_budget=a.token_budget,
                     diff_check=not a.no_differential, diff_n=DIFF_N, diff_seed=DIFF_SEED,
-                    tools=a.tools,
+                    tools=a.tools, endpoint=a.endpoint,
                 )
             except Exception as e:  # API or network errors count as failures but are recorded
                 r = {"success": False, "reason": f"{type(e).__name__}: {e}"[:300]}
@@ -79,6 +96,8 @@ def main() -> None:
                 if isinstance(e, agent.meta_client.MetaAPIError) and any(
                         k in str(e) for k in ("HTTP 401", "HTTP 403", "Key file")):
                     raise SystemExit(f"Aborting, nothing saved: {e}")
+                if a.endpoint and isinstance(e, agent.meta_client.MetaAPIError) and "Network error" in str(e):
+                    raise SystemExit(f"Aborting, nothing saved: the local server is not reachable: {e}")
             r.pop("diff", None)
             r["fs_deny"] = sandbox.FS_DENY
             if r.get("success") and a.score_seed is not None:
@@ -104,7 +123,7 @@ def main() -> None:
         rows.append(row)
 
     Path("results").mkdir(exist_ok=True)
-    out = Path("results") / f"bench_{started}_{a.model}{'_NOFSDENY' if a.no_fs_deny else ''}{'_tools' if a.tools else ''}.json"
+    out = Path("results") / f"bench_{started}_{a.model}{'_NOFSDENY' if a.no_fs_deny else ''}{'_tools' if a.tools else ''}{'_local' if a.endpoint else ''}.json"
     out.write_text(json.dumps(rows, indent=2))
     print("\n| case | runs | solved | first try | avg tokens | scored pass |\n|---|---|---|---|---|---|")
     for r in rows:

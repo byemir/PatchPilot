@@ -7,6 +7,7 @@ import sys
 import urllib.error
 import urllib.request
 from pathlib import Path
+from urllib.parse import urlparse
 
 BASE_URL = "https://api.meta.ai/v1"  # fixed on purpose: the key must never be sent elsewhere
 
@@ -64,8 +65,76 @@ def list_models() -> dict:
     return _request("GET", "/models")
 
 
+LOCAL_HOSTS = ("127.0.0.1", "localhost", "::1")
+LOCAL_SAMPLING = {"temperature": 1.0, "top_p": 0.95, "top_k": 64}  # published Muse Glimmer settings; greedy decoding is advised against
+LOCAL_REASONING = ("low", "medium", "high", "xhigh")  # reasoning_strength levels of the Muse Glimmer chat template
+LOCAL_MAX_TOKENS = 12000  # hard cap: a runaway reasoning trace must not keep the single server slot busy past the 900 s client timeout
+
+
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, *args, **kwargs):
+        return None
+
+
+def _check_local(url: str) -> str:
+    u = urlparse(url)
+    if u.scheme != "http" or u.hostname not in LOCAL_HOSTS:
+        raise MetaAPIError(f"local endpoint must be http on a loopback host (127.0.0.1, localhost or ::1): {url}")
+    return url
+
+
+def _local_request(url: str, method: str, payload: dict | None, timeout_s: float) -> dict:
+    """Request to a server on this machine: no Authorization header, the API key is never read, no proxy, no redirects."""
+    _check_local(url)
+    data = json.dumps(payload).encode() if payload is not None else None
+    req = urllib.request.Request(url, data=data, method=method,
+                                 headers={"Content-Type": "application/json", "Accept": "application/json"})
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), _NoRedirect())
+    try:
+        with opener.open(req, timeout=timeout_s) as resp:
+            return json.loads(resp.read().decode())
+    except urllib.error.HTTPError as e:
+        raise MetaAPIError(f"HTTP {e.code} on {url}: {e.read().decode(errors='replace')[:1000]}") from None
+    except urllib.error.URLError as e:
+        raise MetaAPIError(f"Network error on {url}: {e.reason}") from None
+
+
+def _local_chat(endpoint, messages, model, reasoning_effort, timeout_s, tools, tool_choice) -> dict:
+    payload: dict = {"model": model, "messages": messages, "max_tokens": LOCAL_MAX_TOKENS, **LOCAL_SAMPLING}
+    if reasoning_effort:
+        if reasoning_effort not in LOCAL_REASONING:
+            raise ValueError(f"reasoning level {reasoning_effort!r} is not one of {LOCAL_REASONING}")
+        payload["chat_template_kwargs"] = {"reasoning_strength": reasoning_effort}
+    if tools is not None:
+        payload["tools"] = tools
+    if tool_choice is not None:
+        payload["tool_choice"] = tool_choice
+    return _local_request(_check_local(endpoint).rstrip("/") + "/chat/completions", "POST", payload, timeout_s)
+
+
+def local_server_info(endpoint: str) -> dict:
+    """Non-secret facts about the local server for the result files (file names only, no directory paths)."""
+    u = urlparse(_check_local(endpoint))
+    root = f"{u.scheme}://{u.netloc}"
+    info: dict = {}
+    try:
+        props = _local_request(root + "/props", "GET", None, 10)
+        info["build_info"] = props.get("build_info")
+        info["model_file"] = Path(str(props.get("model_path") or "")).name or None
+    except Exception as e:
+        info["props_error"] = f"{type(e).__name__}: {str(e)[:120]}"
+    try:
+        models = _local_request(root + "/v1/models", "GET", None, 10)
+        info["served_models"] = [m.get("id") for m in models.get("data", [])]
+    except Exception as e:
+        info["models_error"] = f"{type(e).__name__}: {str(e)[:120]}"
+    return info
+
+
 def chat(messages: list, model: str, *, reasoning_effort: str | None = None, timeout_s: float = 120.0,
-         tools: list | None = None, tool_choice: str | dict | None = None) -> dict:
+         tools: list | None = None, tool_choice: str | dict | None = None, endpoint: str | None = None) -> dict:
+    if endpoint is not None:
+        return _local_chat(endpoint, messages, model, reasoning_effort, timeout_s, tools, tool_choice)
     payload: dict = {"model": model, "messages": messages}
     if reasoning_effort:
         payload["reasoning_effort"] = reasoning_effort
