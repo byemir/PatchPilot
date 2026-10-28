@@ -36,7 +36,7 @@ Engineering log and technical notes: [`docs/engineering-log.md`](docs/engineerin
 
 ## Results so far
 
-All numbers come from the files in `results/`. Cases are synthetic, samples are small, only token counts were recorded. All rows below were produced before the isolation layer existed: model code ran without the OS layer and the API key was in the process environment (none of the files listed below has an `fs_deny` field). The 126 patches in `runs/` at the time of the check import only pandas, numpy, collections and math (import lines only), so no sign of file or environment access was found; that scan cannot rule it out.
+All numbers come from the files in `results/`. Cases are synthetic, samples are small, only token counts were recorded. The rows of the first table below were produced before the isolation layer existed: model code ran without the OS layer and the API key was in the process environment (none of the files in that table has an `fs_deny` field). The 126 patches in `runs/` at the time of the check import only pandas, numpy, collections and math (import lines only), so no sign of file or environment access was found; that scan cannot rule it out.
 
 | setting | model | result | file |
 |---|---|---|---|
@@ -46,7 +46,18 @@ All numbers come from the files in `results/`. Cases are synthetic, samples are 
 | p4 only, effort=low, gate off, accepted patches scored with the differential at seed 1 | muse-spark-1.3 | 2/5 accepted, 0 pass the differential | `bench_20261027-204730_muse-spark-1.3.json` |
 | p4 only, effort=low, gate off, accepted patches scored with the differential at seed 1 | muse-wonder-1.0 | 3/5 accepted, 1 passes the differential | `bench_20261027-205730_muse-wonder-1.0.json` |
 
-Observed once (n=1): in one wonder-1.0 run with the gate on, the differential rejected an attempt that had passed the visible and hidden checks, the counterexample was returned to the model and the next attempt passed. p4 is mostly unsolved; with the gate off, 4 of the 5 accepted patches failed the differential, which is why accepted counts and differential-scored counts are reported separately. Details and caveats: the engineering log.
+Observed in two wonder-1.0 runs (n=2; one before and one after the isolation layer): with the gate on, the differential rejected an attempt that had passed the visible and hidden checks, the counterexample was returned to the model and the next attempt passed. p4 is mostly unsolved; with the gate off, 4 of the 5 accepted patches failed the differential, which is why accepted counts and differential-scored counts are reported separately. Details and caveats: the engineering log.
+
+## Results under the isolation layer
+
+p4_label_histogram only, effort=low, 5 runs per model, differential used as a gate and accepted patches re-scored with the differential at another seed, one invocation per model (the result files have counted=true and fs_deny=true).
+
+| model | solved | first try | accepted patches passing the re-scored differential | avg tokens | file |
+|---|---|---|---|---|---|
+| muse-spark-1.3 | 0/5 | 0 | 0 | 21230 | `bench_20261027-224719_muse-spark-1.3.json` |
+| muse-wonder-1.0 | 3/5 | 1 | 3 of 3 | 13066 | `bench_20261027-225746_muse-wonder-1.0.json` |
+
+First failing gate per attempt: spark-1.3 (15 attempts) visible 7, hidden 6, differential 2; wonder-1.0 (13 attempts) visible 6, hidden 3, differential 1, accepted 3. n=5 per model, one synthetic case; these runs differ from the earlier p4 rows, so this is not a controlled comparison. Only token counts were recorded.
 
 ## Benchmark cases
 
