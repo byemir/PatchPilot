@@ -147,6 +147,29 @@ p4_label_histogram, effort=low, 5 runs per model, differential used as a gate, a
 
 Same setting without tools (table above): spark 0/5 (avg 21230 tokens), wonder 3/5 (avg 13066). First failing gate per attempt, 16 attempts with tools: visible 2, hidden 0, differential 8, invalid reply 2, accepted 4; 28 attempts without tools: visible 13, hidden 9, differential 3, accepted 3. No run with tools reached a third attempt. Two of the four accepted patches were submitted from the last files passed to a tool after the token budget stopped the conversation. With tools, prompt tokens (the context is re-sent on every call) were 61 percent (spark) and 73 percent (wonder) of all tokens. n=5 per model, one synthetic case, runs differ: this pilot gives no evidence that the tools improve the success rate, and with the same budget they used 2.5 to 5.1 times the tokens per run. Only token counts were recorded.
 
+### Glimmer at reasoning strength medium (four cases)
+
+Same server, same protocol and same case files, with `reasoning_strength` set to medium per request (5 runs per case, one batch per case, counted=true, re-scored at seed 1). Low is the table above. Different batches, n=5 per cell: this is not enough to say whether the setting matters. Wall-clock times are not reported for the medium batches because another job ran on the same machine during the first one.
+
+| case | solved low / medium | first try low / medium | avg tokens per run low / medium | medium file |
+|---|---|---|---|---|
+| n7_float32_scalars | 2/5 / 0/5 | 1 / 0 | 5047 / 12775 | `bench_20261028-222025_muse-glimmer_local.json` |
+| p1_epoch_seconds | 3/5 / 4/5 | 2 / 2 | 2825 / 6478 | `bench_20261028-225035_muse-glimmer_local.json` |
+| p2_dst_day_offset | 4/5 / 5/5 | 3 / 4 | 5060 / 5202 | `bench_20261028-230556_muse-glimmer_local.json` |
+| p4_label_histogram | 0/5 / 0/5 | 0 / 0 | 6604 / 14800 | `bench_20261028-231826_muse-glimmer_local.json` |
+
+On these four cases both settings solved 9 of 20 runs. Unsolved runs ended with "max attempts reached". Why runs differed was not analysed (patches not read).
+
+### Results on p5, p6 and n8 (all three models)
+
+One-shot, effort low (Glimmer: reasoning strength low), 5 runs per cell, re-scored at seed 1. All 45 runs were solved and passed the re-scored differential, so these cases did not separate the models; they add coverage of three documented behavior changes, not difficulty. Token counts only, no dollar cost. Per-run files and sources: `docs/CASES.md`.
+
+| case | muse-spark-1.3 first try / avg tokens | muse-wonder-1.0 first try / avg tokens | muse-glimmer (local) first try / avg tokens |
+|---|---|---|---|
+| p5_chained_assignment | 5 / 1407 | 5 / 1511 | 4 / 1493 |
+| p6_str_dtype_checks | 5 / 2610 | 5 / 2326 | 4 / 2210 |
+| n8_string_to_bool | 5 / 2807 | 5 / 2553 | 1 / 2772 |
+
 ## Benchmark cases
 
 All cases are **synthetic**: small programs written for this project and derived from library release notes and from running both versions. They are not taken from real open-source projects. Each case keeps its recorded inputs (`inputs.json`, `golden.json`), held-out inputs that are never shown to the model (`hidden_inputs.json`, `hidden_golden.json`), a `known_good.json` patch and `known_bad/` patches. Golden outputs come from the OLD library version.
@@ -159,6 +182,11 @@ All cases are **synthetic**: small programs written for this project and derived
 | p4_label_histogram | pandas 2.3.3 -> 3.0.6 | `astype(str)` keeps None/NaN as NaN; `DataFrame.value_counts(sort=False)` order |
 | n6_uint8_scaling | NumPy 1.26.4 -> 2.5.4 | uint8 scalar arithmetic wraps around |
 | n7_float32_scalars | NumPy 1.26.4 -> 2.5.4 | float32 scalar * Python float stays float32 (sum digits, comparisons) |
+| p5_chained_assignment | pandas 2.3.3 -> 3.0.6 | chained assignment `df[col][mask] = v` no longer modifies `df`, and raises nothing |
+| p6_str_dtype_checks | pandas 2.3.3 -> 3.0.6 | string columns become `str` dtype (`dtype == object` is False), missing values are NaN, not None |
+| n8_string_to_bool | NumPy 1.26.4 -> 2.5.4 | `astype(bool)` on strings: non-empty means True, so "0" becomes True |
+
+p5, p6 and n8 are our own reproductions derived from documented behavior changes (pandas 3.0.0 and NumPy 2.0.0 release notes), not incidents from real projects; the sources and their caveats are in `docs/CASES.md`. For p2, p3 and p4 no real project incident was found either.
 
 A case is counted only if `python -m patchpilot.validate_case benchmarks/<case>` reports it valid (old OK, new silently broken, tests green on both, hidden inputs break too, known-good patch accepted, known-bad patches rejected).
 
