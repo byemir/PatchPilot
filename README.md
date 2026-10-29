@@ -4,7 +4,7 @@ Agent that proposes and verifies patches for Python code that broke silently aft
 **At a glance**
 
 - A patch is accepted only if it passes three gates: the visible tests, hidden tests the model never sees, and a differential check against the old library.
-- Twelve cases (pandas 2.3 to 3.0, NumPy 1.26 to 2.x): eleven synthetic ones derived from documented library changes and one (p7) built around a function copied from the open-source project scikit-FIBERS; not tried on whole real repositories.
+- Twelve cases (pandas 2.3 to 3.0, NumPy 1.26 to 2.x): eleven synthetic ones derived from documented library changes and one (p7) built around a function copied from the open-source project scikit-FIBERS; not tried on whole real repositories. Two further cases come from third-party repositories (indsl and Kythera, each in two variants) and are reported separately under "Cases from third-party code".
 - Hosted Muse Spark and Muse Wonder solved 125 of 125 runs on five cases; on the hardest one (p4), Spark 0 of 5 and Wonder 3 of 5. Muse Glimmer running locally solved 19 of 30 runs on six cases (low reasoning).
 - All runs were made on one Apple M2 Ultra Mac; no other platform was tested.
 
@@ -84,7 +84,7 @@ Limits: the function must live in one self-contained file (standard library plus
 Example in `examples/own_function/`: the unmodified `censor` function from scikit-FIBERS (see `docs/THIRD_PARTY_NOTICES.md`) plus a thin adapter. One run with muse-spark-1.3 solved it on the first attempt (2696 tokens), and one run on the `n8` function rebuilt this way solved it on the first attempt (3350 tokens). These are single runs, not a success rate. `censor` is also the source of p7, so the breakage pattern is not new; what is new is that the case was generated from the original code by one command. Muse Glimmer on the same case (local, effort low, `bash scripts/demo_own_function.sh`) solved it in 6 runs out of 6, 5 on the first attempt (2167 to 4686 tokens per run; the sixth needed two attempts). These are repeats of one case, not six cases. `bash scripts/run_offline_tests.sh` runs the five offline tests (no model call, no real key; about 50 seconds on our Mac).
 
 ## Limitations
-Eleven of twelve cases are synthetic and one (p7) contains code copied from one real open-source project; PatchPilot has not been tried on whole real repositories. Sample sizes in `results/` are small (1 to 5 runs per case and setting; the first three files have 3 runs per case, one smoke test has 1), so they show direction only. Only token counts were recorded, no dollar cost per run. The first two bench files and earlier runs ran without the differential gate (see the engineering log).
+Eleven of the twelve main cases are synthetic and one (p7) contains code copied from one real open-source project; two further cases (indsl and Kythera, each with a scoped variant) are copied from third-party repositories and are reported separately; PatchPilot has not been tried on whole real repositories. Sample sizes in `results/` are small (1 to 5 runs per case and setting; the first three files have 3 runs per case, one smoke test has 1), so they show direction only. Only token counts were recorded, no dollar cost per run. The first two bench files and earlier runs ran without the differential gate (see the engineering log).
 Not tested or not measured: dollar cost and run time of hosted calls (not recorded), Linux and other non-macOS platforms, memory inspection tools (`lldb`, `vmmap`, `gcore`), other same-user processes that hold secrets, external network, real open-source projects, Muse Spark Open and other open-weight models, other quantizations of Muse Glimmer, reasoning levels of Glimmer other than low and medium (medium on four cases only), hosted effort levels other than low (one minimal-effort batch), a tools run with a larger token budget and tools mode with a local endpoint.
 
 Engineering log and technical notes: [`docs/engineering-log.md`](docs/engineering-log.md), [`docs/training-notes.jsonl`](docs/training-notes.jsonl).
@@ -137,6 +137,25 @@ Per case (solved / first try / average tokens per run):
 | p3_groupby_report | 5/5 / 5 / 2071 | 5/5 / 4 / 3078 | 5/5 / 5 / 2629 | 5/5 / 4 / 2655 | 5/5 / 5 / 2281 |
 
 125 of 125 runs were solved and 125 of 125 accepted patches passed the re-scored differential; 13 runs needed more than one attempt. These five cases were solved in every run, unlike p4 (see above). The spark batches differ from each other in first-try counts and token averages, which shows the run-to-run variation at n=5; no comparison between the models is drawn from these rows. Only token counts were recorded.
+
+## How the local model is run
+
+The Glimmer runs in this repository use a model served on the same machine, not a hosted API. The agent is pointed at it with `--endpoint http://127.0.0.1:8080/v1` (the endpoint of every run is stored in its `attempt_N.json` under `endpoint`).
+
+- Hardware: Apple M2 Ultra, 192 GiB RAM, macOS 26.6.2
+- Server: llama.cpp `version: 0.8.0 (build 11960, commit 8642541b2)`, AppleClang 21.0.0
+- Weights: `Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf`, 16756683904 bytes, sha256 `4cc57c0f51040a226e5a72cc47b7613f7772950e460a665f7083de89f183f60e`
+- Client: Python 3.12.16
+
+Start the server:
+
+    llama-server -m ~/models/muse-glimmer/Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf -a muse-glimmer -ngl 99 -c 65536 -np 1 --host 127.0.0.1 --port 8080 --chat-template-kwargs '{"reasoning_strength":"low"}'
+
+Check the file and the server, then run one case:
+
+    shasum -a 256 ~/models/muse-glimmer/Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf
+    curl -s http://127.0.0.1:8080/v1/models
+    .venv/bin/python -m patchpilot.agent benchmarks/r1f_indsl_time_split .sandboxes/pd23/bin/python .sandboxes/pd30/bin/python --lib pandas --model muse-glimmer --effort low --endpoint http://127.0.0.1:8080/v1
 
 ## Results with a local open-weight model (Muse Glimmer)
 
@@ -211,6 +230,30 @@ p8_session_report_three_breaks (pandas) and n9_fleet_report_three_breaks (NumPy)
 | n9 | muse-wonder-1.0 | 5/5 | 5 | 2515 | `bench_20261029-115408_muse-wonder-1.0.json` |
 | n9 | muse-glimmer (local) | 3/5 | 2 | 5222 | `bench_20261029-115707_muse-glimmer_local.json` |
 
+## Cases from third-party code
+
+Everything above in the case table is a reproduction we wrote, except p7 (scikit-FIBERS). These two cases come from other people's repositories and are reported separately. The selection rules were written and committed before any search (`docs/REAL_CASES_PROTOCOL.md`); the search log, every examined hit and the reason for each rejection are in `docs/real_cases/candidates.md`. 168 distinct hits were collected, 75 passed a mechanical screen and were decided one by one, ten finalists were rejected after reading their code (reasons in `candidates.md`), two were accepted.
+
+| case | upstream | license | function | code taken from | fixed upstream by |
+|---|---|---|---|---|---|
+| `r1_indsl_time_split` | cognitedata/indsl | Apache-2.0 | `_split_timeseries_into_time_and_value_arrays` | parent fab55f6dfa82 | PR 639, merge 5ec4a2ed4f |
+| `r2_kythera_epoch_seconds` | ziagl888/Kythera | MIT | `panel_to_compact` | parent d0ff0159d9ae | PR 229, merge e3181d5aeb |
+
+The function bodies are copied verbatim by script (`scripts/build_real_case.py`); license texts are in `docs/THIRD_PARTY_NOTICES.md`. The JSON adapter, the inputs, the known-good patch and the known-bad patch are ours. Both cases passed `validate_case` before any model saw them. Both are the same documented change (pandas 3.0 datetime resolution inference: conversion to integers gives values 1000x smaller, see `docs/CASES.md` for the quoted release note), so they are two real examples of one mechanism, not two mechanisms. The target was three cases; two were found within the time box.
+
+Two variants were run with Glimmer at low effort on the local server, five runs each. In `r1`/`r2` the adapter sat in the editable file, and the models often rewrote the adapter instead of the third-party function. In `r1f`/`r2f` the adapter is read-only (`tests/adapter.py`), so the repair has to change the third-party function. The unscoped runs are kept as they were (`docs/real_cases/results_unscoped_20261029.json`); the scoped runs are in `docs/real_cases/results_scoped_20261029.json` with every diff.
+
+| variant | runs | passed visible and hidden | first attempt | tokens, all attempts | third-party function changed | differential gate |
+|---|---|---|---|---|---|---|
+| r1, adapter editable | 5 | 5 | 4 | 2177 to 5251 | 0 of 5 | PASS 5 |
+| r2, adapter editable | 5 | 5 | 4 | 2684 to 7581 | 3 of 5 | WEAK 5 |
+| r1f, function only | 5 | 5 | 2 | 2199 to 5277 | 5 of 5 | PASS 5 |
+| r2f, function only | 5 | 5 | 4 | 2427 to 6504 | 5 of 5 | WEAK 5 |
+
+Reading of the 10 scoped patches (by eye, from the diffs in the results file): all five `r1f` patches compute elapsed seconds from `total_seconds()` and do not depend on the pandas version. In `r2f`, three patches are unit-independent (`pd.Timestamp(0)` difference, `.timestamp()`, forcing `datetime64[ns]`). Two read `pd.__version__` and divide by `10**6` on pandas 3.0 and above; one of them also imports `packaging`. They pass every gate on the recorded inputs, which come from strings and are microsecond data on pandas 3. They are wrong for nanosecond data: on pandas 3.0.6 a `datetime64[ns]` value for 2024-01-01 gives 1704067200000 with `// 10**6`, correct is 1704067200. The differential gate would be the check that catches this, but it returned WEAK on `r2` (fewer than 20 valid generated probes, `MIN_VALID` in `patchpilot/differential.py`), so it did not.
+
+Limits of this section: two cases, one change class, one model, one effort level, five runs each, one machine.
+
 ## Tools mode (experimental, p4 only)
 
 `--tools` lets the model call `run_tests` and `run_probe` during an attempt (one conversation per attempt, at most 12 tool calls, and the same 60000-token run budget, which is checked only before each model call and was exceeded in several runs). `run_probe` runs inputs chosen by the model through the original code on the old library and through the candidate on the new library; it is an oracle for the original behavior on those inputs. The gate is unchanged and is not available to the model.
@@ -227,7 +270,7 @@ Same setting without tools (table above): spark 0/5 (avg 21230 tokens), wonder 3
 
 ## Benchmark cases
 
-Eleven of the twelve cases are **synthetic**: small programs written for this project and derived from library release notes and from running both versions. p7 is different: the function `censor` is copied verbatim from the open-source project scikit-FIBERS (MIT license, commit 356c6d5, notice in `docs/THIRD_PARTY_NOTICES.md`); the wrapper, tests and inputs that grade it were written for this project. Each case keeps its recorded inputs (`inputs.json`, `golden.json`), held-out inputs that are never shown to the model (`hidden_inputs.json`, `hidden_golden.json`), a `known_good.json` patch and `known_bad/` patches. Golden outputs come from the OLD library version.
+Eleven of the twelve cases are **synthetic**: small programs written for this project and derived from library release notes and from running both versions. p7 is different: the function `censor` is copied verbatim from the open-source project scikit-FIBERS (MIT license, commit 356c6d5, notice in `docs/THIRD_PARTY_NOTICES.md`); the wrapper, tests and inputs that grade it were written for this project. Each case keeps its recorded inputs (`inputs.json`, `golden.json`), held-out inputs that are never shown to the model (`hidden_inputs.json`, `hidden_golden.json`), a `known_good.json` patch and `known_bad/` patches. Golden outputs come from the OLD library version. Two further cases, `r1`/`r1f` (cognitedata/indsl) and `r2`/`r2f` (ziagl888/Kythera), are copied from third-party repositories, are not part of the twelve, and are described under "Cases from third-party code".
 
 | case | library change (old -> new) | what silently changes |
 |---|---|---|
