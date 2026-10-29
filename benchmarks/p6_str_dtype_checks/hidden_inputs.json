@@ -1,0 +1,82 @@
+[
+ {
+  "records": [
+   {
+    "name": "  Zed",
+    "label": "Platinum",
+    "score": 9
+   },
+   {
+    "name": "  YOKO ",
+    "label": null,
+    "score": 4
+   },
+   {
+    "name": " X ",
+    "label": "  gold",
+    "score": 2
+   }
+  ]
+ },
+ {
+  "records": [
+   {
+    "name": "a",
+    "label": "B ",
+    "score": 1
+   },
+   {
+    "name": "C ",
+    "label": " d",
+    "score": 2
+   },
+   {
+    "name": " E",
+    "label": null,
+    "score": 3
+   },
+   {
+    "name": "f",
+    "label": "G",
+    "score": 4
+   }
+  ]
+ },
+ {
+  "records": [
+   {
+    "name": "  one ",
+    "label": "TWO",
+    "score": 3
+   }
+  ]
+ },
+ {
+  "records": [
+   {
+    "name": " Mixed Case ",
+    "label": null,
+    "score": 0
+   },
+   {
+    "name": "UPPER",
+    "label": "LOWER",
+    "score": 100
+   }
+  ]
+ },
+ {
+  "records": [
+   {
+    "name": "x",
+    "label": null,
+    "score": 1
+   },
+   {
+    "name": "y",
+    "label": "",
+    "score": 2
+   }
+  ]
+ }
+]

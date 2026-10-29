@@ -1,0 +1,69 @@
+[
+  {
+    "case": "n7_float32_scalars",
+    "model": "muse-glimmer",
+    "effort": "medium",
+    "runs": 5,
+    "successes": 0,
+    "first_try": 0,
+    "avg_tokens": 12775,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "local_server": {
+        "build_info": "b11960-8642541b2",
+        "model_file": "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf",
+        "served_models": [
+          "muse-glimmer"
+        ]
+      },
+      "max_tokens": 12000
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 14864,
+        "run_dir": "runs/20261028-222026_n7_float32_scalars",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 15470,
+        "run_dir": "runs/20261028-222750_n7_float32_scalars",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 12163,
+        "run_dir": "runs/20261028-223525_n7_float32_scalars",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 12263,
+        "run_dir": "runs/20261028-224102_n7_float32_scalars",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 9114,
+        "run_dir": "runs/20261028-224640_n7_float32_scalars",
+        "fs_deny": true
+      }
+    ],
+    "scored_pass": 0
+  }
+]

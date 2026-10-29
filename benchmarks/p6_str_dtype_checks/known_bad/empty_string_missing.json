@@ -1,0 +1,6 @@
+{
+ "files": {
+  "app.py": "import pandas as pd\n\n\ndef clean_labels(records):\n    \"\"\"Strip and lower-case the text columns, and report rows whose label was never provided.\n\n    records: [{\"name\": ..., \"label\": ..., \"score\": ...}, ...]. Returns the cleaned rows, the cleaned column names and\n    the positions of the rows with no label (null).\n    \"\"\"\n    df = pd.DataFrame(records, columns=[\"name\", \"label\", \"score\"])\n    missing = [i for i, v in enumerate(df[\"label\"]) if pd.isna(v) or v == \"\"]\n    cleaned = []\n    for col in df.columns:\n        if pd.api.types.is_string_dtype(df[col].dtype):  # text column\n            df[col] = df[col].str.strip().str.lower()\n            cleaned.append(col)\n    rows = []\n    for name, label, score in df.itertuples(index=False):\n        rows.append([None if pd.isna(name) else str(name),\n                     None if pd.isna(label) else str(label),\n                     None if pd.isna(score) else int(score)])\n    return {\"cleaned\": cleaned, \"missing\": missing, \"rows\": rows}\n"
+ },
+ "note": "also treats the empty string as a missing label"
+}

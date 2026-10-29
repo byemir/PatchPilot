@@ -1,0 +1,6 @@
+{
+ "files": {
+  "app.py": "import pandas as pd\n\n\ndef apply_discounts(orders, threshold, rate):\n    \"\"\"Discount the orders above `threshold` by `rate` and mark them as discounted.\n\n    orders: [{\"id\": ..., \"amount\": ..., \"status\": ...}, ...]. Returns [[id, amount, status], ...] in the same order.\n    \"\"\"\n    df = pd.DataFrame(orders, columns=[\"id\", \"amount\", \"status\"])\n    big = df[\"amount\"] > threshold\n    part = df[big]\n    part[\"amount\"] = part[\"amount\"] * (1 - rate)\n    part[\"status\"] = \"discounted\"\n    return [[int(r.id), round(float(r.amount), 2), str(r.status)] for r in df.itertuples()]\n"
+ },
+ "note": "assigns on a filtered copy; the frame is never updated"
+}

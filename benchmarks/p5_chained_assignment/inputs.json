@@ -1,0 +1,71 @@
+[
+ {
+  "orders": [
+   {
+    "id": 1,
+    "amount": 120.0,
+    "status": "open"
+   },
+   {
+    "id": 2,
+    "amount": 80.0,
+    "status": "open"
+   },
+   {
+    "id": 3,
+    "amount": 200.0,
+    "status": "paid"
+   }
+  ],
+  "threshold": 100.0,
+  "rate": 0.1
+ },
+ {
+  "orders": [
+   {
+    "id": 7,
+    "amount": 50.0,
+    "status": "open"
+   },
+   {
+    "id": 8,
+    "amount": 75.5,
+    "status": "open"
+   }
+  ],
+  "threshold": 60.0,
+  "rate": 0.2
+ },
+ {
+  "orders": [
+   {
+    "id": 4,
+    "amount": 10.0,
+    "status": "open"
+   }
+  ],
+  "threshold": 100.0,
+  "rate": 0.5
+ },
+ {
+  "orders": [
+   {
+    "id": 5,
+    "amount": 30.0,
+    "status": "paid"
+   },
+   {
+    "id": 6,
+    "amount": 45.0,
+    "status": "open"
+   },
+   {
+    "id": 9,
+    "amount": 150.0,
+    "status": "open"
+   }
+  ],
+  "threshold": 40.0,
+  "rate": 0.15
+ }
+]

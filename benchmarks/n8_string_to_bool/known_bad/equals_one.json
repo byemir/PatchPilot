@@ -1,0 +1,6 @@
+{
+ "files": {
+  "app.py": "import numpy as np\n\n\ndef enabled_devices(flags):\n    \"\"\"Which devices are enabled.\n\n    flags: strings read from a text file, \"0\" for off and any other number for on.\n    \"\"\"\n    arr = np.array(flags)\n    enabled = arr == \"1\"\n    return {\"count\": int(enabled.sum()), \"enabled\": [bool(x) for x in enabled]}\n"
+ },
+ "note": "treats only \"1\" as on; wrong for other numbers"
+}

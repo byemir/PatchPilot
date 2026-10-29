@@ -1,0 +1,159 @@
+[
+  {
+    "case": "p2_dst_day_offset",
+    "model": "muse-glimmer",
+    "effort": "medium",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 4,
+    "avg_tokens": 5202,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "local_server": {
+        "build_info": "b11960-8642541b2",
+        "model_file": "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf",
+        "served_models": [
+          "muse-glimmer"
+        ]
+      },
+      "max_tokens": 12000
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3451,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3.0 changed pd.offsets.Day to add a calendar day preserving local wall time instead of a fixed 24 h. The code relies on a fixed 24 h step across DST transitions, so the hour shifts on the new version. Replacing the Day offset with a fixed pd.Timedelta(days=n_days) gives an absolute 24 h addition that matches the 2.3.3 behaviour on both versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-230557_p2_dst_day_offset",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 118,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3642,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed `pd.offsets.Day` to preserve local wall-clock time across DST transitions, so adding a calendar day no longer equals an absolute 24 h shift. The golden output requires an absolute elapsed-time addition. Replacing the Day offset with `pd.Timedelta(days=n_days)` makes the addition absolute on both pandas 2.3.3 and 3.0.6, restoring the expected timestamps.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-230740_p2_dst_day_offset",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 118,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 9893,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3.0 changed the semantics of adding a DateOffset to a tz-aware Timestamp from a fixed 24 h absolute shift to a wall-clock calendar shift. The golden output requires the old absolute 24 h behaviour. Using a fixed Timedelta(days=\u2026) restores the absolute shift on both pandas 2.3.3 and 3.0.6, and short-circuiting count==0 avoids constructing an out-of-bounds Timestamp for the generated edge case.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-230925_p2_dst_day_offset",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 118,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 5827,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed the semantics of `pd.offsets.Day` addition on tz-aware timestamps from absolute 24 h to calendar-day wall-time preservation, so `t0 + Day` now keeps the local clock time across DST transitions. The golden output requires absolute 24 h addition. Using `pd.Timedelta(days=n_days)` gives an absolute duration on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-231400_p2_dst_day_offset",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 118,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3198,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3.0 changed pd.offsets.Day to perform a calendar-day (wall-time) addition instead of a fixed 24 h addition. Across a DST transition this keeps the local clock hour and changes the UTC offset, giving 12:00 -0400 instead of the expected 13:00 -0400. Using a fixed-duration Timedelta(days=n_days) preserves the absolute 24 h step on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261028-231656_p2_dst_day_offset",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 118,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  }
+]
