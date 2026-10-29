@@ -34,3 +34,18 @@ A candidate becomes a case only if `patchpilot.validate_case` passes: old librar
 - Each third-party case lists source URL, license, commit hash and the release-note quote, and carries the upstream notice in `docs/THIRD_PARTY_NOTICES.md`.
 - Candidates that did not pass are shown in the table.
 - No model is run on a candidate before it is accepted.
+
+## Amendment 1 (2026-10-29, before any candidate was examined)
+
+The first run of `scripts/real_case_search.sh` (stored unchanged in `docs/real_cases/search_20261029_run1_invalid/`) returned hits that have nothing to do with pandas or NumPy (Q1, Q2 and Q6 returned the same 30 unrelated 2014-2015 issues, all numbered 3; Q4 returned issues numbered 2 and 50). Two causes, found with a diagnostic run of three request forms on the query Q1: (a) the `gh search issues` command did not search the words; the REST endpoint `search/issues` does; (b) bare integers inside the queries ("pandas 3", "numpy 2", "NEP 50") are matched as issue numbers. None of the run-1 hits is a candidate (no connection to pandas or NumPy, criterion 1 fails); all are recorded as such.
+
+Changes, made without looking at which results they produce: the script calls the REST endpoint (`gh api search/issues`, 30 per page, state closed, language python), and the queries lose their bare integers:
+
+- Q1 `"chained assignment" "pandas 3.0"`
+- Q2 `"copy-on-write" "pandas 3.0"`
+- Q3 `"pandas 3.0" astype datetime` (unchanged)
+- Q4 `"numpy 2.0" "type promotion"` (replaces `"numpy 2" "NEP 50"`)
+- Q5 `"numpy 2.0" uint8 overflow` (unchanged)
+- Q6 `"pandas 3.0" "str dtype"`
+
+Disclosure: during the diagnostic run, five hits for the old Q1 were displayed: samadel98/auto-FOX #3 (MAINT: Support NumPy 2 and pandas 2/3), SFGLab/MultiMM #3 (fix: patch the chained-assignment warnings of pandas 3), jmtatsch/virus_radar #3, OscarAspelin95/amplipore #3 and wenceslas-sanchez/tricount-extractor #3 (dependency bumps). They get no priority: candidates are examined in the order the new run returns them.
