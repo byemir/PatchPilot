@@ -1,0 +1,123 @@
+[
+  {
+    "case": "n9_fleet_report_three_breaks",
+    "model": "muse-glimmer",
+    "effort": "low",
+    "runs": 5,
+    "successes": 3,
+    "first_try": 2,
+    "avg_tokens": 5222,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "local_server": {
+        "build_info": "b11960-8642541b2",
+        "model_file": "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf",
+        "served_models": [
+          "muse-glimmer"
+        ]
+      },
+      "max_tokens": 12000
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 3,
+        "tokens_used": 8071,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 changed two behaviours used in the code: `np.array([flag]).astype(bool)` now interprets the string \"0\" numerically as False whereas the old behaviour was truthy for a non-empty string, and arithmetic on `np.uint8` scalars now stays in uint8 domain so `np.uint8(level)+100` wraps modulo 256. Both changes break flag detection and the `level+100` boosted value, and the float32 accumulation changes the rounded total.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 155,
+          "core_divergences": 0,
+          "wide_divergences": 12
+        },
+        "run_dir": "runs/20261029-115707_n9_fleet_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 149,
+          "core_divergences": 0,
+          "wide_divergences": 14,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2712,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 changed the behaviour of `astype(bool)` on string arrays and the NumPy uint8 casting used in the original code, so flag strings like \"0\" are now truthy and level values are being cast through NumPy in a way that changes the boosted values. Replacing the NumPy-dependent flag and level handling with pure Python int/float arithmetic makes the result deterministic across NumPy 1.26 and 2.5.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 155,
+          "core_divergences": 0,
+          "wide_divergences": 12
+        },
+        "run_dir": "runs/20261029-115958_n9_fleet_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 149,
+          "core_divergences": 0,
+          "wide_divergences": 14,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 7317,
+        "run_dir": "runs/20261029-120101_n9_fleet_report_three_breaks",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 6036,
+        "run_dir": "runs/20261029-120316_n9_fleet_report_three_breaks",
+        "fs_deny": true
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1975,
+        "hidden_checked": true,
+        "diagnosis": "The implementation relied on NumPy type casting and uint8 arithmetic. In NumPy 2 the string-to-bool cast and uint8 overflow promotion changed, so `np.array([flag]).astype(bool)` now treats \"0\" as truthy and `np.uint8(level)+100` wraps modulo 256. Removing the NumPy casts and doing the flag test and level arithmetic in pure Python restores the intended semantics on both NumPy 1.26 and 2.5.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 155,
+          "core_divergences": 0,
+          "wide_divergences": 12
+        },
+        "run_dir": "runs/20261029-120456_n9_fleet_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 149,
+          "core_divergences": 0,
+          "wide_divergences": 14,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 3
+  }
+]

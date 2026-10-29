@@ -1,0 +1,159 @@
+[
+  {
+    "case": "p8_session_report_three_breaks",
+    "model": "muse-glimmer",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 5,
+    "avg_tokens": 2495,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "local_server": {
+        "build_info": "b11960-8642541b2",
+        "model_file": "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf",
+        "served_models": [
+          "muse-glimmer"
+        ]
+      },
+      "max_tokens": 12000
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2420,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed the internal representation and conversion behavior for datetime columns, so `astype('int64')` no longer yields nanoseconds and the chained assignment `df['flag'][big] = 'large'` is ineffective; missing notes detection with `v is None` fails because None is converted to NaN. Using a pandas-independent epoch calculation, `.loc` for flag assignment and `pd.isna` for missing detection makes the output stable across 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-114847_p8_session_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2636,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 changed the default datetime resolution and the chained assignment `df['flag'][big] = 'large'` is no longer reliable; `None` notes are now NaN so `v is None` never matches. The epoch truncation comes from the resolution change making `astype('int64')` return microseconds instead of nanoseconds.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-114938_p8_session_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2195,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 changes break the epoch conversion and null detection: `astype('int64') // 10**9` no longer yields seconds and `v is None` never matches the NaN that pandas uses for missing notes, while chained assignment `df['flag'][big]` is unreliable. Using timestamp conversion via `pd.Timestamp.timestamp()` and `pd.isna` for nulls, together with `.loc` assignment, gives the same golden output on pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-115034_p8_session_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2211,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed the integer representation of datetime64 and the chained assignment `df[\"flag\"][big] = \"large\"` no longer mutates the frame, and `None` notes become NaN so `v is None` never matches. Using `.dt`-based epoch, `.loc` assignment and `pd.isna` restores the original semantics on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-115115_p8_session_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3013,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 enables copy-on-write by default and normalises nulls to NaN, so chained assignment `df[\"flag\"][big] = \"large\"` no longer mutates the frame and `v is None` never matches a NaN note. Pandas 3 also changed the default datetime64 resolution, so `astype(\"int64\") // 10**9` no longer yields seconds.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-115157_p8_session_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  }
+]

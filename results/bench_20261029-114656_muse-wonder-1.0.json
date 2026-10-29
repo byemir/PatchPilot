@@ -1,0 +1,153 @@
+[
+  {
+    "case": "p8_session_report_three_breaks",
+    "model": "muse-wonder-1.0",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 5,
+    "avg_tokens": 2354,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": null,
+      "local_server": null,
+      "max_tokens": null
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2181,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 changed three defaults silently: to_datetime now uses microsecond (not nanosecond) resolution so astype('int64')//10**9 is 1000x too small, copy-on-write makes df['flag'][big]='large' a no-op, and the new string dtype stores missing notes as NA/NaN rather than None so 'v is None' never matches.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-114657_p8_session_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2123,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 changed three defaults: to_datetime no longer uses ns resolution so astype('int64')//10**9 gives wrong epochs, copy-on-write makes df['flag'][big]='large' a no-op, and inferred string dtype stores missing notes as pd.NA instead of None so 'v is None' never matches.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-114715_p8_session_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2512,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 breaks three assumptions: pd.to_datetime no longer uses ns resolution so astype('int64')//10**9 is wrong, Copy-on-Write makes df['flag'][big]='large' a no-op, and the new string dtype stores null notes as pd.NA instead of None so 'v is None' misses them.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-114733_p8_session_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2386,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 changed three defaults relied on silently: to_datetime now uses microsecond (not nanosecond) resolution so astype(int64)//10**9 truncates epochs, Copy-on-Write makes df['flag'][big]='large' a no-op, and the new string dtype stores null notes as pd.NA instead of None so 'v is None' misses them.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-114800_p8_session_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2566,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 changed three defaults breaking app.py: parsed datetimes use us (not ns) resolution so astype(int64)//10**9 gives kilo-seconds, copy-on-write makes df['flag'][big]='large' a no-op, and inferred string dtype stores missing notes as NaN/NA not None so 'is None' never matches.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-114823_p8_session_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  }
+]

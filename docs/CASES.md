@@ -54,3 +54,8 @@ Our own reproduction (not project code). `fleet_report` combines three NumPy 2 c
 - String flags: `astype(bool)` on strings, "0" becomes True. Source: NumPy 2.0.0 release notes, "Truthiness of NumPy strings changed" (gh-23871). https://numpy.org/devdocs/release/2.0.0-notes.html
 - `np.uint8(level) + 100`: 300 on 1.26.4 and 44 (wrapped) on 2.5.4 for level 200; and `np.float32(level) * gain` plus a float32 running total: results differ at the sixth decimal (24.69134 versus 24.691339). The release notes say only that NEP 50 type promotion was adopted and "can lead to changes in output dtypes and lower precision results for mixed-dtype operations"; the specific values above were measured by us on these two versions, not quoted from the notes.
 - Validation: VALID; the new library differs on 4 of 4 visible and 4 of 5 hidden probes (the fifth is an empty device list); known_good accepted; known_bad `flag_equals_one`, `wrap_mod_256` and `total_still_float32` rejected at visible, `not_zero_string` at hidden.
+
+## Measurements p8 and n9 (counted, effort low, 5 runs per cell, one-shot, re-scored at seed 1)
+- p8: muse-spark-1.3 5/5, first try 5, avg 3125 tokens; muse-wonder-1.0 5/5, 5, 2354; muse-glimmer (local) 5/5, 5, 2495.
+- n9: muse-spark-1.3 5/5, first try 5, avg 3149; muse-wonder-1.0 5/5, 5, 2515; muse-glimmer (local) 3/5, first try 2, avg 5222.
+- All 28 solved runs re-scored PASS. Model patches not read; token counts only.

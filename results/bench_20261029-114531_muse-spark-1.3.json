@@ -1,0 +1,153 @@
+[
+  {
+    "case": "p8_session_report_three_breaks",
+    "model": "muse-spark-1.3",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 5,
+    "avg_tokens": 3125,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": null,
+      "local_server": null,
+      "max_tokens": null
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3342,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 broke three things: datetime64 inferred as ms/s so astype(int64)//1e9 no longer equals seconds, copy-on-write makes df[\"flag\"][big]=... a no-op, and the new string dtype stores None as NA/NaN so v is None is never true.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-114532_p8_session_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3074,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 infers datetime64[us] so astype(int64)//1e9 truncates epochs by 1000x, Copy-on-Write makes chained df[\"flag\"][big] assignment a no-op, and None notes become NaN so v is None misses them.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-114551_p8_session_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3213,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 changed datetime unit from ns to us (breaking //1e9 epoch calc), enabled copy-on-write (breaking df[\"flag\"][big]=) and uses NA/NaN for None strings (breaking v is None).",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-114607_p8_session_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3038,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers non-nano datetime resolution so `astype(int64)//1e9` no longer yields seconds, enforces Copy-on-Write so chained `df[\"flag\"][big]=` stops mutating, and infers string dtype so `None` becomes NaN and `v is None` misses.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-114625_p8_session_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2959,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 enables copy-on-write so chained assignment `df[\"flag\"][big]=` no longer writes, infers non-nano datetime resolution so `astype(int64)//1e9` is unit-dependent, and stores None as NaN/NA so `v is None` misses.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-114641_p8_session_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 135,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  }
+]

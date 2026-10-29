@@ -4,7 +4,7 @@ Agent that proposes and verifies patches for Python code that broke silently aft
 **At a glance**
 
 - A patch is accepted only if it passes three gates: the visible tests, hidden tests the model never sees, and a differential check against the old library.
-- Ten cases (pandas 2.3 to 3.0, NumPy 1.26 to 2.x): nine synthetic ones derived from documented library changes and one (p7) built around a function copied from the open-source project scikit-FIBERS; not tried on whole real repositories.
+- Twelve cases (pandas 2.3 to 3.0, NumPy 1.26 to 2.x): eleven synthetic ones derived from documented library changes and one (p7) built around a function copied from the open-source project scikit-FIBERS; not tried on whole real repositories.
 - Hosted Muse Spark and Muse Wonder solved 125 of 125 runs on five cases; on the hardest one (p4), Spark 0 of 5 and Wonder 3 of 5. Muse Glimmer running locally solved 19 of 30 runs on six cases (low reasoning).
 - All runs were made on one Apple M2 Ultra Mac; no other platform was tested.
 
@@ -68,7 +68,7 @@ The runner (`patchpilot/*.py`) imports only the Python standard library, includi
 Cases n6/n7 use `.sandboxes/np126` and `.sandboxes/np2`. Benchmark runner: `python -m patchpilot.bench --help`.
 
 ## Limitations
-Nine of ten cases are synthetic and one (p7) contains code copied from one real open-source project; PatchPilot has not been tried on whole real repositories. Sample sizes in `results/` are small (1 to 5 runs per case and setting; the first three files have 3 runs per case, one smoke test has 1), so they show direction only. Only token counts were recorded, no dollar cost per run. The first two bench files and earlier runs ran without the differential gate (see the engineering log).
+Eleven of twelve cases are synthetic and one (p7) contains code copied from one real open-source project; PatchPilot has not been tried on whole real repositories. Sample sizes in `results/` are small (1 to 5 runs per case and setting; the first three files have 3 runs per case, one smoke test has 1), so they show direction only. Only token counts were recorded, no dollar cost per run. The first two bench files and earlier runs ran without the differential gate (see the engineering log).
 Not tested or not measured: dollar cost and run time of hosted calls (not recorded), Linux and other non-macOS platforms, memory inspection tools (`lldb`, `vmmap`, `gcore`), other same-user processes that hold secrets, external network, real open-source projects, Muse Spark Open and other open-weight models, other quantizations of Muse Glimmer, reasoning levels of Glimmer other than low and medium (medium on four cases only), hosted effort levels other than low (one minimal-effort batch), a tools run with a larger token budget and tools mode with a local endpoint.
 
 Engineering log and technical notes: [`docs/engineering-log.md`](docs/engineering-log.md), [`docs/training-notes.jsonl`](docs/training-notes.jsonl).
@@ -182,6 +182,19 @@ p7_censor_chained_iloc contains the function `censor` copied verbatim from the o
 | muse-wonder-1.0 | 5/5 | 5 | 2760 | `bench_20261029-084952_muse-wonder-1.0.json` |
 | muse-glimmer (local) | 5/5 | 5 | 2502 | `bench_20261029-085203_muse-glimmer_local.json` |
 
+### Results on p8 and n9 (three silent breaks in one function)
+
+p8_session_report_three_breaks (pandas) and n9_fleet_report_three_breaks (NumPy) each combine three documented changes in one function (see `docs/CASES.md`). One-shot, effort low (Glimmer: reasoning strength low), 5 runs per cell, re-scored at seed 1. All 20 hosted runs were solved on the first attempt and passed the re-scored differential, so combining three breaks did not make these cases harder for the hosted models. Glimmer solved p8 5/5 and n9 3/5. Token counts only. The model patches were not read.
+
+| case | model | solved | first try | avg tokens per run | file |
+|---|---|---|---|---|---|
+| p8 | muse-spark-1.3 | 5/5 | 5 | 3125 | `bench_20261029-114531_muse-spark-1.3.json` |
+| p8 | muse-wonder-1.0 | 5/5 | 5 | 2354 | `bench_20261029-114656_muse-wonder-1.0.json` |
+| p8 | muse-glimmer (local) | 5/5 | 5 | 2495 | `bench_20261029-114846_muse-glimmer_local.json` |
+| n9 | muse-spark-1.3 | 5/5 | 5 | 3149 | `bench_20261029-115304_muse-spark-1.3.json` |
+| n9 | muse-wonder-1.0 | 5/5 | 5 | 2515 | `bench_20261029-115408_muse-wonder-1.0.json` |
+| n9 | muse-glimmer (local) | 3/5 | 2 | 5222 | `bench_20261029-115707_muse-glimmer_local.json` |
+
 ## Tools mode (experimental, p4 only)
 
 `--tools` lets the model call `run_tests` and `run_probe` during an attempt (one conversation per attempt, at most 12 tool calls, and the same 60000-token run budget, which is checked only before each model call and was exceeded in several runs). `run_probe` runs inputs chosen by the model through the original code on the old library and through the candidate on the new library; it is an oracle for the original behavior on those inputs. The gate is unchanged and is not available to the model.
@@ -198,7 +211,7 @@ Same setting without tools (table above): spark 0/5 (avg 21230 tokens), wonder 3
 
 ## Benchmark cases
 
-Nine of the ten cases are **synthetic**: small programs written for this project and derived from library release notes and from running both versions. p7 is different: the function `censor` is copied verbatim from the open-source project scikit-FIBERS (MIT license, commit 356c6d5, notice in `docs/THIRD_PARTY_NOTICES.md`); the wrapper, tests and inputs that grade it were written for this project. Each case keeps its recorded inputs (`inputs.json`, `golden.json`), held-out inputs that are never shown to the model (`hidden_inputs.json`, `hidden_golden.json`), a `known_good.json` patch and `known_bad/` patches. Golden outputs come from the OLD library version.
+Eleven of the twelve cases are **synthetic**: small programs written for this project and derived from library release notes and from running both versions. p7 is different: the function `censor` is copied verbatim from the open-source project scikit-FIBERS (MIT license, commit 356c6d5, notice in `docs/THIRD_PARTY_NOTICES.md`); the wrapper, tests and inputs that grade it were written for this project. Each case keeps its recorded inputs (`inputs.json`, `golden.json`), held-out inputs that are never shown to the model (`hidden_inputs.json`, `hidden_golden.json`), a `known_good.json` patch and `known_bad/` patches. Golden outputs come from the OLD library version.
 
 | case | library change (old -> new) | what silently changes |
 |---|---|---|
@@ -212,8 +225,10 @@ Nine of the ten cases are **synthetic**: small programs written for this project
 | p6_str_dtype_checks | pandas 2.3.3 -> 3.0.6 | string columns become `str` dtype (`dtype == object` is False), missing values are NaN, not None |
 | n8_string_to_bool | NumPy 1.26.4 -> 2.5.4 | `astype(bool)` on strings: non-empty means True, so "0" becomes True |
 | p7_censor_chained_iloc | pandas 2.3.3 -> 3.0.6 | chained `df['Censoring'].iloc[i] = v` in scikit-FIBERS `censor`: the write is lost, so the `Censoring` column is not updated |
+| p8_session_report_three_breaks | pandas 2.3.3 -> 3.0.6 | three breaks in one function: epoch seconds 1000x smaller, chained assignment, None versus NaN |
+| n9_fleet_report_three_breaks | NumPy 1.26.4 -> 2.5.4 | three breaks in one function: string to bool, uint8 wrap-around, float32 promotion |
 
-p5, p6 and n8 are our own reproductions derived from documented behavior changes (pandas 3.0.0 and NumPy 2.0.0 release notes), not incidents from real projects; the sources and their caveats are in `docs/CASES.md`. For p2, p3 and p4 no real project incident was found either.
+p5, p6, n8, p8 and n9 are our own reproductions derived from documented behavior changes (pandas 3.0.0 and NumPy 2.0.0 release notes; the uint8 and float32 values in n9 were measured by us, see `docs/CASES.md`), not incidents from real projects; the sources and their caveats are in `docs/CASES.md`. For p2, p3 and p4 no real project incident was found either.
 
 A case is counted only if `python -m patchpilot.validate_case benchmarks/<case>` reports it valid (old OK, new silently broken, tests green on both, hidden inputs break too, known-good patch accepted, known-bad patches rejected).
 

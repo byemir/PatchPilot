@@ -1,0 +1,153 @@
+[
+  {
+    "case": "n9_fleet_report_three_breaks",
+    "model": "muse-wonder-1.0",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 5,
+    "avg_tokens": 2515,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": null,
+      "local_server": null,
+      "max_tokens": null
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2326,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 (NEP 50 and string-to-bool change) altered app.py: np.array(['0']).astype(bool) is now True for a non-empty string instead of parsing it numerically, uint8 + Python int now stays uint8 and wraps past 255, and float32 * Python float now stays float32 instead of promoting, losing precision. Using version-independent Python numeric parsing and arithmetic restores the intended semantics on both versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 155,
+          "core_divergences": 0,
+          "wide_divergences": 12
+        },
+        "run_dir": "runs/20261029-115409_n9_fleet_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 149,
+          "core_divergences": 0,
+          "wide_divergences": 14,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2383,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 NEP 50 keeps Python scalars weak, so uint8+100 wraps modulo 256 and float32*gain stays float32 (losing precision), and string-to-bool astype now treats '0' as a non-empty true string; all were promoted/parsed differently in 1.26.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 155,
+          "core_divergences": 0,
+          "wide_divergences": 12
+        },
+        "run_dir": "runs/20261029-115432_n9_fleet_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 149,
+          "core_divergences": 0,
+          "wide_divergences": 14,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2437,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 (NEP 50) changed scalar semantics: string-to-bool now treats \"0\" as True, uint8 + Python int stays uint8 and wraps past 255, and float32 * Python float stays float32 losing precision. Performing flag parsing, addition, and scaling in pure Python int/float gives identical float64/int results on both versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 155,
+          "core_divergences": 0,
+          "wide_divergences": 12
+        },
+        "run_dir": "runs/20261029-115459_n9_fleet_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 149,
+          "core_divergences": 0,
+          "wide_divergences": 14,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2831,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 NEP 50 changes broke three assumptions: np.uint8 scalar + int now wraps at 8 bits instead of promoting, np.float32 scalar * Python float now stays float32 instead of promoting to float64, and string-to-bool astype no longer parses \"0\" as False. Fix by doing flag parsing, addition, and scaling in explicit Python float/int arithmetic, which is version-independent.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 155,
+          "core_divergences": 0,
+          "wide_divergences": 12
+        },
+        "run_dir": "runs/20261029-115519_n9_fleet_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 149,
+          "core_divergences": 0,
+          "wide_divergences": 14,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2598,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 (NEP 50 and string-to-bool change) altered silent semantics: np.array(['0']).astype(bool) now yields True for any non-empty string instead of parsing the number, uint8 + Python int now stays uint8 and wraps modulo 256 instead of promoting, and float32 * Python float now stays float32 instead of promoting to float64, losing precision. Using explicit Python float/int parsing and arithmetic restores the version-independent intended behavior.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 155,
+          "core_divergences": 0,
+          "wide_divergences": 12
+        },
+        "run_dir": "runs/20261029-115644_n9_fleet_report_three_breaks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 149,
+          "core_divergences": 0,
+          "wide_divergences": 14,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  }
+]
