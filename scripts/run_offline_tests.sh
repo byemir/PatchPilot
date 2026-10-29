@@ -7,6 +7,7 @@ tests=(
   "patchpilot.local_test"
   "patchpilot.tools_test"
   "patchpilot.make_case_test"
+  "patchpilot.repair_test"
   "patchpilot.isolation_test"
   "patchpilot.negative_test benchmarks/n8_string_to_bool"
 )
