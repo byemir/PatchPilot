@@ -59,3 +59,22 @@ Our own reproduction (not project code). `fleet_report` combines three NumPy 2 c
 - p8: muse-spark-1.3 5/5, first try 5, avg 3125 tokens; muse-wonder-1.0 5/5, 5, 2354; muse-glimmer (local) 5/5, 5, 2495.
 - n9: muse-spark-1.3 5/5, first try 5, avg 3149; muse-wonder-1.0 5/5, 5, 2515; muse-glimmer (local) 3/5, first try 2, avg 5222.
 - All 28 solved runs re-scored PASS. Model patches not read; token counts only.
+
+## Third-party cases (separate from the synthetic cases above)
+
+Chosen by the rules in `docs/REAL_CASES_PROTOCOL.md` and validated with `patchpilot.validate_case` before any model saw them. The function body is copied verbatim by `scripts/build_real_case.py` (ast) from the parent of the merge commit of the upstream pull request that fixed it. The adapter (JSON in, JSON out), the inputs, the known-good patch and the known-bad patch are ours and are marked as such. Licenses are in `docs/THIRD_PARTY_NOTICES.md`.
+
+Documented change (pandas 3.0.0 release notes, `doc/source/whatsnew/v3.0.0.rst` at tag v3.0.0, section "Datetime/timedelta resolution inference", anchor `whatsnew_300.api_breaking.datetime_resolution_inference`):
+
+> The new default resolution when parsing strings is microseconds, falling back to nanoseconds when the precision of the string requires it.
+
+> One big exception is converting to integers, which will give integers 1000x smaller.
+
+Both cases below are the same class of change (datetime64[ns] became datetime64[us], integer conversion is 1000x smaller). They are two real examples of one mechanism, not two mechanisms.
+
+| case | upstream | license | function | code taken from | fixed by |
+|---|---|---|---|---|---|
+| `r1_indsl_time_split` | https://github.com/cognitedata/indsl | Apache-2.0 | `_split_timeseries_into_time_and_value_arrays` in `indsl/data_quality/outliers.py` | parent fab55f6dfa82 | PR 639 (https://github.com/cognitedata/indsl/pull/639), merge 5ec4a2ed4f |
+| `r2_kythera_epoch_seconds` | https://github.com/ziagl888/Kythera | MIT | `panel_to_compact` in `tools/breadth_study.py` | parent d0ff0159d9ae | PR 229 (https://github.com/ziagl888/Kythera/pull/229), merge e3181d5aeb |
+
+Validation (`validate_case`, run 2026-10-29): both VALID, failed_gates=[], naive_passes_visible=False, known_good accepted, known_bad `hardcode_microseconds` rejected at the visible gate.

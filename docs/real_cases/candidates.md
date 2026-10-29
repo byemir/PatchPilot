@@ -272,3 +272,9 @@ Code read at the parent of the merge commit (`gh api .../contents/PATH?ref=SHA^`
 | Q3#29 | pastas/pastas#1269 | rejected | C3: the fix touches ten files and class methods (Model.residuals); the module-level get_sample at the parent commit is not affected |
 | Q6#3 | mazino2d/caketool#16 | rejected | C3: FeatureEncoder is an sklearn transformer using a project helper (caketool.utils.lib_utils.get_class) |
 | Q6#5 | capitalone/locopy#389 | rejected | C3: find_column_type_pandas uses pyarrow (pa.types) and the module logger |
+
+## Accepted after reading the code and building the case
+
+- Q3#28 cognitedata/indsl#639: ACCEPTED as `benchmarks/r1_indsl_time_split` (validate_case VALID, 2026-10-29).
+- Q3#30 ziagl888/Kythera#229: ACCEPTED as `benchmarks/r2_kythera_epoch_seconds` (validate_case VALID, 2026-10-29). In the same pull request `coin_arrays` was rejected: it needs a database connection (C3).
+- Count of third-party cases: 2 (target was 3; a third needs Amendment 2, not applied).
