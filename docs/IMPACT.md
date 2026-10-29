@@ -20,7 +20,7 @@ Of those hits, twelve finalists were read in detail (`docs/real_cases/candidates
 
     python -m patchpilot.repair my_module.py my_function --inputs probes.json --lib pandas --endpoint http://127.0.0.1:8080/v1
 
-One function in one file, your own inputs, a local open-weight model, a patch that has passed three gates and a diff you review before `--apply`. The example function `examples/own_function/subject_dropout.py` is also the benchmark case o3 (README, "Results on o1, o2 and o3"); the one-command tool itself has been run end to end only offline with a scripted model reply (`repair_test`) and, on an earlier example that is no longer in the repository, with the local model. An earlier measurement was made on a function from another project that is no longer in the repository and is not quoted here.
+One function in one file, your own inputs, a local open-weight model, a patch that has passed three gates and a diff you review before `--apply`. The example function `examples/own_function/subject_dropout.py` is also the benchmark case o3 (README, "Results on o1, o2 and o3"); the one-command tool was run end to end once on it with the local model: accepted on the first attempt, 2025 tokens, 32 s for the repair (one run, not a rate). An earlier measurement was made on a function from another project that is no longer in the repository and is not quoted here.
 
 ## What this does not show
 
