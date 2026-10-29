@@ -255,3 +255,5 @@ Used in `benchmarks/r2_kythera_epoch_seconds`. Source: https://github.com/ziagl8
     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
+
+The same upstream functions (same licenses as above) are also used in `benchmarks/r1f_indsl_time_split` and `benchmarks/r2f_kythera_epoch_seconds`.
