@@ -1,0 +1,22 @@
+[
+ {
+  "n_subjects": 10,
+  "dropout_rate": 0.3,
+  "seed": 1
+ },
+ {
+  "n_subjects": 25,
+  "dropout_rate": 0.2,
+  "seed": 7
+ },
+ {
+  "n_subjects": 40,
+  "dropout_rate": 0.5,
+  "seed": 3
+ },
+ {
+  "n_subjects": 8,
+  "dropout_rate": 0.25,
+  "seed": 11
+ }
+]

@@ -1,0 +1,5 @@
+{
+ "files": {
+  "app.py": "\"\"\"Example function for `patchpilot.repair` (written for this project). It marks a share of subjects as dropped out,\nwith a seeded random choice, and writes the flags with a chained assignment. That works on pandas 2.3 and does\nnothing on pandas 3.0 (copy-on-write): the flags stay 1 and no error is raised.\"\"\"\nimport random\n\nimport pandas as pd\n\n\ndef mark_dropouts(n_subjects, dropout_rate, seed):\n    table = pd.DataFrame({\"subject\": list(range(n_subjects)), \"observed\": [1] * n_subjects})\n    rng = random.Random(seed)\n    n_drop = int(round(n_subjects * dropout_rate))\n    for position in rng.sample(range(n_subjects), n_drop):\n        table.iloc[position, table.columns.get_loc(\"observed\")] = 0\n    return {\"subjects\": table[\"subject\"].tolist(), \"observed\": table[\"observed\"].tolist()}\n"
+ }
+}

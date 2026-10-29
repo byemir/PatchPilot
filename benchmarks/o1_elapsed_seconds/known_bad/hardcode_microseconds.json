@@ -1,0 +1,6 @@
+{
+ "files": {
+  "app.py": "\"\"\"Own code (written for this project): elapsed time of a sampled signal.\"\"\"\nimport numpy as np\nimport pandas as pd\n\n\ndef elapsed_seconds(timestamps, values):\n    \"\"\"Seconds since the first sample for every sample, together with the values as floats.\"\"\"\n    index = pd.DatetimeIndex(pd.to_datetime(timestamps))\n    ticks = np.array(index, dtype=np.int64)\n    seconds = (ticks - ticks[0]) / 1e6\n    return {\"seconds\": [round(float(s), 6) for s in seconds], \"values\": [float(v) for v in values]}\n"
+ },
+ "note": "assumes the new microsecond unit: right on the new library, wrong on the old one"
+}

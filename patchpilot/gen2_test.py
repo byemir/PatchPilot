@@ -1,13 +1,10 @@
-"""Generator v2 checks (no model call): aligned lists, date-aware strings, version switch, and one re-score of a recorded patch.
+"""Generator v2 checks (no model call): aligned lists, date-aware strings, version switch, and a constructed version-branching patch.
 
     python -m patchpilot.gen2_test
 """
 from __future__ import annotations
 
 import json
-import shutil
-import subprocess
-import tempfile
 from pathlib import Path
 
 from patchpilot import differential
@@ -37,20 +34,13 @@ check("v2: fractional seconds of 3, 6 and 9 digits all occur",
 check("v2: deterministic for a seed", generate(seeds, n=50, seed=3, v2=True) == generate(seeds, n=50, seed=3, v2=True))
 
 repo = Path(__file__).resolve().parents[1]
-rec = json.loads((repo / "docs" / "real_cases" / "results_scoped_20261029.json").read_text())
-bad = next(r for r in rec if r["case"].startswith("r2f") and "Version(" in r["patch_diff"])  # branches on the pandas version
-case = repo / "benchmarks" / bad["case"]
+case = repo / "benchmarks" / "o2_bars_epoch_seconds"
 cfg = json.loads((case / "case.json").read_text())
-tmp = Path(tempfile.mkdtemp())
-try:
-    shutil.copy(case / "app.py", tmp / "app.py")
-    (tmp / "p.diff").write_text(bad["patch_diff"])
-    subprocess.run(["patch", "-s", "-p1", "-d", str(tmp), "-i", "p.diff"], check=True)
-    files = {"app.py": (tmp / "app.py").read_text()}
-    d1 = differential.differential(case, str(repo / cfg["old"]), str(repo / cfg["new"]), files, gen=1)
-    d2 = differential.differential(case, str(repo / cfg["old"]), str(repo / cfg["new"]), files)
-finally:
-    shutil.rmtree(tmp, ignore_errors=True)
-check("recorded version-sniffing patch: generator 1 cannot judge it (WEAK)", d1["verdict"] == "WEAK" and d1["gen"] == 1, str(d1)[:200])
-check("recorded version-sniffing patch: generator 2 (from case.json) rejects it", d2["verdict"] == "DIVERGENCE" and d2["gen"] == 2, str(d2)[:200])
+bad = json.loads((case / "known_bad" / "branch_on_version.json").read_text())["files"]  # divides by 10**6 on pandas 3
+d1 = differential.differential(case, str(repo / cfg["old"]), str(repo / cfg["new"]), bad, gen=1)
+d2 = differential.differential(case, str(repo / cfg["old"]), str(repo / cfg["new"]), bad)
+check("version-branching patch: generator 1 records its version and valid-probe count", d1["gen"] == 1 and d1["valid"] > 0, str(d1)[:200])
+check("version-branching patch: generator 2 (from case.json) is rejected with more valid probes",
+      d2["verdict"] == "DIVERGENCE" and d2["gen"] == 2 and d2["valid"] > d1["valid"], str(d2)[:200])
+check("version-branching patch: generator 2 finds divergences on wide (nanosecond) inputs", d2.get("wide_divergences", 0) > 0, str(d2)[:200])
 print(f"gen2_test: {passed} checks passed")

@@ -1,0 +1,1223 @@
+[
+  {
+    "case": "o1_elapsed_seconds",
+    "model": "muse-glimmer",
+    "effort": "low",
+    "runs": 15,
+    "successes": 15,
+    "first_try": 14,
+    "avg_tokens": 1543,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "local_server": {
+        "build_info": "b11960-8642541b2",
+        "model_file": "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf",
+        "served_models": [
+          "muse-glimmer"
+        ]
+      },
+      "max_tokens": 12000
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1304,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed the int64 representation of a DatetimeIndex so `np.array(index, dtype=np.int64)` no longer yields nanoseconds consistently, causing the manual `/ 1e9` conversion to be off by 1000x. Using the TimedeltaIndex API `total_seconds()` gives the same wall-clock seconds on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 143,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-191803_o1_elapsed_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1541,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 DatetimeIndex values exposed via np.array are in a different time unit (microseconds) so dividing the raw int64 ticks by 1e9 yields values 1000\u00d7 too small. Using pandas' own time delta API avoids the unit assumption.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 143,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-191830_o1_elapsed_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1381,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the DatetimeIndex values exposed via np.array(index, dtype=np.int64) changed their unit from nanoseconds to microseconds, so dividing by 1e9 now yields values 1000\u00d7 too small. Using pandas Timedelta arithmetic via .total_seconds() gives correct seconds independent of the internal storage unit.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 143,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-191903_o1_elapsed_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1458,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the integer representation of a DatetimeIndex changed, so `np.array(index, dtype=np.int64)` no longer yields nanosecond ticks; dividing by 1e9 therefore produces wrong values. Using pandas' own timedelta arithmetic gives stable seconds across versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 143,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-191930_o1_elapsed_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1496,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed the integer representation exposed by converting a DatetimeIndex to a NumPy int64 array, so the manual `(ticks - ticks[0]) / 1e9` calculation no longer yields seconds. Using the public `.total_seconds()` API is stable across pandas versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 143,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-192000_o1_elapsed_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1366,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed the internal integer representation used when a DatetimeIndex is cast to np.int64, so the manual `np.array(index, dtype=np.int64)` / 1e9 calculation now yields values in a different unit. Using pandas' own Timedelta arithmetic is stable across versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 143,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-192032_o1_elapsed_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1430,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the int64 view of a DatetimeIndex no longer represents nanoseconds, so `np.array(index, dtype=np.int64)/1e9` yields seconds that are 1000\u00d7 too small. Using pandas' own timedelta arithmetic avoids the unit assumption.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 143,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-192059_o1_elapsed_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 2962,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the int64 view of a DatetimeIndex changed its time unit, so `np.array(index, dtype=np.int64)` no longer yields nanoseconds; dividing by 1e9 now produces values 1000\u00d7 too small. Using pandas' own Timedelta arithmetic gives seconds independent of the internal representation.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 143,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-192128_o1_elapsed_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1686,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3.0 changed the integer representation / dtype used when converting a DatetimeIndex to a NumPy int64 array, so the manual `ticks / 1e9` scaling is no longer correct. Using pandas' own Timedelta total_seconds() gives a version-stable seconds value.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 143,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-192221_o1_elapsed_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1409,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed the dtype/size of the underlying int64 representation obtained via np.array(DatetimeIndex, dtype=np.int64), so dividing by 1e9 no longer yields seconds. Using pandas' own Timedelta arithmetic is stable across versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 143,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-192300_o1_elapsed_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1335,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3.0 changed the internal epoch resolution used when converting a DatetimeIndex to int64, so the manual `np.array(index, dtype=np.int64)` / 1e9 computation now yields values that are 1000\u00d7 too small. Using pandas' own timedelta arithmetic avoids the version-dependent int representation.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 143,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-192328_o1_elapsed_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1322,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the conversion of a DatetimeIndex to int64 via `np.array(index, dtype=np.int64)` changed the underlying time unit, so dividing by 1e9 no longer yields seconds. Using pandas' own time delta API makes the computation version-stable.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 143,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-192354_o1_elapsed_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1452,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the int64 representation of a DatetimeIndex changed resolution from nanoseconds to microseconds, so dividing the raw int64 ticks by 1e9 now yields seconds/1000. Using the Timedelta arithmetic provided by pandas avoids relying on the internal tick unit.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 143,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-192420_o1_elapsed_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1675,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the NumPy array view of a DatetimeIndex no longer yields raw nanosecond int64 values that the code assumes, so `(ticks - ticks[0]) / 1e9` under-scales the elapsed time by ~1000\u00d7. Using pandas' own timedeltas avoids relying on the internal int representation.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 143,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-192449_o1_elapsed_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1322,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed the internal integer representation/unit used by np.array(DatetimeIndex, dtype=np.int64), so dividing the raw int64 ticks by 1e9 no longer yields seconds. Using pandas' own Timedelta arithmetic gives correct seconds on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 143,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-192526_o1_elapsed_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 15
+  },
+  {
+    "case": "o2_bars_epoch_seconds",
+    "model": "muse-glimmer",
+    "effort": "low",
+    "runs": 15,
+    "successes": 15,
+    "first_try": 15,
+    "avg_tokens": 1849,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "local_server": {
+        "build_info": "b11960-8642541b2",
+        "model_file": "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf",
+        "served_models": [
+          "muse-glimmer"
+        ]
+      },
+      "max_tokens": 12000
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2020,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed the internal resolution used when astype('int64') is applied to a datetime64 column; the column is now up-sampled to microseconds so `astype('int64') // 10**9` yields seconds/1000 instead of seconds. Computing epoch seconds via an explicit `datetime64[s]` cast is resolution independent.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 132,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-192551_o2_bars_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1885,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 `Series.astype('int64')` on a datetime64 column no longer yields nanoseconds; the resulting integer scale changed so `// 10**9` produces milliseconds-derived values (\u2248 /1000). Using a version-stable conversion to epoch seconds via `.dt.timestamp()` avoids the unit assumption.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 132,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-192640_o2_bars_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1693,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed the internal datetime resolution handling so `astype('int64')` no longer yields nanoseconds for the column, causing the `// 10**9` conversion to produce millisecond-scale values ~1e6 instead of seconds ~1e9. Converting explicitly to `datetime64[s]` before casting to int64 makes the epoch-second result independent of the underlying resolution.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 132,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-192722_o2_bars_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1801,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the datetime dtype default resolution changed so `astype('int64')` on a datetime column no longer yields nanoseconds but a coarser unit (e.g. microseconds). Dividing by 1e9 therefore produces seconds/1000. Forcing the column to `datetime64[ns]` before casting to int64 restores nanosecond epoch values on both old and new pandas.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 132,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-192758_o2_bars_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2118,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 changed the internal unit for datetime64 so astype('int64') no longer yields nanoseconds; dividing by 1e9 therefore produces microsecond-scaled values (~1000\u00d7 too small). Using an explicit datetime64[s] cast makes the epoch seconds computation independent of the library\u2019s default unit.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 132,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-192837_o2_bars_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1642,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.x `Series.astype('int64')` on a datetime64[ns] column no longer returns nanoseconds, so `// 10**9` yields a truncated value (effectively dividing by 10\u00b9\u00b2). Using a timestamp conversion that is independent of the internal integer representation restores correct epoch seconds on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 132,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-192927_o2_bars_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1882,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the internal datetime resolution changed, so `astype('int64')` no longer yields nanoseconds for the series and `//10**9` produces truncated/ microsecond-scaled values. Casting explicitly to `datetime64[s]` before converting to int gives stable epoch seconds across pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 132,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-193001_o2_bars_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2016,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the datetime64 resolution changed so `astype('int64')` on a datetime column no longer yields nanoseconds but a finer/coarser unit. Dividing the resulting int by 1e9 therefore produces epoch values scaled by ~1000. Converting explicitly to `datetime64[s]` before casting to int makes the epoch seconds stable across pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 132,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-193042_o2_bars_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1473,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the int64 cast of a datetime column no longer yields nanoseconds consistently, causing the nanosecond value to be interpreted as a smaller unit and the integer division by 1e9 to produce truncated epoch values. Converting the datetime column explicitly to second resolution before casting to int makes the epoch seconds stable across pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 132,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-193129_o2_bars_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1834,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the int64 view of a datetime64 column changed its unit handling so `astype('int64') // 1e9` no longer yields epoch seconds. Converting the datetime column explicitly to `datetime64[s]` before casting to int produces stable epoch seconds on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 132,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-193158_o2_bars_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2326,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3.0.6 changed the integer representation returned by astype('int64') on a datetime64 column from nanoseconds to microseconds, so //10**9 now yields milliseconds-scale epoch values ~1000\u00d7 too small. Detecting an implausibly small epoch and falling back to a microsecond divisor restores correct seconds on both old and new pandas.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 132,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-193238_o2_bars_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1835,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the internal representation / astype behavior for datetime64 changed so `frame[\"t\"].astype(\"int64\") // 10**9` no longer yields nanoseconds, producing millisecond-scale values. Using the public datetime accessor `dt.timestamp()` yields epoch seconds consistently across pandas versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 132,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-193335_o2_bars_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1683,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the internal integer representation of datetime64 changed resolution; `astype('int64')` now yields microseconds instead of nanoseconds, so `//10**9` produces milliseconds-truncated epoch values. Using a timestamp conversion that is resolution-independent restores correct epoch seconds on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 132,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-193415_o2_bars_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1753,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed the internal datetime resolution used by astype('int64'), so the integer values are no longer nanoseconds. Dividing by 1e9 therefore yields microsecond-scaled epochs (~1e6 instead of ~1e9). Forcing the column to datetime64[ns] before the int64 conversion restores nanosecond units and the //1e9 epoch calculation works identically on pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 132,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-193451_o2_bars_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1770,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 changed the integer representation of datetime64 so `astype('int64') // 10**9` no longer yields seconds consistently. Converting the datetime values explicitly to `datetime64[s]` before casting to int gives a stable epoch-seconds representation on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 132,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-193528_o2_bars_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 15
+  },
+  {
+    "case": "o3_subject_dropout",
+    "model": "muse-glimmer",
+    "effort": "low",
+    "runs": 15,
+    "successes": 15,
+    "first_try": 15,
+    "avg_tokens": 2055,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "local_server": {
+        "build_info": "b11960-8642541b2",
+        "model_file": "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf",
+        "served_models": [
+          "muse-glimmer"
+        ]
+      },
+      "max_tokens": 12000
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2116,
+        "hidden_checked": true,
+        "diagnosis": "The code uses chained assignment `table[\"observed\"].iloc[position] = 0`. With pandas 3.0 copy-on-write this chained set is a no-op and silently leaves `observed` all 1s, while pandas 2.3 mutated in place. Replacing the chained assignment with a single indexing operation on the DataFrame avoids copy-on-write and works on both versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-193606_o3_subject_dropout",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 141,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2088,
+        "hidden_checked": true,
+        "diagnosis": "The function uses chained assignment `table[\"observed\"].iloc[position] = 0` which is a SettingWithCopy pattern. Pandas 3.0 enables copy-on-write by default so the chained assignment modifies a temporary view and the original DataFrame stays unchanged, leaving all observed flags as 1. Replacing the chained assignment with a single indexing operation `table.loc[position, \"observed\"] = 0` writes directly to the DataFrame and works on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-193706_o3_subject_dropout",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 141,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2009,
+        "hidden_checked": true,
+        "diagnosis": "Chained assignment via `table['observed'].iloc[position] = 0` is a no-op under pandas 3.0 copy-on-write, so the `observed` column never gets zeroed. Use a single indexing operation to modify the frame in place.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-193800_o3_subject_dropout",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 141,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2027,
+        "hidden_checked": true,
+        "diagnosis": "Chained assignment via `table[\"observed\"].iloc[position] = 0` is a no-op under pandas 3.0 copy-on-write semantics, so the observed flags are never changed. Using a single indexing operation avoids the chained assignment and works on both pandas 2.3 and 3.0.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-193852_o3_subject_dropout",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 141,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2021,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 enables copy-on-write by default, so the chained assignment `table[\"observed\"].iloc[position] = 0` writes to a temporary view and does not modify the original DataFrame. Using a single indexing operation like `.loc` writes directly to the table and works on both pandas 2.3 and 3.0.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-193945_o3_subject_dropout",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 141,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2048,
+        "hidden_checked": true,
+        "diagnosis": "The function uses chained assignment `table['observed'].iloc[position] = 0` which is a view in pandas 2.3 but becomes a no-op under pandas 3.0 copy-on-write. Switching to a single indexing operation that writes through the DataFrame restores the mutation on both versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-194036_o3_subject_dropout",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 141,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1966,
+        "hidden_checked": true,
+        "diagnosis": "The function uses chained assignment `table[\"observed\"].iloc[position] = 0`. With pandas 3.0 copy-on-write enabled, the chained indexing returns a copy so the assignment is silently ignored, leaving all observed values as 1. Using direct indexed assignment avoids the chained view.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-194129_o3_subject_dropout",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 141,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2053,
+        "hidden_checked": true,
+        "diagnosis": "The function uses chained indexing `table[\"observed\"].iloc[position] = 0` which is a SettingWithCopy operation. Pandas 3.0 enables copy-on-write by default, so the assignment modifies a temporary view and the original DataFrame is left unchanged, leaving all observed flags as 1. Replacing the chained assignment with a direct indexed write via `.loc` or `.at` makes the mutation effective on both pandas 2.3 and 3.0.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-194219_o3_subject_dropout",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 141,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2127,
+        "hidden_checked": true,
+        "diagnosis": "The code uses chained assignment `table[\"observed\"].iloc[position] = 0`. On pandas 2.3 this mutates the original frame, but with copy-on-write enabled in pandas 3.0 the chained access returns a copy so the assignment is lost and `observed` stays all 1s. Replacing the chained set with a single-level indexed assignment avoids the copy-on-write no-op.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-194312_o3_subject_dropout",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 141,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1998,
+        "hidden_checked": true,
+        "diagnosis": "Chained assignment `table['observed'].iloc[position] = 0` is a no-op under pandas 3.0 copy-on-write, so the dropout flags are never set. Using a single-level indexed assignment writes the value reliably on both pandas 2.3 and 3.0.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-194406_o3_subject_dropout",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 141,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2048,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 enables copy-on-write by default so the chained assignment `table[\"observed\"].iloc[position] = 0` writes to a temporary view and is silently ignored, leaving all observed flags as 1. Using a single indexing operation avoids the chained assignment and works on both pandas 2.3 and 3.0.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-194457_o3_subject_dropout",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 141,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2015,
+        "hidden_checked": true,
+        "diagnosis": "The dropout marking uses chained assignment `table[\"observed\"].iloc[position] = 0`. Under pandas 3.0 copy-on-write this writes to a temporary view and is silently ignored, leaving all observed flags as 1. Using direct label-based indexing avoids the chained assignment.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-194550_o3_subject_dropout",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 141,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2127,
+        "hidden_checked": true,
+        "diagnosis": "The function uses chained indexing `table[\"observed\"].iloc[position] = 0`. With pandas 3.0 copy-on-write this chained assignment writes to a temporary view and never mutates the original DataFrame, so all observed flags stay 1. Replacing the chained assignment with a single-level indexer works on both pandas 2.3 and 3.0.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-194642_o3_subject_dropout",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 141,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2101,
+        "hidden_checked": true,
+        "diagnosis": "Chained indexing `table[\"observed\"].iloc[position] = 0` is a SettingWithCopy operation that silently fails under pandas 3.0 copy-on-write, so the observed flags remain 1. Using a single .loc/.at assignment writes directly to the DataFrame and works on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-194738_o3_subject_dropout",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 141,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2088,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 enables copy-on-write by default, so the chained assignment `table[\"observed\"].iloc[position] = 0` writes to a temporary view and is silently dropped. Using a single indexing operation avoids the chained assignment and works on both pandas 2.3 and 3.0.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-194833_o3_subject_dropout",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 141,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 15
+  }
+]

@@ -13,7 +13,7 @@ PD = (".sandboxes/pd23/bin/python", ".sandboxes/pd30/bin/python")
 NP = (".sandboxes/np126/bin/python", ".sandboxes/np2/bin/python")
 CASES = [
     ("benchmarks/p5_chained_assignment", "apply_discounts", "pandas", PD),
-    ("benchmarks/p7_censor_chained_iloc", "censor_records", "pandas", PD),
+    ("benchmarks/o3_subject_dropout", "mark_dropouts", "pandas", PD),
     ("benchmarks/n8_string_to_bool", "enabled_devices", "numpy", NP),
 ]
 

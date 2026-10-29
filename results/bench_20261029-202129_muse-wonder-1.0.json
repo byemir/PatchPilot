@@ -1,0 +1,455 @@
+[
+  {
+    "case": "o1_elapsed_seconds",
+    "model": "muse-wonder-1.0",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 5,
+    "avg_tokens": 1997,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": null,
+      "local_server": null,
+      "max_tokens": null
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2289,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 parses datetimes at microsecond resolution instead of nanosecond resolution, so the DatetimeIndex int64 ticks are microseconds; dividing those ticks by 1e9 therefore makes elapsed times 1000x too small.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 143,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-202131_o1_elapsed_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1939,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 infers microsecond (not nanosecond) resolution for pd.to_datetime/DatetimeIndex, so np.array(index, dtype=np.int64) yields microseconds and dividing by 1e9 makes seconds 1000x too small; the cast assumed nanosecond ticks.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 143,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-202155_o1_elapsed_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1725,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3, pd.to_datetime/DatetimeIndex no longer defaults to nanosecond resolution (it infers a coarser unit such as milliseconds), so casting to int64 no longer yields nanoseconds and dividing by 1e9 understates elapsed times. Compute elapsed time by dividing the TimedeltaIndex by one second, which is resolution-independent.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 143,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-202214_o1_elapsed_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2206,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 preserves the parsed datetime resolution (here microseconds) instead of always using nanoseconds as pandas 2 did, so np.array(index, dtype=np.int64) yields microseconds rather than nanoseconds and dividing by 1e9 makes elapsed times 1000x too small.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 143,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-202232_o1_elapsed_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1826,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3.0 changed the default/inferred datetime resolution from nanoseconds to microseconds, so np.array(index, dtype=np.int64) no longer yields nanoseconds and dividing by 1e9 makes elapsed times 1000x too small. Use Timedelta.total_seconds(), which is resolution-independent, instead of assuming the integer unit.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 143,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-202254_o1_elapsed_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  },
+  {
+    "case": "o2_bars_epoch_seconds",
+    "model": "muse-wonder-1.0",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 5,
+    "avg_tokens": 2114,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": null,
+      "local_server": null,
+      "max_tokens": null
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1753,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0, pd.to_datetime infers a coarser (microsecond) resolution instead of datetime64[ns], so .astype('int64') yields microseconds rather than nanoseconds and //10**9 truncates epoch seconds by 1000. Explicitly normalizing to datetime64[ns] before the int64 cast restores the same value on both versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 132,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-202314_o2_bars_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2470,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers a coarser datetime resolution (e.g. milliseconds) from ISO strings instead of pandas 2's nanoseconds, so astype('int64') no longer returns nanoseconds and dividing by 10**9 makes epoch seconds too small. Computing elapsed timedeltas and dividing by one second is resolution-independent on both versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 132,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-202337_o2_bars_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1972,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3, pd.to_datetime infers a coarser datetime resolution (e.g. microseconds) from ISO strings instead of nanoseconds, so astype('int64') yields values 1000x smaller and dividing by 10**9 truncates epoch seconds. Explicitly normalizing the timestamps to datetime64[ns] before the integer conversion restores resolution-independent behavior on both versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 132,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-202405_o2_bars_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1975,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3, pd.to_datetime no longer always returns datetime64[ns] (it infers a coarser resolution such as microseconds), so .astype('int64') no longer yields nanoseconds and dividing by 10**9 produces values 1000x too small. Explicitly converting to datetime64[ns] before the integer conversion restores nanoseconds on both pandas 2 and 3.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 132,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-202424_o2_bars_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2398,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 pd.to_datetime no longer defaults to nanosecond resolution (it uses microseconds/coarser inferred resolution), so frame['t'].astype('int64') yields microseconds rather than nanoseconds and dividing by 10**9 shrinks epoch seconds by 1000. Compute elapsed time with a Timedelta division instead, which is resolution-independent.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 132,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-202444_o2_bars_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  },
+  {
+    "case": "o3_subject_dropout",
+    "model": "muse-wonder-1.0",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 5,
+    "avg_tokens": 2221,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": null,
+      "local_server": null,
+      "max_tokens": null
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2298,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 copy-on-write, `table[\"observed\"].iloc[position] = 0` is a chained assignment that modifies a temporary copy, leaving the DataFrame unchanged. Use a single-step `.loc` assignment on the DataFrame itself, which works on both 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-202511_o3_subject_dropout",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 141,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2177,
+        "hidden_checked": true,
+        "diagnosis": "Chained assignment table[\"observed\"].iloc[position] = 0 operates on a temporary copy under pandas 3 copy-on-write, so the write is silently discarded; it must be a single .iloc/.loc assignment on the DataFrame itself.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-202556_o3_subject_dropout",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 141,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2231,
+        "hidden_checked": true,
+        "diagnosis": "The chained assignment table[\"observed\"].iloc[position] = 0 mutates a temporary copy under pandas 3.0 copy-on-write, so the original DataFrame is never updated. Assigning directly to the DataFrame with a single .iloc/.loc indexer updates it on both pandas 2.3 and 3.0.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-202640_o3_subject_dropout",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 141,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2233,
+        "hidden_checked": true,
+        "diagnosis": "The chained assignment table[\"observed\"].iloc[position] = 0 modifies a temporary copy under pandas 3.0 copy-on-write, so it is silently discarded, whereas pandas 2.3 modified the original frame. Assigning directly on the DataFrame mutates it on both versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-202720_o3_subject_dropout",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 141,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2168,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 copy-on-write, chained assignment table[\"observed\"].iloc[position] = 0 modifies a temporary copy and silently leaves the DataFrame unchanged. Assigning through the DataFrame's own .iloc indexer works on both 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 138,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-202802_o3_subject_dropout",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 141,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  }
+]

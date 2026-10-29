@@ -35,12 +35,12 @@ All 45 runs solved and re-scored PASS. These cases did not separate the three mo
 
 Result files: results/bench_20261029-0757*..0804* (hosted, six files) and results/bench_20261029-052208, -052424, -052806 (muse-glimmer_local).
 
-## p7_censor_chained_iloc (pandas 2.3 to 3.0), code from a real project
-- Source: the function `censor` and the import lines above it are copied verbatim (lines 1 to 5 and 226 to 245) from scikit-FIBERS, src/skfibers/simulators/SIM1.py at commit 356c6d5, MIT license (Copyright (c) 2023 Ryan Urbanowicz; text in docs/THIRD_PARTY_NOTICES.md). https://github.com/UrbsLab/scikit-FIBERS
-- Pattern: `df['Censoring'].iloc[index] = choice` (chained assignment). The project's issue #19 reports that under pandas 3 this write is lost; its fix commit ee81b24 replaces it with `df.loc[index, 'Censoring'] = choice` and removes the `pd.options.mode.chained_assignment = None` line from the simulators (issue closed by PR #20 on 2026-09-14, as read from the issue page).
-- Written by us: the wrapper `censor_records` (maps the seed to 1..1000 so every run is seeded; `censor` does not seed for 0 or None), the visible test, inputs, known_good and known_bad. The project's own tests were not used.
-- Validation: VALID; the new library (pandas 3.0.6) differs from the old (2.3.3) on 4 of 4 visible and 4 of 5 hidden probes (the fifth has censoring_frequency 0.0). known_bad: `chained_row` rejected at visible, `only_zero_writes` rejected at differential.
-- Measurements (effort low, 5 runs per model, re-scored at seed 1): muse-spark-1.3 5/5, first try 5, avg 3378 tokens; muse-wonder-1.0 5/5, 5, 2760; muse-glimmer (local) 5/5, 5, 2502. Model patches not compared with the project's fix.
+## o1_elapsed_seconds, o2_bars_epoch_seconds, o3_subject_dropout (pandas 2.3 to 3.0), code written by us
+- Source: the three functions were written for this project (`scripts/build_own_cases.py`; o3 is `examples/own_function/subject_dropout.py`). They replace earlier cases built from functions copied from three open-source projects, which were removed so that the repository contains no code from other projects.
+- o1 and o2: the documented change is the pandas 3.0 datetime resolution inference (release note quoted in the section on p1 and in `docs/IMPACT.md`): "One big exception is converting to integers, which will give integers 1000x smaller." o1 converts a `DatetimeIndex` with `np.array(index, dtype=np.int64)` and divides by 1e9; o2 converts a column with `astype("int64") // 10**9`. Both run without error and return numbers 1000x smaller.
+- o3: a seeded random choice (standard library `random`) of subjects to drop and a chained assignment `table["observed"].iloc[position] = 0`; on pandas 3 (copy-on-write) the write is lost and the flags stay 1. Same documented change as p5.
+- Validation (`validate_case`): all three VALID, known_good accepted. The new library differs from the old on 4 of 4 (o1), 3 of 3 (o2) and 4 of 4 (o3) visible probes and on all held-out probes (8 each, chosen from 141, 160 and 138 reproducible candidates; 113, 143 and 127 of those separate the libraries). known_bad: o1 `hardcode_microseconds` rejected at visible; o2 `hardcode_microseconds` at visible and `branch_on_version` at hidden (a constructed patch that divides by 10**6 on pandas 3: right for microsecond data, wrong for nanosecond input); o3 `chained_row` and `first_rows_only` at visible.
+- Measurements (effort low, re-scored at seed 1): muse-glimmer (local) 15 runs per case, 15/15 solved on each, first try 14, 15 and 15, avg tokens 1543, 1849 and 2055 (`results/bench_20261029-191802_muse-glimmer_local.json`); muse-spark-1.3 5 runs per case, all first try, avg 2120, 3099, 2130 (`bench_20261029-201532_muse-spark-1.3.json`); muse-wonder-1.0 5 per case, all first try, avg 1997, 2114, 2221 (`bench_20261029-202129_muse-wonder-1.0.json`). All 75 runs re-scored PASS. Patches not read; token counts only.
 
 ## p8_session_report_three_breaks (pandas 2.3.3 to 3.0.6), three silent breaks in one function
 Our own reproduction (not project code). `session_report` combines three documented pandas 3 changes, each changing a different part of the output:
@@ -60,21 +60,6 @@ Our own reproduction (not project code). `fleet_report` combines three NumPy 2 c
 - n9: muse-spark-1.3 5/5, first try 5, avg 3149; muse-wonder-1.0 5/5, 5, 2515; muse-glimmer (local) 3/5, first try 2, avg 5222.
 - All 28 solved runs re-scored PASS. Model patches not read; token counts only.
 
-## Third-party cases (separate from the synthetic cases above)
+## Real incidents (no code taken)
 
-Chosen by the rules in `docs/REAL_CASES_PROTOCOL.md` and validated with `patchpilot.validate_case` before any model saw them. The function body is copied verbatim by `scripts/build_real_case.py` (ast) from the parent of the merge commit of the upstream pull request that fixed it. The adapter (JSON in, JSON out), the inputs, the known-good patch and the known-bad patch are ours and are marked as such. Licenses are in `docs/THIRD_PARTY_NOTICES.md`.
-
-Documented change (pandas 3.0.0 release notes, `doc/source/whatsnew/v3.0.0.rst` at tag v3.0.0, section "Datetime/timedelta resolution inference", anchor `whatsnew_300.api_breaking.datetime_resolution_inference`):
-
-> The new default resolution when parsing strings is microseconds, falling back to nanoseconds when the precision of the string requires it.
-
-> One big exception is converting to integers, which will give integers 1000x smaller.
-
-Both cases below are the same class of change (datetime64[ns] became datetime64[us], integer conversion is 1000x smaller). They are two real examples of one mechanism, not two mechanisms.
-
-| case | upstream | license | function | code taken from | fixed by |
-|---|---|---|---|---|---|
-| `r1_indsl_time_split` | https://github.com/cognitedata/indsl | Apache-2.0 | `_split_timeseries_into_time_and_value_arrays` in `indsl/data_quality/outliers.py` | parent fab55f6dfa82 | PR 639 (https://github.com/cognitedata/indsl/pull/639), merge 5ec4a2ed4f |
-| `r2_kythera_epoch_seconds` | https://github.com/ziagl888/Kythera | MIT | `panel_to_compact` in `tools/breadth_study.py` | parent d0ff0159d9ae | PR 229 (https://github.com/ziagl888/Kythera/pull/229), merge e3181d5aeb |
-
-Validation (`validate_case`, run 2026-10-29): both VALID, failed_gates=[], naive_passes_visible=False, known_good accepted, known_bad `hardcode_microseconds` rejected at the visible gate.
+Candidates were chosen from GitHub pull requests and issues by the rules in `docs/REAL_CASES_PROTOCOL.md`; the log is `docs/real_cases/candidates.md`. Two candidates met all rules and were first built as benchmark cases from the upstream code (cognitedata/indsl pull request 639, ziagl888/Kythera pull request 229, both fixing the datetime-resolution change). Those cases and their results were removed from the repository so that it holds only our code; o1 and o2 above are our own functions for the same documented mechanism, not copies.

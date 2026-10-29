@@ -1,0 +1,6 @@
+{
+ "files": {
+  "app.py": "\"\"\"Own code (written for this project): price bars as compact arrays with epoch seconds.\"\"\"\nimport pandas as pd\n\n\ndef bars_to_epoch(times, close, volume):\n    \"\"\"Bars given as parallel lists (times as ISO strings) -> JSON-safe arrays with epoch seconds.\"\"\"\n    frame = pd.DataFrame({\"t\": pd.to_datetime(times), \"c\": close, \"v\": volume})\n    return {\n        \"t\": (frame[\"t\"].astype(\"int64\") // 10**6).tolist(),\n        \"c\": [float(x) for x in frame[\"c\"]],\n        \"v\": [float(x) for x in frame[\"v\"]],\n    }\n"
+ },
+ "note": "assumes the new microsecond unit: right on the new library, wrong on the old one"
+}

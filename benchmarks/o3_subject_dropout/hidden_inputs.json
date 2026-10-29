@@ -1,0 +1,42 @@
+[
+ {
+  "n_subjects": 8,
+  "dropout_rate": 0.5,
+  "seed": 10
+ },
+ {
+  "n_subjects": 40,
+  "dropout_rate": 0.294859,
+  "seed": 3
+ },
+ {
+  "n_subjects": 8,
+  "dropout_rate": 0.25,
+  "seed": 0
+ },
+ {
+  "n_subjects": 39,
+  "dropout_rate": 0.5,
+  "seed": 11
+ },
+ {
+  "n_subjects": 8,
+  "dropout_rate": 0.2,
+  "seed": 11
+ },
+ {
+  "n_subjects": 0,
+  "dropout_rate": 0.322972,
+  "seed": 3
+ },
+ {
+  "n_subjects": 0,
+  "dropout_rate": 0.3,
+  "seed": 1
+ },
+ {
+  "n_subjects": 0,
+  "dropout_rate": 0.2,
+  "seed": 1
+ }
+]

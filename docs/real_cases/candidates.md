@@ -1,5 +1,7 @@
 # Candidates (run 2 of the fixed queries)
 
+Note added later: the two accepted candidates (indsl#639, Kythera#229) were built as benchmark cases and the cases were then removed from the repository, so that it contains no code from other projects; the log below is kept unchanged as the search record, and wording such as "ACCEPTED as `benchmarks/r1_...`" refers to cases that no longer exist.
+
 168 distinct hits from docs/real_cases/search_20261029_run2; 75 passed the mechanical screen and are decided by hand below. Rules: `scripts/real_case_screen.py`. A hit found by several queries is listed once, at its first position.
 
 How to read this file: the table below has one row per hit (168 rows) with the mechanical screen decision. The next two sections hold later decisions on the same hits (75 rows for the hits marked `inspect`, then 11 rows after reading the code of the finalists), so the file has 254 table rows but 168 distinct hits. The last section lists the accepted cases.
