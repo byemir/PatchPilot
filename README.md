@@ -42,7 +42,7 @@ The numbers and patches behind the results can be read without running the bench
 All recorded runs were made on one Apple Silicon Mac (Apple M2 Ultra, macOS 26.6.2); no other platform was tested. The isolation layer uses `sandbox-exec`, which exists only on macOS.
 
 ## Setup
-Requires Python 3.12 (tested with 3.12.16). `PYTHON312` must point to a Python 3.12 interpreter; on the macOS machine used for development `python3.12` was not on `PATH`, so the path was passed explicitly. A fresh clone with this script built the four environments and reported all six cases valid. One command builds four pinned virtual environments under `.sandboxes/` and validates all cases:
+Requires Python 3.12 (tested with 3.12.16). `PYTHON312` must point to a Python 3.12 interpreter; on the macOS machine used for development `python3.12` was not on `PATH`, so the path was passed explicitly. A fresh clone with this script built the four environments and reported all six cases valid (the six cases that existed at that time; p5, p6 and n8 were added later and checked with `validate_case` in the same environments, the fresh-clone run was not repeated with them). One command builds four pinned virtual environments under `.sandboxes/` and validates all cases:
 
     PYTHON312=/path/to/python3.12 ./scripts/setup_envs.sh
 
