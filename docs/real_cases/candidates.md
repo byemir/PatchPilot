@@ -172,3 +172,85 @@
 | Q6#28 | [ludwig-ai/ludwig#4203](https://github.com/ludwig-ai/ludwig/pull/4203) fix: pandas 3 compatibility | PR | Apache-2.0 | inspect | passes the mechanical screen |
 | Q6#29 | [cram2/cognitive_robot_abstract_machine#597](https://github.com/cram2/cognitive_robot_abstract_machine/pull/597) Recognize pandas string dtype in infer_variables_from_dataframe | PR | LGPL-3.0 | rejected | C2: license LGPL-3.0 is not MIT/BSD/Apache |
 | Q6#30 | [guillermo-navas-palencia/optbinning#399](https://github.com/guillermo-navas-palencia/optbinning/issues/399) BinningProcess misclassifies string columns as numerical | issue | Apache-2.0 | inspect | passes the mechanical screen |
+
+## Decisions on the hits marked `inspect`
+
+Read in the order of the table above (first-seen position). `finalist` = needs the code at the parent of the fix commit before any decision on C3 and C5-C6; `open` = could not be decided from the pages; `(decided from the title)` = the page was not opened.
+
+| first seen | hit | decision | reason |
+|---|---|---|---|
+| Q1#3 | holoviz/panel#8904 | rejected | C1,C3: pandas 3.1 deprecations; several functions; bokeh and vega dependencies |
+| Q1#4 | catalyst-cooperative/pudl#5719 | rejected | C3: four modules, disjoint functions; failures described as errors |
+| Q1#5 | pmorissette/bt#576 | rejected | C6: the old code still gives the correct result, only a ChainedAssignmentError warning |
+| Q1#6 | Nixtla/datasetsforecast#115 | finalist | silent loss of clip(inplace=True) under copy-on-write; C3 open (class method PHM2008.load), needs the code |
+| Q1#7 | dtcenter/METplotpy#592 | rejected | C4: removes warning filters and unused code, no silent-result fix |
+| Q1#10 | catalyst-cooperative/pudl#5664 | rejected | C3: several PUDL-internal functions; pandas 3.0 attribution not shown |
+| Q1#11 | Alek050/databallpy#344 | open | issue body is empty, no fix pull request named; C4 cannot be verified yet |
+| Q1#15 | owid/etl#6994 | rejected | C3: migration across many ETL steps, not one function |
+| Q1#18 | catalyst-cooperative/pudl#5665 | finalist-weak | silent no-op of group.license_id_ferc1.update under copy-on-write; C3 open (PUDL internals), needs the code |
+| Q1#19 | RamonRDR/python-study-guide#73 | rejected | C4: teaching material, not a fix |
+| Q1#20 | salk-ee/salk_toolkit#82 | finalist | _reconcile_categories silently skipped str columns under pandas 3; C3 open, needs the code |
+| Q1#21 | dtcenter/METcalcpy#485 | rejected | C4: removes unused dependencies |
+| Q1#22 | jldbc/pybaseball#500 | finalist | chained replace(inplace=True) in team_results (FutureWarning on 2.x, silent no-op on 3.0); C3 open, needs the code |
+| Q1#23 | NicolasReyrolle/TrackTales#341 | rejected | C2,C3: license not stated; project-wide refactor issue |
+| Q1#25 | dgunning/edgartools#938 | rejected | C4: raises the Python floor |
+| Q2#4 | openvax/vaxrank#659 | rejected | C4: support-policy issue, no code |
+| Q2#6 | openvax/topiary#496 | rejected | C4: support-policy issue, no code |
+| Q2#8 | phenobarbital/querysource#637 | open | page shows commit titles only (transforms.py copy-on-write fix); code not visible |
+| Q2#9 | openvax/mhctools#611 | rejected | C4: support-policy issue, no code |
+| Q2#22 | lnccbrown/LANfactory#139 | rejected | C6: loud ValueError (read-only array) |
+| Q2#25 | openvax/topiary#509 | rejected | C4: dependency floor and test cleanup |
+| Q2#29 | eschombu/superleaf#4 | rejected | C4: requires pandas 3, performance change only |
+| Q3#2 | catalyst-cooperative/pudl#5721 | rejected | C3: four modules |
+| Q3#5 | pyjanitor-devs/pyjanitor#1801 | rejected | C1: pandas 3.1 resolution change, dates identical |
+| Q3#6 | stefan-jansen/zipline-reloaded#334 | rejected | C6: loud TypeError; several functions |
+| Q3#7 | stranske/Trend_Model_Project#6103 | rejected | C1: silent but caused by index alignment in crosstab, not by a 3.0 or NumPy 2.0 release-note entry |
+| Q3#8 | Sage-Bionetworks/synapsePythonClient#1471 | finalist | convert_dtypes_to_json_serializable: Int64 with missing values becomes Float64 on pandas 3; C3 open, needs the code |
+| Q3#11 | pandas-dev/pandas#65308 | rejected | maintainer: not a bug; pandas issue, not upgraded third-party code |
+| Q3#12 | hulacon/word2psy#4 | rejected | C1: silent defects are not tied to a 3.0 release-note entry; the pandas 3 failure raises |
+| Q3#13 | jsonpickle/jsonpickle#619 | rejected | C1: cause is dtype.type(value) unit inference, not a 3.0 or 2.0 change |
+| Q3#14 | pandas-dev/pandas#53643 | rejected | pandas' own bug |
+| Q3#16 | DASDAE/dascore#949 | rejected | C2,C6: license not stated; blank-cell bug raised |
+| Q3#20 | wdm0006/git-pandas#75 | rejected | C6: both failures are loud (TypeError, AttributeError) |
+| Q3#22 | pandas-dev/pandas#66709 | rejected | pandas' own bug |
+| Q3#24 | pmrv/fleche#1004 | rejected | C6,C1: raises; reported on pandas 2.3.3 |
+| Q3#25 | DASDAE/dascore#960 | rejected | C1,C2: not tied to pandas 3.0; license not stated |
+| Q3#26 | tamnd/firepanda-compat#8 | rejected | C4: reporting feature |
+| Q3#28 | cognitedata/indsl#639 | finalist | DatetimeIndex to int64 unit regression, silently wrong numbers (matches the datetime resolution note); C3 open (indsl helpers), needs the code |
+| Q3#29 | pastas/pastas#1268 | finalist-weak | silent wrong fit when index unit is not ns; fix PR 1269 touches Model.residuals and get_sample; C3 open |
+| Q3#30 | ziagl888/Kythera#229 | finalist-weak | open_time.astype('int64')/1e9 silently 1000x smaller; fix applied at four sites; C3 open |
+| Q4#1 | asmahani/ogboost#1 | rejected | C6: OverflowError (loud) |
+| Q4#2 | brendan-m-murphy/pytensor#4 | rejected | C2,C3: license unclear; broad NumPy 2 update |
+| Q4#3 | CNES/georastertools#35 | rejected | C4: test precision changes only |
+| Q4#7 | opendatahub-io/notebooks#2864 | rejected | C4: compatibility audit, no fix |
+| Q4#10 | janosh/matbench-discovery#325 | rejected | C4: no silent-result fix described |
+| Q4#13 | numpy/numpy#21261 | rejected | NumPy's own issue from 2022 |
+| Q4#17 | cupy/cupy#9982 | rejected | CuPy library code mirroring a NumPy 2.4.5 regression |
+| Q4#22 | cupy/cupy#9983 | rejected | C4: test change only (decided from the title) |
+| Q5#1 | Solafune-Inc/solafune-tools#32 | rejected | C4: Pillow security upgrade (decided from the title) |
+| Q5#2 | NeuralEnsemble/python-neo#1883 | rejected | C3: one line inside a BiocamRawIO method that reads HDF5 files |
+| Q5#3 | pytorch/pytorch#200880 | rejected | C1,C2: unrelated to the release notes (decided from the title); license not machine-identified |
+| Q5#4 | kornia/kornia#5253 | rejected | C1: unrelated to the release notes (decided from the title) |
+| Q5#5 | huggingface/lerobot#4948 | rejected | C4: performance change (decided from the title) |
+| Q5#7 | pandas-dev/pandas#48867 | rejected | pandas API issue from 2022, not an upgrade break (decided from the title) |
+| Q5#10 | edithatogo/tobac#26 | rejected | C4: dependency qualification update (decided from the title) |
+| Q5#11 | edithatogo/tobac#19 | rejected | C4: dependency qualification update (decided from the title) |
+| Q5#12 | rmems/grok-ozempic#142 | rejected | C4: new feature (decided from the title) |
+| Q5#13 | pytorch/pytorch#190092 | rejected | C1,C2: C++ helper, unrelated (decided from the title) |
+| Q5#26 | Itqan-community/Munajjam#114 | rejected | C4: new feature (decided from the title) |
+| Q6#3 | mazino2d/caketool#16 | finalist-weak | FeatureEncoder skipped str columns via select_dtypes under pandas 3; class method, C3 open, needs the code |
+| Q6#4 | pyjanitor-devs/pyjanitor#1745 | rejected | C3: pyjanitor internals, helper at three call sites |
+| Q6#5 | capitalone/locopy#389 | finalist | find_column_type_pandas silently typed date columns as varchar on pandas 3; localized function, C3 open, needs the code |
+| Q6#7 | cuinfoscience/INFO-Missing-Manual#51 | rejected | C4: documentation (decided from the title) |
+| Q6#8 | pyathena-dev/PyAthena#885 | rejected | C4: dependency floors, tests and docs |
+| Q6#11 | PyPSA/linopy#924 | rejected | C6: TypeError (loud); many functions |
+| Q6#16 | hamedbh/piicleaner#79 | rejected | C4: Python version support and pyo3 upgrade (decided from the title) |
+| Q6#17 | guillermo-navas-palencia/optbinning#400 | rejected | C6: crash downstream, not silent |
+| Q6#19 | MaxHalford/sorobn#51 | rejected | C6: TypeError (loud) |
+| Q6#20 | YosefLab/Cassiopeia#290 | rejected | C6: every listed failure raised |
+| Q6#21 | meteostat/meteostat#303 | rejected | C6,C3: crashes; several files and a project helper |
+| Q6#22 | scverse/anndata#2669 | rejected | C1: unrelated backport (decided from the title) |
+| Q6#23 | UT-Computational-NE/rocksteady#109 | rejected | C6: warning policy, results unchanged (decided from the title) |
+| Q6#24 | explorerhq/sql-explorer#711 | rejected | C4: CI and test only, outputs identical on both versions; license not stated |
+| Q6#28 | ludwig-ai/ludwig#4203 | rejected | C6,C3: loud TypeError; several places |
+| Q6#30 | guillermo-navas-palencia/optbinning#399 | rejected | C6: issue behind #400, crash |
