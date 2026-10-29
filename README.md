@@ -7,6 +7,7 @@ Agent that proposes and verifies patches for Python code that broke silently aft
 - Twelve cases (pandas 2.3 to 3.0, NumPy 1.26 to 2.x): eleven synthetic ones derived from documented library changes and one (p7) built around a function copied from the open-source project scikit-FIBERS; not tried on whole real repositories. Two further cases come from third-party repositories (indsl and Kythera, each in two variants) and are reported separately under "Cases from third-party code".
 - Hosted Muse Spark and Muse Wonder solved 125 of 125 runs on five cases; on the hardest one (p4), Spark 0 of 5 and Wonder 3 of 5. Muse Glimmer running locally solved 19 of 30 runs on six cases (low reasoning).
 - All runs were made on one Apple M2 Ultra Mac; no other platform was tested.
+- Why it matters and what it does not show: [`docs/IMPACT.md`](docs/IMPACT.md). One command from a function to a gated patch: `python -m patchpilot.repair` (see "Try it on your own function").
 
 ## Models and where they run
 
