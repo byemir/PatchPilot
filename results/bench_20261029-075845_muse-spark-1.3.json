@@ -1,0 +1,153 @@
+[
+  {
+    "case": "p6_str_dtype_checks",
+    "model": "muse-spark-1.3",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 5,
+    "avg_tokens": 2610,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": null,
+      "local_server": null,
+      "max_tokens": null
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3007,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 infers text columns as `str` dtype instead of `object` and represents missing `None` as NA/NaN, so `dtype == object` was never true and `v is None` was never true.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-075846_p6_str_dtype_checks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 148,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2526,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers strings as `str` dtype not `object`, so `dtype==object` skipped cleaning; and None becomes NaN/NA so `v is None` missed missing labels.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-075902_p6_str_dtype_checks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 148,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2220,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 defaults text columns to `str` dtype instead of `object`, so `dtype == object` is never true, and missing labels become NaN/NA instead of `None`, so `v is None` is never true.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-075916_p6_str_dtype_checks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 148,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2433,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 uses `str` dtype instead of `object` for text columns so `dtype == object` is never true, and `None` becomes `NaN/NA` so `v is None` is never true.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-075929_p6_str_dtype_checks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 148,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2862,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 infers text columns as `str` dtype instead of `object` and materializes `None` as `NaN/NA`, so `dtype == object` and `v is None` are never true.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-075942_p6_str_dtype_checks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 148,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  }
+]

@@ -1,0 +1,153 @@
+[
+  {
+    "case": "p6_str_dtype_checks",
+    "model": "muse-wonder-1.0",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 5,
+    "avg_tokens": 2326,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": null,
+      "local_server": null,
+      "max_tokens": null
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2169,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers text columns as the new 'str' dtype instead of 'object', so the dtype == object check skips stripping/lowering; missing labels are also stored as NaN/NA rather than None, so 'v is None' never matches.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-080212_p6_str_dtype_checks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 148,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2314,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers a dedicated 'str' dtype instead of object for text columns, so `df[col].dtype == object` never matches and cleaning is skipped; missing labels are also stored as NaN/NA rather than None, so `v is None` never matches.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-080232_p6_str_dtype_checks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 148,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2012,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers the new `str` dtype instead of `object` for text columns, so `df[col].dtype == object` matched nothing and cleaning was skipped; likewise `None` in a `str` column is stored as NaN/NA, so `v is None` never found missing labels.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-080301_p6_str_dtype_checks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 148,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2587,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3.0 infers the new 'str' dtype instead of object for text columns, so `dtype == object` never matches and cleaning is skipped; missing labels are also stored as NaN/NA rather than None, so `v is None` never matches.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-080321_p6_str_dtype_checks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 148,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2547,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3.0 uses the new 'str' string dtype instead of object for text columns and represents missing text as NaN rather than None, so `dtype == object` never matched (no cleaning) and `v is None` never matched (no missing rows).",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-080351_p6_str_dtype_checks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 148,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  }
+]

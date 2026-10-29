@@ -1,0 +1,153 @@
+[
+  {
+    "case": "p5_chained_assignment",
+    "model": "muse-wonder-1.0",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 5,
+    "avg_tokens": 1511,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": null,
+      "local_server": null,
+      "max_tokens": null
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1355,
+        "hidden_checked": true,
+        "diagnosis": "Chained assignment df[\"amount\"][big] = ... relied on mutating a view; under pandas 3.0 Copy-on-Write it mutates a copy and is silently lost. Using .loc for masked assignment works on both versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-080100_p5_chained_assignment",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 153,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1396,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 Copy-on-Write makes chained assignment df[\"amount\"][big] = ... operate on a temporary copy and silently do nothing, whereas it mutated the DataFrame in 2.3.3. Using .loc for the masked assignment mutates the DataFrame on both versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-080114_p5_chained_assignment",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 153,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1407,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 enables Copy-on-Write unconditionally, so chained assignment `df[\"amount\"][big] = ...` modifies a temporary copy and is silently discarded. Using `.loc` on the DataFrame itself updates the original on both pandas 2 and 3.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-080127_p5_chained_assignment",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 153,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1947,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3 Copy-on-Write is always enabled, so chained assignment like df[\"amount\"][big] = ... modifies a temporary copy and silently leaves df unchanged (it worked in pandas 2). Replace it with whole-column where/mask assignment that mutates df on both versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-080140_p5_chained_assignment",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 153,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1448,
+        "hidden_checked": true,
+        "diagnosis": "Chained assignment df[\"amount\"][big] = ... silently does nothing under pandas 3.0's always-on Copy-on-Write, so discounts and status changes were lost. Using .loc[mask, column] assignment updates the DataFrame itself on both pandas 2.x and 3.x.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-080159_p5_chained_assignment",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 153,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  }
+]

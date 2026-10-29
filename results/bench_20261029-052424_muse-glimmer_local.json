@@ -1,0 +1,159 @@
+[
+  {
+    "case": "p6_str_dtype_checks",
+    "model": "muse-glimmer",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 4,
+    "avg_tokens": 2210,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "local_server": {
+        "build_info": "b11960-8642541b2",
+        "model_file": "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf",
+        "served_models": [
+          "muse-glimmer"
+        ]
+      },
+      "max_tokens": 12000
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1639,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 changed string columns to the nullable StringDtype so `dtype == object` is no longer true and the cleaning loop is skipped; missing detection used `v is None` which never matches pandas NA values. Both issues cause the output to diverge while tests still pass.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-052425_p6_str_dtype_checks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 148,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1761,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed string column dtypes from object to pandas.StringDtype and made None values become NaN, so `df[col].dtype == object` no longer matches text columns and `v is None` never finds missing labels. Using `pd.isna` for missing detection and applying strip/lower via a string-safe apply makes the logic work on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 2
+        },
+        "run_dir": "runs/20261029-052500_p6_str_dtype_checks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 148,
+          "core_divergences": 0,
+          "wide_divergences": 2,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1744,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 changed object dtype handling so `df[col].dtype == object` no longer matches string columns and `v is None` no longer detects missing labels that become NaN; cleaning is therefore skipped and missing rows are not found.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 2
+        },
+        "run_dir": "runs/20261029-052536_p6_str_dtype_checks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 148,
+          "core_divergences": 0,
+          "wide_divergences": 2,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 4318,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 changed string column dtypes from `object` to `StringDtype`, so `df[col].dtype == object` is false and the `.str.strip().str.lower()` cleaning is skipped; also missing detection used `v is None` which fails on the new scalar types. Using `pandas.api.types.is_string_dtype` and `pd.isna` makes the logic version-agnostic.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-052612_p6_str_dtype_checks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 148,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1590,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed object string columns to a dedicated StringDtype so `df[col].dtype == object` is now False and the strip/lower cleaning is skipped; missing detection used `v is None` which never matches NaN. Fix both checks with `pd.isna` and a dtype test that works for both object and string dtypes.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 159,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-052736_p6_str_dtype_checks",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 148,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  }
+]

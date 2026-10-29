@@ -1,0 +1,153 @@
+[
+  {
+    "case": "n8_string_to_bool",
+    "model": "muse-wonder-1.0",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 5,
+    "avg_tokens": 2553,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": null,
+      "local_server": null,
+      "max_tokens": null
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2732,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 changed string-to-bool conversion in astype(bool) to Python semantics, so any non-empty string such as \"0\" becomes True, whereas NumPy 1 parsed it as numeric zero. Parse each flag numerically (with textual boolean fallbacks) instead of relying on string astype(bool), which is version-independent.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-080416_n8_string_to_bool",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 155,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2375,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2.5 changed string-to-bool casting: np.array(['0']).astype(bool) previously parsed the numeric string as False, but now any non-empty string is True. Explicitly converting the flags through a numeric dtype restores the intended '0 is off' semantics on both versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-080441_n8_string_to_bool",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 155,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2247,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 changed string-to-bool casting to Python semantics (any non-empty string is True), so \"0\" became True; in NumPy 1.x it was parsed as False. The fix is to parse the numeric string values explicitly instead of relying on astype(bool).",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-080509_n8_string_to_bool",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 155,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2584,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 changed string-to-bool casting so any non-empty string, including \"0\", becomes True, whereas NumPy 1 parsed numeric strings so \"0\" became False. Parsing the flags numerically before converting to bool avoids relying on the version-dependent string cast.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-080528_n8_string_to_bool",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 155,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2826,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 changed string-to-bool casting via astype(bool) to Python truthiness, so every non-empty string including \"0\" becomes True; NumPy 1 parsed \"0\" as False. Parse the numeric string explicitly instead of relying on the cast.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-080551_n8_string_to_bool",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 155,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  }
+]

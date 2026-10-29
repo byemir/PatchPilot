@@ -1,0 +1,159 @@
+[
+  {
+    "case": "p5_chained_assignment",
+    "model": "muse-glimmer",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 4,
+    "avg_tokens": 1493,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "local_server": {
+        "build_info": "b11960-8642541b2",
+        "model_file": "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf",
+        "served_models": [
+          "muse-glimmer"
+        ]
+      },
+      "max_tokens": 12000
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1255,
+        "hidden_checked": true,
+        "diagnosis": "The code uses chained indexing `df['amount'][big] = ...` and `df['status'][big] = ...`. In pandas 3.0 chained assignment is no longer applied, so the discount and status updates are silently dropped, leaving original amounts/statuses. Using explicit `.loc` indexing makes the assignment work reliably on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-052209_p5_chained_assignment",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 153,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 2435,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 enables Copy-on-Write by default, so chained indexing `df[\"amount\"][big] = \u2026` no longer mutates the original frame. Using `.loc` for the assignment makes the mutation reliable on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-052235_p5_chained_assignment",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 153,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1275,
+        "hidden_checked": true,
+        "diagnosis": "Chained indexing `df['amount'][big] = ...` is a SettingWithCopy operation that is ignored under pandas 3.0 copy-on-write semantics, so the discount and status updates never reach the DataFrame. Using explicit `.loc` indexing performs the assignment in place on both old and new pandas versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-052312_p5_chained_assignment",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 153,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1241,
+        "hidden_checked": true,
+        "diagnosis": "Chained indexing `df['amount'][big] = ...` triggers a SettingWithCopy warning and is a no-op under pandas 3.0 copy-on-write semantics, so discounts and status updates are silently dropped. Using explicit `.loc` indexing makes the mutation reliable on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-052338_p5_chained_assignment",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 153,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1260,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 stops performing chained assignment `df[col][mask] = ...` silently, so the discount and status updates are no-ops. Using `.loc` for indexed assignment works on both 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-052401_p5_chained_assignment",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 153,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  }
+]

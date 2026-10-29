@@ -1,0 +1,159 @@
+[
+  {
+    "case": "n8_string_to_bool",
+    "model": "muse-glimmer",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 1,
+    "avg_tokens": 2772,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "local_server": {
+        "build_info": "b11960-8642541b2",
+        "model_file": "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf",
+        "served_models": [
+          "muse-glimmer"
+        ]
+      },
+      "max_tokens": 12000
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 2693,
+        "hidden_checked": true,
+        "diagnosis": "np.array(flags).astype(bool) changed semantics in NumPy 2.x; string arrays are now always truthy, so \"0\" and \"00\" are treated as True. The intended logic is numeric zero vs non-zero, so the bool conversion must be based on the integer value of each flag string.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-052806_n8_string_to_bool",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 155,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1393,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 changed how astype(bool) treats string arrays; a non-empty string like '0' is now truthy, so `arr.astype(bool)` marks '0' as True. The intended semantics are numeric: '0' means off and any other number means on. Parsing the flags numerically before converting to bool restores the original semantics on both NumPy 1.26 and 2.5.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-052903_n8_string_to_bool",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 155,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 3276,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 changed the behaviour of `astype(bool)` on an object/string array, so string flags are now all truthy instead of being interpreted numerically; the original code relied on NumPy's implicit string-to-bool conversion which differs between 1.26.4 and 2.5.4.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-052934_n8_string_to_bool",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 155,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 3176,
+        "hidden_checked": true,
+        "diagnosis": "Numpy 2 changed `astype(bool)` semantics for string arrays so non-empty strings like \"0\" become True. The spec requires \"0\" and any numeric zero string to be False and any other number to be True. Using an explicit numeric test instead of `astype(bool)` makes the result version-independent.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-053048_n8_string_to_bool",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 155,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 3320,
+        "hidden_checked": true,
+        "diagnosis": "In NumPy 2.x `astype(bool)` on a string dtype array treats any non-empty string as True, so \"0\" and \"00\" both become True. The original code relied on the older NumPy behaviour that interpreted the numeric value of the string. Converting the flag strings to integers before testing truthiness restores the intended numeric-zero-means-off semantics on both NumPy 1.26.4 and 2.5.4.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 140,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-053157_n8_string_to_bool",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 155,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  }
+]
