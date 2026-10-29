@@ -67,6 +67,22 @@ The runner (`patchpilot/*.py`) imports only the Python standard library, includi
 
 Cases n6/n7 use `.sandboxes/np126` and `.sandboxes/np2`. Benchmark runner: `python -m patchpilot.bench --help`.
 
+## Try it on your own function
+
+`patchpilot.make_case` builds a case folder from one function in one file. You give it the file, the function name, a JSON list of keyword-argument inputs, and two interpreters (old and new library version):
+
+```
+python -m patchpilot.make_case --src my_module.py --fn my_function --inputs probes.json \
+    --old /path/to/old/python --new /path/to/new/python --lib pandas --out my_case
+python -m patchpilot.agent my_case /path/to/old/python /path/to/new/python --lib pandas
+```
+
+The golden output comes from the old interpreter. Held-out inputs are derived with the differential generator and kept only if the old library reproduces them (or pass `--hidden-inputs`). It stops with a reason if the function raises on the old library, is not deterministic, crashes on the new library (a loud failure) or gives the same output there (nothing to repair).
+
+Limits: the function must live in one self-contained file (standard library plus the library under repair), take JSON-friendly arguments and return JSON-friendly values (otherwise write a small adapter in the same file), and be deterministic. No known-good or known-bad patches are generated. `python -m patchpilot.make_case_test` checks the builder offline on three existing functions.
+
+Example in `examples/own_function/`: the unmodified `censor` function from scikit-FIBERS (see `docs/THIRD_PARTY_NOTICES.md`) plus a thin adapter. One run with muse-spark-1.3 solved it on the first attempt (2696 tokens), and one run on the `n8` function rebuilt this way solved it on the first attempt (3350 tokens). These are single runs, not a success rate. `censor` is also the source of p7, so the breakage pattern is not new; what is new is that the case was generated from the original code by one command.
+
 ## Limitations
 Eleven of twelve cases are synthetic and one (p7) contains code copied from one real open-source project; PatchPilot has not been tried on whole real repositories. Sample sizes in `results/` are small (1 to 5 runs per case and setting; the first three files have 3 runs per case, one smoke test has 1), so they show direction only. Only token counts were recorded, no dollar cost per run. The first two bench files and earlier runs ran without the differential gate (see the engineering log).
 Not tested or not measured: dollar cost and run time of hosted calls (not recorded), Linux and other non-macOS platforms, memory inspection tools (`lldb`, `vmmap`, `gcore`), other same-user processes that hold secrets, external network, real open-source projects, Muse Spark Open and other open-weight models, other quantizations of Muse Glimmer, reasoning levels of Glimmer other than low and medium (medium on four cases only), hosted effort levels other than low (one minimal-effort batch), a tools run with a larger token budget and tools mode with a local endpoint.
