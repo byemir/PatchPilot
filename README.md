@@ -95,7 +95,7 @@ Example in `examples/own_function/`: the unmodified `censor` function from sciki
 
 ## Limitations
 Eleven of the twelve main cases are synthetic and one (p7) contains code copied from one real open-source project; two further cases (indsl and Kythera, each with a scoped variant) are copied from third-party repositories and are reported separately; PatchPilot has not been tried on whole real repositories. Sample sizes in `results/` are small (1 to 5 runs per case and setting; the first three files have 3 runs per case, one smoke test has 1), so they show direction only. Only token counts were recorded, no dollar cost per run. The first two bench files and earlier runs ran without the differential gate (see the engineering log).
-Not tested or not measured: dollar cost and run time of hosted calls (not recorded), Linux and other non-macOS platforms, memory inspection tools (`lldb`, `vmmap`, `gcore`), other same-user processes that hold secrets, external network, real open-source projects, Muse Spark Open and other open-weight models, other quantizations of Muse Glimmer, reasoning levels of Glimmer other than low and medium (medium on four cases only), hosted effort levels other than low (one minimal-effort batch), a tools run with a larger token budget and tools mode with a local endpoint.
+Not tested or not measured: dollar cost and run time of hosted calls (not recorded), Linux and other non-macOS platforms, memory inspection tools (`lldb`, `vmmap`, `gcore`), other same-user processes that hold secrets, external network, whole real open-source repositories (only single functions from three other projects were tried), Muse Spark Open and other open-weight models, other quantizations of Muse Glimmer, reasoning levels of Glimmer other than low and medium (medium on four cases only), hosted effort levels other than low (one minimal-effort batch), a tools run with a larger token budget and tools mode with a local endpoint.
 
 Engineering log and technical notes: [`docs/engineering-log.md`](docs/engineering-log.md), [`docs/training-notes.jsonl`](docs/training-notes.jsonl).
 
@@ -243,7 +243,7 @@ p8_session_report_three_breaks (pandas) and n9_fleet_report_three_breaks (NumPy)
 
 ## Cases from third-party code
 
-Everything above in the case table is a reproduction we wrote, except p7 (scikit-FIBERS). These two cases come from other people's repositories and are reported separately. The selection rules were written and committed before any search (`docs/REAL_CASES_PROTOCOL.md`); the search log, every examined hit and the reason for each rejection are in `docs/real_cases/candidates.md`. 168 distinct hits were collected, 75 passed a mechanical screen and were decided one by one, ten finalists were rejected after reading their code (reasons in `candidates.md`), two were accepted.
+Every case in the table under "Benchmark cases" below is a reproduction we wrote, except p7 (scikit-FIBERS). These two cases come from other people's repositories and are reported separately. The selection rules were written and committed before any search (`docs/REAL_CASES_PROTOCOL.md`); the search log, every examined hit and the reason for each rejection are in `docs/real_cases/candidates.md`. 168 distinct hits were collected, 75 passed a mechanical screen and were decided one by one, ten finalists were rejected after reading their code (reasons in `candidates.md`), two were accepted.
 
 | case | upstream | license | function | code taken from | fixed upstream by |
 |---|---|---|---|---|---|
