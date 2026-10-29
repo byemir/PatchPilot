@@ -1,0 +1,30 @@
+asmahani/ogboost	1	issue	2026-08-26	OverflowError out of nowhere	https://github.com/asmahani/ogboost/issues/1
+brendan-m-murphy/pytensor	4	PR	2025-02-04	Numpy 2 updates	https://github.com/brendan-m-murphy/pytensor/pull/4
+CNES/georastertools	35	PR	2026-05-27	Update for compatibility with numpy v1 and numpy v2	https://github.com/CNES/georastertools/pull/35
+RadwanSusan/RAD-Trading	72	PR	2026-10-03	[Aikido] Fix 9 security issues in numpy, scipy, werkzeug and 4 more	https://github.com/RadwanSusan/RAD-Trading/pull/72
+nodetool-ai/nodetool-core	982	PR	2026-08-09	Bolt: [performance improvement]	https://github.com/nodetool-ai/nodetool-core/pull/982
+RadwanSusan/RAD-Trading	67	PR	2026-09-24	[Aikido] Fix 10 security issues in numpy, platformdirs, scipy and 5 more	https://github.com/RadwanSusan/RAD-Trading/pull/67
+opendatahub-io/notebooks	2864	issue	2026-01-23	TrustyAI notebook: Verify compatibility with NumPy 2.3 and Pandas 2.3 upgrades	https://github.com/opendatahub-io/notebooks/issues/2864
+RadwanSusan/RAD-Trading	73	PR	2026-10-06	[Aikido] Fix 11 security issues in fsspec, werkzeug, numpy and 5 more	https://github.com/RadwanSusan/RAD-Trading/pull/73
+RadwanSusan/RAD-Trading	62	PR	2026-09-17	[Aikido] Fix 8 security issues in numpy, scipy, werkzeug and 4 more	https://github.com/RadwanSusan/RAD-Trading/pull/62
+janosh/matbench-discovery	325	PR	2026-05-19	Clean up site tests and diatomics tooling	https://github.com/janosh/matbench-discovery/pull/325
+RadwanSusan/RAD-Trading	70	PR	2026-10-01	[Aikido] Fix 14 security issues in urllib3, tornado, numpy and 6 more	https://github.com/RadwanSusan/RAD-Trading/pull/70
+DeebotUniverse/client.py	524	PR	2024-06-17	Update numpy requirement from <2.0,>=1.23.2 to >=1.23.2,<3.0	https://github.com/DeebotUniverse/client.py/pull/524
+numpy/numpy	21261	issue	2022-03-29	BUG: Bitshift operations on scalar integers change type to int64 or fail	https://github.com/numpy/numpy/issues/21261
+RadwanSusan/RAD-Trading	66	PR	2026-09-21	[Aikido] Fix 9 security issues in numpy, scipy, werkzeug and 4 more	https://github.com/RadwanSusan/RAD-Trading/pull/66
+RadwanSusan/RAD-Trading	58	PR	2026-09-08	[Aikido] Fix 8 security issues in numpy, scipy, werkzeug and 4 more	https://github.com/RadwanSusan/RAD-Trading/pull/58
+RadwanSusan/RAD-Trading	74	PR	2026-10-07	[Aikido] Fix 9 security issues in numpy, scipy, werkzeug and 4 more	https://github.com/RadwanSusan/RAD-Trading/pull/74
+cupy/cupy	9982	PR	2026-06-02	core: bool.conj() promotes to int8 (match NumPy 2.x)	https://github.com/cupy/cupy/pull/9982
+block-hczhai/pyblock3-preview	19	issue	2026-03-18	`SZ.from_flat()` raises `RuntimeWarning: overflow` and returns wrong results with numpy 2.x	https://github.com/block-hczhai/pyblock3-preview/issues/19
+RadwanSusan/RAD-Trading	68	PR	2026-09-25	[Aikido] Fix 11 security issues in jupyterlab, numpy, scipy and 5 more	https://github.com/RadwanSusan/RAD-Trading/pull/68
+RadwanSusan/RAD-Trading	60	PR	2026-09-13	[Aikido] Fix 8 security issues in numpy, scipy, werkzeug and 4 more	https://github.com/RadwanSusan/RAD-Trading/pull/60
+RadwanSusan/RAD-Trading	71	PR	2026-10-02	[Aikido] Fix 11 security issues in jupyterlab, numpy, scipy and 5 more	https://github.com/RadwanSusan/RAD-Trading/pull/71
+cupy/cupy	9983	PR	2026-06-02	test_ndarray_complex_ops: drop identity assert from test_conj_pass	https://github.com/cupy/cupy/pull/9983
+RadwanSusan/RAD-Trading	64	PR	2026-09-19	[Aikido] Fix 18 security issues in anyio, urllib3, tornado and 8 more	https://github.com/RadwanSusan/RAD-Trading/pull/64
+sparlit/EQATS	313	PR	2026-08-28	[Aikido] Fix security issue in numpy via major version upgrade from 1.24.0 to 2.4.5	https://github.com/sparlit/EQATS/pull/313
+sank29mane/growin-app	432	PR	2026-08-07	⚡ Bolt: Vectorize market impact slippage calculation	https://github.com/sank29mane/growin-app/pull/432
+n24q02m/hull	93	PR	2026-10-26	fix(deps): update numpy to >=2.5.4,<2.6 - autoclosed	https://github.com/n24q02m/hull/pull/93
+kejhy93/ProteinFolding	180	PR	2026-10-24	Update dependency numpy to v2.5.4	https://github.com/kejhy93/ProteinFolding/pull/180
+baneeishaque/attentive-gan-derainnet	1699	PR	2026-10-26	Scheduled daily dependency update on Monday	https://github.com/baneeishaque/attentive-gan-derainnet/pull/1699
+achrafarbounper/ThinkTuning	36	PR	2026-08-19	[Aikido] Fix security issue in numpy via major version upgrade from 1.24.0 to 2.4.5	https://github.com/achrafarbounper/ThinkTuning/pull/36
+baneeishaque/attentive-gan-derainnet	1698	PR	2026-10-24	Scheduled daily dependency update on Saturday	https://github.com/baneeishaque/attentive-gan-derainnet/pull/1698

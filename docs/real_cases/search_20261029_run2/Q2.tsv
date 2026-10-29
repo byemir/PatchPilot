@@ -1,0 +1,30 @@
+ucgmsim/velocity_modelling	64	PR	2026-10-20	Drop the pandas<3.0 upper bound	https://github.com/ucgmsim/velocity_modelling/pull/64
+owid/etl	6994	PR	2026-10-09	Enable pandas 3 behavior (Copy-on-Write, str dtype)	https://github.com/owid/etl/pull/6994
+braydio/RSAssistant	144	PR	2026-10-17	chore(deps): bump pandas from 2.2.3 to 3.0.6	https://github.com/braydio/RSAssistant/pull/144
+openvax/vaxrank	659	issue	2026-10-20	Raise minimum supported pandas to 3.0	https://github.com/openvax/vaxrank/issues/659
+lucasrodes/whatstk	187	PR	2026-10-23	Fix the small known bugs and turn the type checker back on (#177)	https://github.com/lucasrodes/whatstk/pull/187
+openvax/topiary	496	issue	2026-10-20	Raise minimum supported pandas to 3.0	https://github.com/openvax/topiary/issues/496
+tech-pw/cryo	312	PR	2026-10-26	chore(deps): update pandas requirement from >=2.0.0 to >=3.0.6	https://github.com/tech-pw/cryo/pull/312
+phenobarbital/querysource	637	PR	2026-10-01	feat(pandas3-migration): FEAT-161 — Migrate to pandas >= 3.0	https://github.com/phenobarbital/querysource/pull/637
+openvax/mhctools	611	issue	2026-10-20	Raise minimum supported pandas to 3.0	https://github.com/openvax/mhctools/issues/611
+jojacobsen/openpls-engine	58	PR	2026-10-22	chore(deps): bump pandas to 3.0	https://github.com/jojacobsen/openpls-engine/pull/58
+W-Thurston/dsbf	47	PR	2026-10-16	chore(deps): bump pandas from 2.3.1 to 3.0.6	https://github.com/W-Thurston/dsbf/pull/47
+kokjz/fpl-predict	5	PR	2026-10-13	Bump pandas from 2.2.3 to 3.0.6	https://github.com/kokjz/fpl-predict/pull/5
+w4bo/data-governance-demo	28	PR	2026-10-11	chore(deps): update dependency pandas to v3	https://github.com/w4bo/data-governance-demo/pull/28
+rjwalters/kicad-tools	6359	PR	2026-10-12	chore(deps): update dependency pandas to v3	https://github.com/rjwalters/kicad-tools/pull/6359
+googleapis/google-cloud-python	18619	PR	2026-10-09	chore(deps): update dependency pandas to v3	https://github.com/googleapis/google-cloud-python/pull/18619
+Nixtla/datasetsforecast	115	PR	2026-10-14	fix(phm2008): assign clipped RUL instead of chained inplace clip	https://github.com/Nixtla/datasetsforecast/pull/115
+Bhargavvvv2912/renovate-check-age-of-empires-api	39	PR	2026-10-11	Update dependency pandas to v3	https://github.com/Bhargavvvv2912/renovate-check-age-of-empires-api/pull/39
+TanNhatCMS/jarvis	17	PR	2026-10-22	chore(deps): update dependency pandas to v3	https://github.com/TanNhatCMS/jarvis/pull/17
+vincenttisseront/bastion-app	426	PR	2026-10-07	chore(deps): update dependency pandas to v3 - autoclosed	https://github.com/vincenttisseront/bastion-app/pull/426
+softagram/sgraph	209	PR	2026-09-21	Bump pandas from 2.3.3 to 3.0.6	https://github.com/softagram/sgraph/pull/209
+diaoyunxi/price-comparator-tracker	133	PR	2026-10-10	chore(deps): bump pandas from 2.2.1 to 3.0.6	https://github.com/diaoyunxi/price-comparator-tracker/pull/133
+lnccbrown/LANfactory	139	issue	2026-09-09	Drift on pandas 3.x breaks Copy-on-Write in trainers	https://github.com/lnccbrown/LANfactory/issues/139
+FZJ-IEK3-VSA/FINE	863	PR	2026-10-01	Update dependency pandas to v3	https://github.com/FZJ-IEK3-VSA/FINE/pull/863
+Unsquared2/quantstats	2	PR	2026-08-30	Fix benchmark=None crash and pandas 3.0 copy_on_write deprecation	https://github.com/Unsquared2/quantstats/pull/2
+openvax/topiary	509	PR	2026-10-25	Require pandas 3 across the supported Python matrix	https://github.com/openvax/topiary/pull/509
+FukaseDaichi/trader	35	PR	2026-10-23	Bump pandas from 2.3.3 to 3.1.0	https://github.com/FukaseDaichi/trader/pull/35
+bcgov/wps	5867	PR	2026-09-29	fix(deps): update dependency pandas to v3	https://github.com/bcgov/wps/pull/5867
+Radeq2137/leasing-analytics-dbt	5	PR	2026-10-10	Add engineering guidelines (Python, pandas, data engineering)	https://github.com/Radeq2137/leasing-analytics-dbt/pull/5
+eschombu/superleaf	4	PR	2026-10-17	superleaf 1.0.0: require pandas 3, accept pd.col expressions	https://github.com/eschombu/superleaf/pull/4
+DevenGaikwad/MatCount	10	PR	2026-10-04	chore(deps): update pandas requirement from <3,>=2.2 to >=3.0.6,<4	https://github.com/DevenGaikwad/MatCount/pull/10

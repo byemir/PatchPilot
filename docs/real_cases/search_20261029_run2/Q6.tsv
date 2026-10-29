@@ -1,0 +1,30 @@
+owid/etl	6994	PR	2026-10-09	Enable pandas 3 behavior (Copy-on-Write, str dtype)	https://github.com/owid/etl/pull/6994
+geopandas/pyogrio	711	PR	2026-10-27	TST: update test_write_read_datetime_tz_objects expected strings for pandas 3.1 and older GDAL	https://github.com/geopandas/pyogrio/pull/711
+mazino2d/caketool	16	PR	2026-10-19	fix: pandas 3 compatibility in encoder and tests	https://github.com/mazino2d/caketool/pull/16
+pyjanitor-devs/pyjanitor	1745	PR	2026-10-04	Preserve object dtype in conditional-join result columns	https://github.com/pyjanitor-devs/pyjanitor/pull/1745
+capitalone/locopy	389	PR	2026-09-17	fix: support pandas 3.0 dtype changes, add tox matrix for pandas versions	https://github.com/capitalone/locopy/pull/389
+jmineau/PYSTILT	269	PR	2026-10-28	test: read STILT-R's CSV dumps without read_csv(float_precision=), deprecated in pandas 3.1	https://github.com/jmineau/PYSTILT/pull/269
+cuinfoscience/INFO-Missing-Manual	51	PR	2026-09-25	Name pandas 3's str dtype alongside pandas 2's object	https://github.com/cuinfoscience/INFO-Missing-Manual/pull/51
+pyathena-dev/PyAthena	885	PR	2026-09-28	Require pandas 3.0 and pyarrow 22.0	https://github.com/pyathena-dev/PyAthena/pull/885
+Radeq2137/leasing-analytics-dbt	5	PR	2026-10-10	Add engineering guidelines (Python, pandas, data engineering)	https://github.com/Radeq2137/leasing-analytics-dbt/pull/5
+sourabh1996/sourabh1996.github.io	13	PR	2026-10-11	Numerical Computing and Data Analysis: all lessons written	https://github.com/sourabh1996/sourabh1996.github.io/pull/13
+PyPSA/linopy	924	issue	2026-09-04	spec: grouped operators crash on string labels under pandas 3.0 (ArrowStringArray)	https://github.com/PyPSA/linopy/issues/924
+rubengura/Optimizing_Public_Transportation	8	PR	2026-10-25	Bump pandas from 2.3.3 to 3.0.6 in /producers	https://github.com/rubengura/Optimizing_Public_Transportation/pull/8
+ydvSajal/repoMl	1	PR	2026-09-26	chore(repo): project skeleton, placeholder modules, pinned requirements (S0)	https://github.com/ydvSajal/repoMl/pull/1
+WindWang2/webgis-ai-agent	1494	PR	2026-09-21	build(deps): update pandas requirement from <3.0.0,>=2.2.2 to >=2.2.2,<4.0.0	https://github.com/WindWang2/webgis-ai-agent/pull/1494
+NVIDIA-BioNeMo/bionemo-recipes	1744	PR	2026-09-09	Fix pandas 3.0 breakage in evo2_phage_gen unit tests and evo2_megatron LoRA notebook	https://github.com/NVIDIA-BioNeMo/bionemo-recipes/pull/1744
+hamedbh/piicleaner	79	PR	2026-10-12	Support Python 3.11–3.15: upgrade pyo3 to 0.29 and drop 3.10	https://github.com/hamedbh/piicleaner/pull/79
+guillermo-navas-palencia/optbinning	400	PR	2026-08-23	Fix categorical variable detection under pandas >= 3.0	https://github.com/guillermo-navas-palencia/optbinning/pull/400
+jhkirby2001-collab/Procurement-ai-tools	21	PR	2026-08-20	Fix Spend Report render crash under pandas 3.0 (new str dtype)	https://github.com/jhkirby2001-collab/Procurement-ai-tools/pull/21
+MaxHalford/sorobn	51	PR	2026-10-11	Support pandas 3, fix chow_liu on compacted numeric columns	https://github.com/MaxHalford/sorobn/pull/51
+YosefLab/Cassiopeia	290	PR	2026-07-13	Fix pandas 3.0 / numpy 2 compatibility	https://github.com/YosefLab/Cassiopeia/pull/290
+meteostat/meteostat	303	PR	2026-07-01	fix: pandas 3.0+ compatibility	https://github.com/meteostat/meteostat/pull/303
+scverse/anndata	2669	PR	2026-09-30	Backport PR #2629: feat: Store dask arrays matching dask chunk size	https://github.com/scverse/anndata/pull/2669
+UT-Computational-NE/rocksteady	109	issue	2026-10-22	Pandas4Warning in test_regression's golden comparison; the FutureWarning policy misses it	https://github.com/UT-Computational-NE/rocksteady/issues/109
+explorerhq/sql-explorer	711	PR	2026-09-23	Fix CI: pin ruff, make type inference tests pandas 3 compatible	https://github.com/explorerhq/sql-explorer/pull/711
+jwalcutt/risk-scoring-service	43	PR	2026-09-07	Bump pandas from 2.3.3 to 3.0.5	https://github.com/jwalcutt/risk-scoring-service/pull/43
+isteven/agentic-data-analysis	23	PR	2026-09-22	feat(data): add live data.gov.sg API client with pagination + retry	https://github.com/isteven/agentic-data-analysis/pull/23
+selimfirat/pysad	191	PR	2026-09-28	build: bump pandas from 2.2.3 to 2.3.3	https://github.com/selimfirat/pysad/pull/191
+ludwig-ai/ludwig	4203	PR	2026-09-26	fix: pandas 3 compatibility	https://github.com/ludwig-ai/ludwig/pull/4203
+cram2/cognitive_robot_abstract_machine	597	PR	2026-09-04	Recognize pandas string dtype in infer_variables_from_dataframe	https://github.com/cram2/cognitive_robot_abstract_machine/pull/597
+guillermo-navas-palencia/optbinning	399	issue	2026-08-23	BinningProcess misclassifies string columns as numerical	https://github.com/guillermo-navas-palencia/optbinning/issues/399

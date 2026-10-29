@@ -1,0 +1,30 @@
+Solafune-Inc/solafune-tools	32	PR	2026-10-24	fix: Upgrade Pillow to 13.0.0 for CVE-2026-112400	https://github.com/Solafune-Inc/solafune-tools/pull/32
+NeuralEnsemble/python-neo	1883	issue	2026-07-22	biocam gain calculation bug when using numpy >= 2.0.0.	https://github.com/NeuralEnsemble/python-neo/issues/1883
+pytorch/pytorch	200880	PR	2026-10-14	[funcol] Support avg reduce_scatter and product all_reduce backward	https://github.com/pytorch/pytorch/pull/200880
+kornia/kornia	5253	PR	2026-10-01	fix(filters)!: guided_blur subsample accepts sizes not divisible by subsample, validates subsample	https://github.com/kornia/kornia/pull/5253
+huggingface/lerobot	4948	PR	2026-10-13	perf(streaming): cut sidecar build memory by 91%	https://github.com/huggingface/lerobot/pull/4948
+brendan-m-murphy/pytensor	4	PR	2025-02-04	Numpy 2 updates	https://github.com/brendan-m-murphy/pytensor/pull/4
+pandas-dev/pandas	48867	issue	2022-09-29	BUG/API: setting behavior inserting negative numbers in np.uint/nullable UInt Series	https://github.com/pandas-dev/pandas/issues/48867
+AIcrowd/flopscope	168	PR	2026-07-28	fix(einsum)!: apply the caller's casting rule to out=, as numpy does	https://github.com/AIcrowd/flopscope/pull/168
+tmolteno/disko	30	PR	2026-10-25	Bump the python-minor-patch group across 1 directory with 14 updates	https://github.com/tmolteno/disko/pull/30
+edithatogo/tobac	26	PR	2026-10-26	fix(deps): update scientific stack qualification	https://github.com/edithatogo/tobac/pull/26
+edithatogo/tobac	19	PR	2026-10-25	fix(deps): update scientific stack qualification	https://github.com/edithatogo/tobac/pull/19
+rmems/grok-ozempic	142	PR	2026-09-22	Add ordered Grok-1 text input manifest validation (v1)	https://github.com/rmems/grok-ozempic/pull/142
+pytorch/pytorch	190092	PR	2026-07-15	Add c10::safe_conv (strict, integer-only) and c10::unsafe_wrapping_convert (#190092)	https://github.com/pytorch/pytorch/pull/190092
+umutaktepe/AeroTools	2093	PR	2026-10-26	Bug #12345 Scheduled daily dependency update on Monday	https://github.com/umutaktepe/AeroTools/pull/2093
+umutaktepe/AeroTools	2092	PR	2026-10-24	Bug #12345 Scheduled daily dependency update on Saturday	https://github.com/umutaktepe/AeroTools/pull/2092
+umutaktepe/AeroTools	2091	PR	2026-10-22	Bug #12345 Scheduled daily dependency update on Thursday	https://github.com/umutaktepe/AeroTools/pull/2091
+umutaktepe/AeroTools	2090	PR	2026-10-20	Bug #12345 Scheduled daily dependency update on Tuesday	https://github.com/umutaktepe/AeroTools/pull/2090
+icohangar-ops/Practice_Radar	2	PR	2026-09-13	[Aikido] Fix 4 security issues in requests, numpy	https://github.com/icohangar-ops/Practice_Radar/pull/2
+umutaktepe/AeroTools	2089	PR	2026-10-18	Bug #12345 Scheduled daily dependency update on Sunday	https://github.com/umutaktepe/AeroTools/pull/2089
+umutaktepe/AeroTools	2088	PR	2026-10-16	Bug #12345 Scheduled daily dependency update on Friday	https://github.com/umutaktepe/AeroTools/pull/2088
+umutaktepe/AeroTools	2087	PR	2026-10-14	Bug #12345 Scheduled daily dependency update on Wednesday	https://github.com/umutaktepe/AeroTools/pull/2087
+umutaktepe/AeroTools	2086	PR	2026-10-12	Bug #12345 Scheduled daily dependency update on Monday	https://github.com/umutaktepe/AeroTools/pull/2086
+umutaktepe/AeroTools	2085	PR	2026-10-10	Bug #12345 Scheduled daily dependency update on Saturday	https://github.com/umutaktepe/AeroTools/pull/2085
+Sagargupta16/stock-market-prediction	58	PR	2026-09-03	chore(deps): update monthly dependencies	https://github.com/Sagargupta16/stock-market-prediction/pull/58
+umutaktepe/AeroTools	2084	PR	2026-10-08	Bug #12345 Scheduled daily dependency update on Thursday	https://github.com/umutaktepe/AeroTools/pull/2084
+Itqan-community/Munajjam	114	PR	2026-08-22	feat(transcription): add FastConformer CTC alignment	https://github.com/Itqan-community/Munajjam/pull/114
+umutaktepe/AeroTools	2083	PR	2026-10-06	Bug #12345 Scheduled daily dependency update on Tuesday	https://github.com/umutaktepe/AeroTools/pull/2083
+baneeishaque/attentive-gan-derainnet	1657	PR	2026-08-01	Scheduled daily dependency update on Saturday	https://github.com/baneeishaque/attentive-gan-derainnet/pull/1657
+umutaktepe/AeroTools	2082	PR	2026-10-04	Bug #12345 Scheduled daily dependency update on Sunday	https://github.com/umutaktepe/AeroTools/pull/2082
+umutaktepe/AeroTools	2081	PR	2026-10-02	Bug #12345 Scheduled daily dependency update on Friday	https://github.com/umutaktepe/AeroTools/pull/2081

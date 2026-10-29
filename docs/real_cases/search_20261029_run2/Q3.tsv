@@ -1,0 +1,30 @@
+geopandas/pyogrio	711	PR	2026-10-27	TST: update test_write_read_datetime_tz_objects expected strings for pandas 3.1 and older GDAL	https://github.com/geopandas/pyogrio/pull/711
+catalyst-cooperative/pudl	5721	PR	2026-10-22	:panda_face: Fix EIA null-handling regressions from pandas 3.0	https://github.com/catalyst-cooperative/pudl/pull/5721
+catalyst-cooperative/pudl	5719	PR	2026-10-22	:panda_face: EIA-923 explicit and dtype-stable transform fixes	https://github.com/catalyst-cooperative/pudl/pull/5719
+phenobarbital/querysource	637	PR	2026-10-01	feat(pandas3-migration): FEAT-161 — Migrate to pandas >= 3.0	https://github.com/phenobarbital/querysource/pull/637
+pyjanitor-devs/pyjanitor	1801	issue	2026-10-22	Date conversion tests fail on pandas 3.1: to_datetime returns datetime64[us] instead of [s]	https://github.com/pyjanitor-devs/pyjanitor/issues/1801
+stefan-jansen/zipline-reloaded	334	PR	2026-09-24	BUG: Preserve csvdir metadata dtypes when concatenating empty frames	https://github.com/stefan-jansen/zipline-reloaded/pull/334
+stranske/Trend_Model_Project	6103	PR	2026-10-16	fix(monte-carlo): count adjacent regime transitions positionally	https://github.com/stranske/Trend_Model_Project/pull/6103
+Sage-Bionetworks/synapsePythonClient	1471	PR	2026-10-12	[SYNPY-1933] Updated pandas to use 3.x	https://github.com/Sage-Bionetworks/synapsePythonClient/pull/1471
+NicolasReyrolle/TrackTales	341	issue	2026-09-11	refactor: Adapt and optimize codebase for Pandas 3.0.5	https://github.com/NicolasReyrolle/TrackTales/issues/341
+wkddkw/crypto-quant	6	PR	2026-10-01	修复测试对真实数据的隐式依赖并添加 CI	https://github.com/wkddkw/crypto-quant/pull/6
+pandas-dev/pandas	65308	issue	2026-04-20	BUG: pyarrow engine timestamp conversion fails when doing pd.read_csv	https://github.com/pandas-dev/pandas/issues/65308
+hulacon/word2psy	4	PR	2026-10-15	Fix silent defects found in a bug-hunting pass	https://github.com/hulacon/word2psy/pull/4
+jsonpickle/jsonpickle	619	PR	2026-08-05	Rebuild numpy scalars from their declared dtype	https://github.com/jsonpickle/jsonpickle/pull/619
+pandas-dev/pandas	53643	issue	2023-06-13	BUG: Timedelta with non-ns unit does not add correctly to stdlib datetime.datetime	https://github.com/pandas-dev/pandas/issues/53643
+ashribad2005/sih-trustgraph-2026	2	PR	2026-08-18	Member 1:AI part is completed	https://github.com/ashribad2005/sih-trustgraph-2026/pull/2
+DASDAE/dascore	949	PR	2026-08-20	Require pandas 3, and convert only the times a row states	https://github.com/DASDAE/dascore/pull/949
+muntherhasan1/scprs-analysis	24	PR	2026-07-19	Upgrade pandas to 3.x (lift the deliberate 2.x hold)	https://github.com/muntherhasan1/scprs-analysis/pull/24
+RadwanSusan/RAD-Trading	72	PR	2026-10-03	[Aikido] Fix 9 security issues in numpy, scipy, werkzeug and 4 more	https://github.com/RadwanSusan/RAD-Trading/pull/72
+RadwanSusan/RAD-Trading	53	PR	2026-08-23	[Aikido] Fix 7 security issues in fastjsonschema, numpy, werkzeug and 4 more	https://github.com/RadwanSusan/RAD-Trading/pull/53
+wdm0006/git-pandas	75	issue	2026-08-02	[autopilot] Support pandas 3.x: lift the <3.0.0 cap and fix the two calls that break under it	https://github.com/wdm0006/git-pandas/issues/75
+deepaihealth/expert-work	1122	PR	2026-08-06	chore(sandbox-image): 依赖一次性扫清——8 个包,weasyprint+pydyf 成对升,pandas 上 3.0	https://github.com/deepaihealth/expert-work/pull/1122
+pandas-dev/pandas	66709	issue	2026-08-10	BUG: to_json(date_format="epoch") ignores date_unit for datetime-likes behind Categorical/Sparse dtypes	https://github.com/pandas-dev/pandas/issues/66709
+MingoDynasty/Corporate-Serf-Dashboard	151	PR	2026-07-18	chore(deps): refresh dependency floors and correct pandas-stubs	https://github.com/MingoDynasty/Corporate-Serf-Dashboard/pull/151
+pmrv/fleche	1004	issue	2026-10-13	Digesting a DataFrame with an object column of arrays raises (hash_pandas_object)	https://github.com/pmrv/fleche/issues/1004
+DASDAE/dascore	960	PR	2026-08-21	Hold every annotation cell in the type it reads back as	https://github.com/DASDAE/dascore/pull/960
+tamnd/firepanda-compat	8	issue	2026-09-04	The scoreboard: per section, with coverage beside it	https://github.com/tamnd/firepanda-compat/issues/8
+tim1016/learn-ai	920	PR	2026-07-05	feat: establish temporal authority	https://github.com/tim1016/learn-ai/pull/920
+cognitedata/indsl	639	PR	2026-05-15	fix: resolve pandas 3 DatetimeIndex-to-int64 unit regression	https://github.com/cognitedata/indsl/pull/639
+pastas/pastas	1268	issue	2026-06-29	Very bad fit when unit of DatetimeIndex of oseries is not us (micro-seconds)	https://github.com/pastas/pastas/issues/1268
+ziagl888/Kythera	229	PR	2026-08-01	fix(replay): RUB2 skew root-caused to the measurement window, not funding (T-2026-KYT-9050-008)	https://github.com/ziagl888/Kythera/pull/229

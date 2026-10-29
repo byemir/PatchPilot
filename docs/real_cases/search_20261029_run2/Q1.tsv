@@ -1,0 +1,30 @@
+ucgmsim/velocity_modelling	64	PR	2026-10-20	Drop the pandas<3.0 upper bound	https://github.com/ucgmsim/velocity_modelling/pull/64
+jojacobsen/openpls-engine	58	PR	2026-10-22	chore(deps): bump pandas to 3.0	https://github.com/jojacobsen/openpls-engine/pull/58
+holoviz/panel	8904	PR	2026-10-23	compat: Handle pandas 3.1 deprecations in Tabulator	https://github.com/holoviz/panel/pull/8904
+catalyst-cooperative/pudl	5719	PR	2026-10-22	:panda_face: EIA-923 explicit and dtype-stable transform fixes	https://github.com/catalyst-cooperative/pudl/pull/5719
+pmorissette/bt	576	PR	2026-09-23	Fix chained-assignment pattern in positions/outlays/get_transactions	https://github.com/pmorissette/bt/pull/576
+Nixtla/datasetsforecast	115	PR	2026-10-14	fix(phm2008): assign clipped RUL instead of chained inplace clip	https://github.com/Nixtla/datasetsforecast/pull/115
+dtcenter/METplotpy	592	PR	2026-10-26	Feature #591 remove unused dependencies	https://github.com/dtcenter/METplotpy/pull/592
+vahidlesani/vivasignals-pro	4	PR	2026-09-24	R30: spot horizons, low-TF MTF base, clean charts, handoff	https://github.com/vahidlesani/vivasignals-pro/pull/4
+pandas-dev/pandas	70131	PR	2026-10-02	DOC: fix broken examples and inaccurate claims in user guide and docstrings	https://github.com/pandas-dev/pandas/pull/70131
+catalyst-cooperative/pudl	5664	PR	2026-09-24	:panda_face: EIA-923 explicit and dtype-stable transform fixes	https://github.com/catalyst-cooperative/pudl/pull/5664
+Alek050/databallpy	344	issue	2026-02-02	Fix for Pandas 3.0	https://github.com/Alek050/databallpy/issues/344
+amirge118/agentsForStocks	34	PR	2026-10-26	chore(deps): upgrade pandas 2.2.3 → 3.1.0	https://github.com/amirge118/agentsForStocks/pull/34
+berntpopp/kidney-genetics-db	403	PR	2026-10-27	chore(deps): update backend dependencies	https://github.com/berntpopp/kidney-genetics-db/pull/403
+nassim0014/kinz-secure-commerce-hub	38	PR	2026-08-24	chore(deps): bump pandas from 2.2.1 to 3.0.5 in /src/api	https://github.com/nassim0014/kinz-secure-commerce-hub/pull/38
+owid/etl	6994	PR	2026-10-09	Enable pandas 3 behavior (Copy-on-Write, str dtype)	https://github.com/owid/etl/pull/6994
+m-beau/pixelmap	41	PR	2026-07-08	chore: drop Python 3.10 support	https://github.com/m-beau/pixelmap/pull/41
+ghammad/pyActigraphy	173	issue	2026-09-26	Bug in Roenneberg_AoT algorithm for detection of inactivity period	https://github.com/ghammad/pyActigraphy/issues/173
+catalyst-cooperative/pudl	5665	PR	2026-09-24	:panda_face: Use dtype-safe assignments and transforms	https://github.com/catalyst-cooperative/pudl/pull/5665
+RamonRDR/python-study-guide	73	PR	2026-08-29	Start Phase 9 with pandas	https://github.com/RamonRDR/python-study-guide/pull/73
+salk-ee/salk_toolkit	82	PR	2026-08-11	Migrate to pandas 3.0 + dependency review	https://github.com/salk-ee/salk_toolkit/pull/82
+dtcenter/METcalcpy	485	PR	2026-10-26	Feature remove unused deps	https://github.com/dtcenter/METcalcpy/pull/485
+jldbc/pybaseball	500	PR	2026-02-04	Fix FutureWarning in team_results.py	https://github.com/jldbc/pybaseball/pull/500
+NicolasReyrolle/TrackTales	341	issue	2026-09-11	refactor: Adapt and optimize codebase for Pandas 3.0.5	https://github.com/NicolasReyrolle/TrackTales/issues/341
+winter-telescope/mirar	1144	PR	2026-09-11	Bump astropy to >=7.2.0 and pandas to >=3.0.0	https://github.com/winter-telescope/mirar/pull/1144
+dgunning/edgartools	938	issue	2026-07-31	6.0: raise the Python floor to 3.11 (the pandas floor stays at 2.0)	https://github.com/dgunning/edgartools/issues/938
+trellumhq/trellum	73	PR	2026-10-18	Build large reports in a third of the memory: pandas 3 and category text columns	https://github.com/trellumhq/trellum/pull/73
+Vandermiet/Beaver_Choice_Paper	18	issue	2026-09-15	101 — Runnable skeleton: install pydantic-ai, fix the starter, stub the loop	https://github.com/Vandermiet/Beaver_Choice_Paper/issues/18
+halon176/h-crypto-price-bot	148	PR	2026-01-26	Update pandas requirement from <3.0.0,>=2.2.2 to >=2.2.2,<4.0.0	https://github.com/halon176/h-crypto-price-bot/pull/148
+ansible/metrics-utility	431	PR	2026-06-10	AAP-75305 - chore: upgrade pandas to 3.0 and openpyxl to 3.1.5 with compat fixes	https://github.com/ansible/metrics-utility/pull/431
+visikai/ohlc-toolkit	68	PR	2026-08-29	⬆️ Update pandas requirement from <3.0.0,>=2.3.0 to >=2.3.0,<4.0.0	https://github.com/visikai/ohlc-toolkit/pull/68
