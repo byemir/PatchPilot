@@ -1,0 +1,152 @@
+[
+ {
+  "case": "r1f_indsl_time_split",
+  "run": "20261029-164047_r1f_indsl_time_split",
+  "recorded": "PASS",
+  "gen1": {
+   "verdict": "PASS",
+   "valid": 29,
+   "wide_divergences": 0
+  },
+  "gen2": {
+   "verdict": "PASS",
+   "valid": 157,
+   "wide_divergences": 0
+  }
+ },
+ {
+  "case": "r1f_indsl_time_split",
+  "run": "20261029-164217_r1f_indsl_time_split",
+  "recorded": "PASS",
+  "gen1": {
+   "verdict": "PASS",
+   "valid": 29,
+   "wide_divergences": 0
+  },
+  "gen2": {
+   "verdict": "DIVERGENCE",
+   "valid": 157,
+   "wide_divergences": 4
+  }
+ },
+ {
+  "case": "r1f_indsl_time_split",
+  "run": "20261029-164349_r1f_indsl_time_split",
+  "recorded": "PASS",
+  "gen1": {
+   "verdict": "PASS",
+   "valid": 29,
+   "wide_divergences": 0
+  },
+  "gen2": {
+   "verdict": "PASS",
+   "valid": 157,
+   "wide_divergences": 0
+  }
+ },
+ {
+  "case": "r1f_indsl_time_split",
+  "run": "20261029-164514_r1f_indsl_time_split",
+  "recorded": "PASS",
+  "gen1": {
+   "verdict": "PASS",
+   "valid": 29,
+   "wide_divergences": 0
+  },
+  "gen2": {
+   "verdict": "PASS",
+   "valid": 157,
+   "wide_divergences": 0
+  }
+ },
+ {
+  "case": "r1f_indsl_time_split",
+  "run": "20261029-164559_r1f_indsl_time_split",
+  "recorded": "PASS",
+  "gen1": {
+   "verdict": "PASS",
+   "valid": 29,
+   "wide_divergences": 0
+  },
+  "gen2": {
+   "verdict": "PASS",
+   "valid": 157,
+   "wide_divergences": 0
+  }
+ },
+ {
+  "case": "r2f_kythera_epoch_seconds",
+  "run": "20261029-164639_r2f_kythera_epoch_seconds",
+  "recorded": "WEAK",
+  "gen1": {
+   "verdict": "WEAK",
+   "valid": 10,
+   "wide_divergences": 0
+  },
+  "gen2": {
+   "verdict": "PASS",
+   "valid": 160,
+   "wide_divergences": 0
+  }
+ },
+ {
+  "case": "r2f_kythera_epoch_seconds",
+  "run": "20261029-164721_r2f_kythera_epoch_seconds",
+  "recorded": "WEAK",
+  "gen1": {
+   "verdict": "WEAK",
+   "valid": 10,
+   "wide_divergences": 0
+  },
+  "gen2": {
+   "verdict": "DIVERGENCE",
+   "valid": 160,
+   "wide_divergences": 4
+  }
+ },
+ {
+  "case": "r2f_kythera_epoch_seconds",
+  "run": "20261029-164814_r2f_kythera_epoch_seconds",
+  "recorded": "WEAK",
+  "gen1": {
+   "verdict": "WEAK",
+   "valid": 10,
+   "wide_divergences": 0
+  },
+  "gen2": {
+   "verdict": "PASS",
+   "valid": 160,
+   "wide_divergences": 0
+  }
+ },
+ {
+  "case": "r2f_kythera_epoch_seconds",
+  "run": "20261029-165007_r2f_kythera_epoch_seconds",
+  "recorded": "WEAK",
+  "gen1": {
+   "verdict": "WEAK",
+   "valid": 10,
+   "wide_divergences": 0
+  },
+  "gen2": {
+   "verdict": "DIVERGENCE",
+   "valid": 160,
+   "wide_divergences": 4
+  }
+ },
+ {
+  "case": "r2f_kythera_epoch_seconds",
+  "run": "20261029-165052_r2f_kythera_epoch_seconds",
+  "recorded": "WEAK",
+  "gen1": {
+   "verdict": "WEAK",
+   "valid": 10,
+   "wide_divergences": 0
+  },
+  "gen2": {
+   "verdict": "PASS",
+   "valid": 160,
+   "wide_divergences": 0
+  }
+ }
+]

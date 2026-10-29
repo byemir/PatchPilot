@@ -90,7 +90,7 @@ def check_source(src: Path, fn: str) -> None:
 
 
 def derive_hidden(out: Path, inputs: list, old: str, new: str, want: int, candidates: int):
-    cands = [g["probe"] for g in differential.generate(inputs, n=candidates, seed=0) if g["tier"] == "core"]
+    cands = [g["probe"] for g in differential.generate(inputs, n=candidates, seed=0, v2=True) if g["tier"] == "core"]
     if not cands:
         fail("the differential generator produced no candidate inputs; pass --hidden-inputs")
     (out / "cand.json").write_text(json.dumps(cands))
@@ -149,7 +149,7 @@ def main(argv=None) -> None:
         (out / "run_case.py").write_text(RUN.format(fn=a.fn))
         (out / "tests" / "__init__.py").write_text("")
         (out / "tests" / "test_app.py").write_text(TEST.format(fn=a.fn))
-        (out / "case.json").write_text(json.dumps({"lib": a.lib, "old": os.path.abspath(a.old), "new": os.path.abspath(a.new)}) + "\n")
+        (out / "case.json").write_text(json.dumps({"lib": a.lib, "old": os.path.abspath(a.old), "new": os.path.abspath(a.new), "gen": 2}) + "\n")
         (out / "inputs.json").write_text(json.dumps(inputs, indent=1) + "\n")
 
         g1, e1 = run_probes(a.old, out, "inputs.json")

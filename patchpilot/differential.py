@@ -9,10 +9,18 @@ Two tiers:
   wide - numbers may leave that range; divergences are only reported, because out-of-contract
          inputs (for example 300 in a uint8 array) can legitimately differ between versions.
 Probes where the oracle itself raised are skipped (undefined behavior, nothing to preserve).
+
+Generator versions: a case folder may carry "gen": 2 in case.json (written by make_case from 2026-10-29 on). Version 2 adds
+  - aligned lists: list fields of one object that have the same length are changed together (same row dropped,
+    duplicated, reversed or truncated in every column), so a table given as columns stays a table;
+  - date-aware strings: ISO dates and timestamps stay valid (shifted by a random amount, same format), and a whole
+    column can get fractional seconds of 3, 6 or 9 digits (milliseconds to nanoseconds).
+Without the key the behavior is exactly the earlier one, so recorded runs stay reproducible.
 """
 from __future__ import annotations
 
 import argparse
+import datetime as _dt
 import json
 import random
 import re
@@ -22,6 +30,8 @@ from pathlib import Path
 from patchpilot import sandbox
 
 TOKEN = re.compile(r"\d+|\D+")
+DATE_RE = re.compile(r"^(\d{4})-(\d{2})-(\d{2})(?:([ T])(\d{2}):(\d{2}):(\d{2})(?:\.(\d+))?)?$")
+FRAC_WIDTHS = (3, 6, 9)
 # Kept small on purpose: a wide integer can land in a size parameter (count, range) and a huge one
 # would exhaust memory, which this local runner cannot limit.
 WIDE_INTS = [0, 1, -1, 255, 256, 65535, 65536]
@@ -33,8 +43,9 @@ def _num(v) -> bool:
 
 
 class Gen:
-    def __init__(self, seeds: list, seed: int):
+    def __init__(self, seeds: list, seed: int, v2: bool = False):
         self.rng = random.Random(seed)
+        self.v2 = v2
         self.leaves: dict = {}  # path -> numbers and strings seen there
         self.elems: dict = {}   # list path -> elements seen there (any type)
         self.maxlen: dict = {}  # list path -> longest list seen
@@ -70,10 +81,93 @@ class Gen:
         if isinstance(v, str):
             return self.mut_str(v, path)
         if isinstance(v, dict):
+            if self.v2:
+                keys = [k for k, x in v.items() if isinstance(x, list)]
+                if len(keys) >= 2 and len({len(v[k]) for k in keys}) == 1 and len(v[keys[0]]) > 0:
+                    return self.mut_aligned(v, path, keys)
             return {k: (self.mut(x, f"{path}.{k}") if r.random() < 0.6 else x) for k, x in v.items()}
         if isinstance(v, list):
             return self.mut_list(v, path + "[]")
         return v
+
+    # ---- generator v2 ----
+    def parse_date(self, s):
+        m = DATE_RE.match(s) if isinstance(s, str) else None
+        if not m:
+            return None
+        y, mo, d, sep, hh, mi, ss, frac = m.groups()
+        try:
+            dt = _dt.datetime(int(y), int(mo), int(d), int(hh or 0), int(mi or 0), int(ss or 0))
+        except ValueError:
+            return None
+        return dt, sep, hh is not None, frac
+
+    def fmt_date(self, dt, sep, has_time, frac):
+        s = dt.strftime("%Y-%m-%d")
+        if has_time:
+            s += (sep or " ") + dt.strftime("%H:%M:%S")
+            if frac:
+                s += "." + frac
+        return s
+
+    def rand_digits(self, k: int) -> str:
+        return "".join(self.rng.choice("0123456789") for _ in range(k))
+
+    def jitter_date(self, s: str) -> str:
+        p = self.parse_date(s)
+        if p is None:
+            return s
+        dt, sep, has_time, frac = p
+        r = self.rng
+        if has_time:
+            dt = dt + _dt.timedelta(seconds=r.randint(-1, 1) * r.choice([1, 60, 3600, 86400, 86400 * 30]))
+        else:
+            dt = dt + _dt.timedelta(days=r.randint(-30, 30))
+        return self.fmt_date(dt, sep, has_time, frac)
+
+    def with_frac(self, s: str, width: int) -> str:
+        p = self.parse_date(s)
+        if p is None:
+            return s
+        dt, sep, has_time, _ = p
+        return self.fmt_date(dt, sep or " ", True, self.rand_digits(width))
+
+    def mut_aligned(self, d: dict, path: str, keys: list):
+        r = self.rng
+        cols = {k: list(d[k]) for k in keys}
+        cap = max(32, max(self.maxlen.get(f"{path}.{k}[]", 0) for k in keys))
+        for _ in range(r.randint(1, 2)):
+            n = len(cols[keys[0]])
+            op = r.choice(["mutate", "mutate", "mutate", "drop", "dup", "reverse", "grow", "trunc", "single",
+                           "datefrac", "datefrac"])
+            if op == "mutate":
+                for k in keys:
+                    cols[k] = [self.mut(x, f"{path}.{k}[]") if r.random() < 0.5 else x for x in cols[k]]
+            elif op == "drop" and n > 1:
+                i = r.randrange(n)
+                cols = {k: c[:i] + c[i + 1:] for k, c in cols.items()}
+            elif op == "dup" and n and n < cap:
+                i, j = r.randrange(n), r.randrange(n + 1)
+                cols = {k: c[:j] + [c[i]] + c[j:] for k, c in cols.items()}
+            elif op == "reverse":
+                cols = {k: c[::-1] for k, c in cols.items()}
+            elif op == "grow" and n < cap:
+                for k in keys:
+                    pool = self.elems.get(f"{path}.{k}[]") or cols[k]
+                    cols[k] = cols[k] + [self.mut(r.choice(pool), f"{path}.{k}[]")]
+            elif op == "trunc" and n > 1:
+                m = r.randint(1, n)
+                cols = {k: c[:m] for k, c in cols.items()}
+            elif op == "single" and n:
+                i = r.randrange(n)
+                cols = {k: [c[i]] for k, c in cols.items()}
+            elif op == "datefrac":
+                w = r.choice(FRAC_WIDTHS)
+                for k in keys:
+                    if cols[k] and all(self.parse_date(x) is not None for x in cols[k]):
+                        cols[k] = [self.with_frac(x, w) for x in cols[k]]
+        return {k: (cols[k] if k in cols else (self.mut(x, f"{path}.{k}") if r.random() < 0.6 else x))
+                for k, x in d.items()}
 
     def mut_num(self, v, path: str):
         r = self.rng
@@ -89,6 +183,8 @@ class Gen:
 
     def mut_str(self, v: str, path: str):
         r = self.rng
+        if self.v2 and self.parse_date(v) is not None:
+            return self.jitter_date(v)
         pool = [x for x in self.leaves.get(path, []) if isinstance(x, str)] or [v]
         c = r.random()
         if c < 0.35:
@@ -153,8 +249,8 @@ class Gen:
         return out
 
 
-def generate(seeds: list, n: int = 200, seed: int = 0, wide_frac: float = 0.25) -> list:
-    g = Gen(seeds, seed)
+def generate(seeds: list, n: int = 200, seed: int = 0, wide_frac: float = 0.25, v2: bool = False) -> list:
+    g = Gen(seeds, seed, v2)
     seen = {json.dumps(s, sort_keys=True) for s in seeds}
     out: list = []
     tries = 0
@@ -195,7 +291,7 @@ def _same(a, b) -> bool:
 
 
 def differential(case_dir, old_py, new_py, patched_files: dict | None = None, *, n: int = 200,
-                 seed: int = 0, seed_files=("inputs.json", "hidden_inputs.json")) -> dict:
+                 seed: int = 0, seed_files=("inputs.json", "hidden_inputs.json"), gen: int | None = None) -> dict:
     case_dir = Path(case_dir)
     seeds: list = []
     for name in seed_files:
@@ -204,7 +300,16 @@ def differential(case_dir, old_py, new_py, patched_files: dict | None = None, *,
             seeds.extend(json.loads(p.read_text()))
     if not seeds:
         return {"verdict": "RUN_ERROR", "reason": "no seed inputs"}
-    gen = generate(seeds, n=n, seed=seed)
+    gen_v = 1
+    cj = case_dir / "case.json"
+    if cj.exists():
+        try:
+            gen_v = int(json.loads(cj.read_text()).get("gen", 1))
+        except (ValueError, TypeError, AttributeError):
+            gen_v = 1
+    if gen is not None:
+        gen_v = gen
+    gen = generate(seeds, n=n, seed=seed, v2=gen_v >= 2)
     probes = [g["probe"] for g in gen]
 
     # Core and wide probes run in separate processes: a wide probe that hangs or crashes must not
@@ -243,7 +348,7 @@ def differential(case_dir, old_py, new_py, patched_files: dict | None = None, *,
     verdict = "DIVERGENCE" if core_div else ("WEAK" if valid < MIN_VALID else "PASS")
     return {"verdict": verdict, "generated": len(probes), "valid": valid,
             "skipped_oracle_error": sum(g["tier"] == "core" for g in gen) - valid, "core_divergences": core_div,
-            "wide_divergences": wide_div, "wide_error": wide_error, "examples": examples[:3], "seed": seed}
+            "wide_divergences": wide_div, "wide_error": wide_error, "examples": examples[:3], "seed": seed, "gen": gen_v}
 
 
 if __name__ == "__main__":

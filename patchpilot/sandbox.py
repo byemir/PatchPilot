@@ -1,4 +1,8 @@
-"""Run a command in an isolated, budgeted subprocess. Standard library only."""
+"""Run a command in an isolated, budgeted subprocess. Standard library only.
+
+File-system and network isolation of model code: macOS uses sandbox-exec (a deny list for the home directory and the
+repository); Linux uses Landlock through patchpilot/landlock_exec.py (an allow list: the workspace, the interpreter and
+system libraries). On other platforms model code is not run unless isolation is switched off explicitly."""
 from __future__ import annotations
 
 import json
@@ -109,7 +113,7 @@ def profile_for(python, extra: str = "") -> str:
 
 
 _SELFTEST_CODE = '''
-import json, os, socket, sys
+import errno, json, os, socket, sys
 home, canary, wpath = sys.argv[1:4]
 
 def t(fn):
@@ -118,6 +122,10 @@ def t(fn):
         return "allowed"
     except PermissionError:
         return "denied"
+    except OSError as e:  # network namespace without a route: no way out either
+        if e.errno in (errno.ENETUNREACH, errno.ENETDOWN, errno.EADDRNOTAVAIL):
+            return "denied"
+        return "other:" + type(e).__name__
     except Exception as e:
         return "other:" + type(e).__name__
 
@@ -149,6 +157,71 @@ def _selftest(python: str, prof: str) -> None:
         raise SandboxUnavailable(f"sandbox self-test: access was not denied for {bad}")
 
 
+LAUNCHER = Path(__file__).with_name("landlock_exec.py")
+LINUX_NETNS = True  # try an empty network namespace on top of Landlock; the launcher continues without it if the kernel refuses
+LINUX_INFO: dict = {}  # filled by the self-test: {"abi": ..., "netns": ...}
+_LINUX_SYSTEM_RO = ("/usr", "/lib", "/lib64", "/bin", "/sbin", "/etc/ld.so.cache", "/etc/ld.so.conf", "/etc/ld.so.conf.d",
+                    "/etc/localtime", "/etc/nsswitch.conf", "/etc/passwd", "/etc/group", "/proc/cpuinfo", "/proc/meminfo",
+                    "/sys/devices/system/cpu")
+
+
+def linux_ro_paths(python) -> list:
+    """Read-only roots for the interpreter: system directories, the environment of this interpreter and the
+    installation its pyvenv.cfg points to. Never the home directory or the filesystem root itself."""
+    home = Path.home().resolve()
+    paths = list(_LINUX_SYSTEM_RO)
+    p = Path(python)
+    roots = {p.parent.parent, p.resolve().parent.parent}
+    cfg = p.parent.parent / "pyvenv.cfg"
+    if cfg.exists():
+        for line in cfg.read_text().splitlines():
+            k, _, v = line.partition("=")
+            if k.strip() == "home" and v.strip():
+                roots.add(Path(v.strip()).resolve().parent)
+    for r in roots:
+        if r not in (Path("/"), home):
+            paths.append(str(r))
+    return paths
+
+
+def linux_wrap(cmd: list, cwd) -> list:
+    out = [sys.executable, "-I", "-S", str(LAUNCHER)]
+    if LINUX_NETNS:
+        out.append("--netns")
+    for q in linux_ro_paths(cmd[0]):
+        out += ["--ro", q]
+    out += ["--rw", str(Path(cwd).resolve()), "--rw", "/dev/null", "--"]
+    return out + cmd
+
+
+def _selftest_linux(python: str) -> None:
+    home, repo = Path.home().resolve(), _repo()
+    canary = (sorted((repo / "benchmarks").glob("*/hidden_golden.json")) or [repo / "README.md"])[0]
+    work = Path(tempfile.mkdtemp(prefix="pp_selftest_"))
+    wpath = home / f".pp_selftest_{os.getpid()}"
+    try:
+        cmd = linux_wrap([os.path.abspath(python), "-c", _SELFTEST_CODE, str(home), str(canary), str(wpath)], work)
+        cmd.insert(4, "--report")
+        r = subprocess.run(cmd, env=SAFE_ENV, capture_output=True, text=True, timeout=60, cwd=work)
+    finally:
+        wpath.unlink(missing_ok=True)  # exists only if the write was NOT denied
+        shutil.rmtree(work, ignore_errors=True)
+    if r.returncode == 126:
+        raise SandboxUnavailable("Landlock is not available here (" + r.stderr.strip()[-200:] + "); model code is not run "
+                                 "without file-system isolation (--no-fs-deny runs it unisolated; such runs are not counted)")
+    try:
+        res = json.loads(r.stdout.strip().splitlines()[-1])
+    except (IndexError, ValueError):
+        raise SandboxUnavailable(f"sandbox self-test did not run: {r.stderr[-300:]}") from None
+    bad = {k: v for k, v in res.items() if v != "denied"}
+    if bad:
+        raise SandboxUnavailable(f"sandbox self-test: access was not denied for {bad}")
+    for part in r.stderr.split():
+        if part.startswith(("abi=", "netns=")):
+            k, _, v = part.partition("=")
+            LINUX_INFO[k] = int(v)
+
+
 EXTRA_RULES = ""  # extra Seatbelt rules appended to the profile; none has been shown to help so far
 _ENV_CHECK = True  # tests may switch the check off to measure the profile alone
 _KEEP_ENV = ("PATH", "HOME", "LANG", "LC_ALL", "LC_CTYPE", "TMPDIR", "TERM", "USER", "LOGNAME", "PP_CLEAN")
@@ -159,6 +232,11 @@ _KEYLIKE = re.compile(r"[A-Za-z0-9_\-]{32,}|sk-[A-Za-z0-9_\-]{16,}")
 def initial_environ() -> list:
     """Entries 'NAME=value' of this process's INITIAL environment, read the way other same-user code could
     read it (sysctl KERN_PROCARGS2). Falls back to os.environ when that is not possible."""
+    if sys.platform.startswith("linux"):
+        try:
+            return [x.decode("utf-8", "replace") for x in Path("/proc/self/environ").read_bytes().split(b"\0") if x]
+        except OSError:
+            pass
     try:
         import ctypes
         import ctypes.util
@@ -214,11 +292,16 @@ def ensure_clean_env() -> None:
     os.execve(sys.executable, [sys.executable, *sys.orig_argv[1:]], env)
 
 
-def _wrap(cmd: list) -> list:
+def _wrap(cmd: list, cwd=None) -> list:
     if not FS_DENY:
         return cmd
     _check_harness_env()
     python = cmd[0]
+    if platform.system() == "Linux":
+        if python not in _SELFTESTED:
+            _selftest_linux(python)
+            _SELFTESTED.add(python)
+        return linux_wrap(cmd, cwd if cwd is not None else os.getcwd())
     if platform.system() != "Darwin" or not os.path.exists(SANDBOX_EXEC):
         raise SandboxUnavailable("sandbox-exec is not available; model code is not run without file-system "
                                  "isolation (--no-fs-deny runs it unisolated; such runs are not counted)")
@@ -233,7 +316,7 @@ def run(python: str | Path, args: list, cwd: str | Path, *, timeout_s: float = 6
     cmd = [os.path.abspath(str(python)), *args]
     t0 = time.monotonic()
     proc = subprocess.Popen(
-        _wrap(cmd),
+        _wrap(cmd, cwd),
         cwd=str(cwd),
         env=SAFE_ENV,
         stdout=subprocess.PIPE,

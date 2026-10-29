@@ -77,7 +77,7 @@ def build(key):
         except SystemExit as e:
             if e.code not in (0, None):
                 print(f"{key}: NOT BUILT as a clean silent breakage (exit {e.code}); folder left for inspection if it exists:", out); return False
-    (out / "case.json").write_text(json.dumps(ref) + "\n")
+    (out / "case.json").write_text(json.dumps({**ref, "gen": 2}) + "\n")  # generator v2 (aligned lists, dates)
     for old, new in (s["good"],):
         assert old in app, "known-good anchor"
         (out / "known_good.json").write_text(json.dumps({"files": {"app.py": app.replace(old, new)}}, indent=1) + "\n")
