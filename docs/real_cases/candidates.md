@@ -254,3 +254,21 @@ Read in the order of the table above (first-seen position). `finalist` = needs t
 | Q6#24 | explorerhq/sql-explorer#711 | rejected | C4: CI and test only, outputs identical on both versions; license not stated |
 | Q6#28 | ludwig-ai/ludwig#4203 | rejected | C6,C3: loud TypeError; several places |
 | Q6#30 | guillermo-navas-palencia/optbinning#399 | rejected | C6: issue behind #400, crash |
+
+## Follow-up after reading the code of the finalists
+
+Code read at the parent of the merge commit (`gh api .../contents/PATH?ref=SHA^`). Q3#30 (ziagl888/Kythera#229) is still being read.
+
+| first seen | hit | decision | reason |
+|---|---|---|---|
+| Q1#6 | Nixtla/datasetsforecast#115 | rejected | C3: the changed lines sit in the PHM2008 loading flow that reads data files and uses the clip_rul flag, not in a function that runs on its own |
+| Q1#11 | Alek050/databallpy#344 | rejected | C3,C4: the thread lists 61 failing tests with five causes; no single fix in one function |
+| Q1#18 | catalyst-cooperative/pudl#5665 | rejected | C3: the changed line is inside a nested function (associate_notes_with_values_group) of a PUDL transform module |
+| Q1#20 | salk-ee/salk_toolkit#82 | rejected | C3: _reconcile_categories calls salk_toolkit.utils.get_categories, warn and io.core._deterministic_categories_and_values (other modules). It is the closest match to the pandas 3.0 str dtype note |
+| Q1#22 | jldbc/pybaseball#500 | rejected | C3: the changed line is inside get_table(soup, team), which takes a BeautifulSoup object |
+| Q2#8 | phenobarbital/querysource#637 | rejected | C3: to_json depends on orjson (third-party) |
+| Q3#8 | Sage-Bionetworks/synapsePythonClient#1471 | rejected | C1: no pandas 3.0 release-note entry could be quoted for the Int64 to Float64 change |
+| Q3#28 | cognitedata/indsl#639 | candidate | _split_timeseries_into_time_and_value_arrays (indsl/data_quality/outliers.py, parent of merge commit 5ec4a2ed4f is fab55f6dfa82, Apache-2.0): 2 lines, numpy and pandas only |
+| Q3#29 | pastas/pastas#1269 | rejected | C3: the fix touches ten files and class methods (Model.residuals); the module-level get_sample at the parent commit is not affected |
+| Q6#3 | mazino2d/caketool#16 | rejected | C3: FeatureEncoder is an sklearn transformer using a project helper (caketool.utils.lib_utils.get_class) |
+| Q6#5 | capitalone/locopy#389 | rejected | C3: find_column_type_pandas uses pyarrow (pa.types) and the module logger |

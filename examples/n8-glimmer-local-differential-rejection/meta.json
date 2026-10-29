@@ -1,0 +1,20 @@
+{
+  "folder": "n8-glimmer-local-differential-rejection",
+  "result_file": "bench_20261029-052806_muse-glimmer_local.json",
+  "run_number": 1,
+  "case": "n8_string_to_bool",
+  "model": "muse-glimmer",
+  "effort": "low",
+  "mode": "one-shot (local endpoint)",
+  "layer": "isolation layer on, counted",
+  "gate": "differential gate on",
+  "attempts": 2,
+  "tokens_used": 2693,
+  "gate_per_attempt": [
+    "rejected at differential",
+    "accepted"
+  ],
+  "rescored_verdict": "PASS",
+  "rescored_seed": 1,
+  "submitted_from": null
+}

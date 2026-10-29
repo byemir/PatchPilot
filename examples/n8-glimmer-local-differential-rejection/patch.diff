@@ -1,0 +1,14 @@
+--- a/app.py
++++ b/app.py
+@@ -6,6 +6,8 @@
+ 
+     flags: strings read from a text file, "0" for off and any other number for on.
+     """
+-    arr = np.array(flags)
+-    enabled = arr.astype(bool)
+-    return {"count": int(enabled.sum()), "enabled": [bool(x) for x in enabled]}
++    # Convert each flag string to an integer and test for non-zero.
++    # This reproduces the original "0" means off, any other number means on
++    # semantics on both NumPy 1.26 and NumPy 2.x.
++    enabled = [bool(int(f) != 0) for f in flags]
++    return {"count": int(sum(enabled)), "enabled": enabled}

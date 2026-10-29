@@ -17,6 +17,7 @@ PICKS = [  # (folder, result file, case, run number inside that file)
     ("p4-spark-gate-off-accepted-but-diverges", "bench_20261027-204730_muse-spark-1.3.json", "p4_label_histogram", 2),
     ("n6-glimmer-local-first-try", "bench_20261028-210347_muse-glimmer_local.json", "n6_uint8_scaling", 1),
     ("n7-glimmer-local-three-attempts", "bench_20261028-210626_muse-glimmer_local.json", "n7_float32_scalars", 2),
+    ("n8-glimmer-local-differential-rejection", "bench_20261029-052806_muse-glimmer_local.json", "n8_string_to_bool", 1),
 ]
 
 
