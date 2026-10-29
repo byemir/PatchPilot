@@ -1,0 +1,139 @@
+[
+  {
+    "case": "p4_label_histogram",
+    "model": "muse-glimmer",
+    "effort": "low",
+    "runs": 15,
+    "successes": 0,
+    "first_try": 0,
+    "avg_tokens": 6656,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "local_server": {
+        "build_info": "b11960-8642541b2",
+        "model_file": "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf",
+        "served_models": [
+          "muse-glimmer"
+        ]
+      },
+      "max_tokens": 12000
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 6019,
+        "run_dir": "runs/20261029-084227_p4_label_histogram",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 6476,
+        "run_dir": "runs/20261029-084431_p4_label_histogram",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 7235,
+        "run_dir": "runs/20261029-084652_p4_label_histogram",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 6289,
+        "run_dir": "runs/20261029-084938_p4_label_histogram",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 6728,
+        "run_dir": "runs/20261029-085142_p4_label_histogram",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 7010,
+        "run_dir": "runs/20261029-085525_p4_label_histogram",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 6303,
+        "run_dir": "runs/20261029-085931_p4_label_histogram",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 6308,
+        "run_dir": "runs/20261029-090326_p4_label_histogram",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 6484,
+        "run_dir": "runs/20261029-090803_p4_label_histogram",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 7200,
+        "run_dir": "runs/20261029-091245_p4_label_histogram",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 6879,
+        "run_dir": "runs/20261029-091810_p4_label_histogram",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 6755,
+        "run_dir": "runs/20261029-092314_p4_label_histogram",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 6763,
+        "run_dir": "runs/20261029-092721_p4_label_histogram",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 6056,
+        "run_dir": "runs/20261029-093159_p4_label_histogram",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 7331,
+        "run_dir": "runs/20261029-093638_p4_label_histogram",
+        "fs_deny": true
+      }
+    ],
+    "scored_pass": 0
+  }
+]

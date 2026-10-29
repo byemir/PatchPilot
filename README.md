@@ -4,7 +4,7 @@ Agent that proposes and verifies patches for Python code that broke silently aft
 **At a glance**
 
 - A patch is accepted only if it passes three gates: the visible tests, hidden tests the model never sees, and a differential check against the old library.
-- Nine synthetic cases (pandas 2.3 to 3.0, NumPy 1.26 to 2.x), derived from documented library changes; not yet tried on real projects.
+- Ten cases (pandas 2.3 to 3.0, NumPy 1.26 to 2.x): nine synthetic ones derived from documented library changes and one (p7) built around a function copied from the open-source project scikit-FIBERS; not tried on whole real repositories.
 - Hosted Muse Spark and Muse Wonder solved 125 of 125 runs on five cases; on the hardest one (p4), Spark 0 of 5 and Wonder 3 of 5. Muse Glimmer running locally solved 19 of 30 runs on six cases (low reasoning).
 - All runs were made on one Apple M2 Ultra Mac; no other platform was tested.
 
@@ -68,7 +68,7 @@ The runner (`patchpilot/*.py`) imports only the Python standard library, includi
 Cases n6/n7 use `.sandboxes/np126` and `.sandboxes/np2`. Benchmark runner: `python -m patchpilot.bench --help`.
 
 ## Limitations
-All cases are synthetic and have not been tried on real open-source projects. Sample sizes in `results/` are small (1 to 5 runs per case and setting; the first three files have 3 runs per case, one smoke test has 1), so they show direction only. Only token counts were recorded, no dollar cost per run. The first two bench files and earlier runs ran without the differential gate (see the engineering log).
+Nine of ten cases are synthetic and one (p7) contains code copied from one real open-source project; PatchPilot has not been tried on whole real repositories. Sample sizes in `results/` are small (1 to 5 runs per case and setting; the first three files have 3 runs per case, one smoke test has 1), so they show direction only. Only token counts were recorded, no dollar cost per run. The first two bench files and earlier runs ran without the differential gate (see the engineering log).
 Not tested or not measured: dollar cost and run time of hosted calls (not recorded), Linux and other non-macOS platforms, memory inspection tools (`lldb`, `vmmap`, `gcore`), other same-user processes that hold secrets, external network, real open-source projects, Muse Spark Open and other open-weight models, other quantizations of Muse Glimmer, reasoning levels of Glimmer other than low and medium (medium on four cases only), hosted effort levels other than low (one minimal-effort batch), a tools run with a larger token budget and tools mode with a local endpoint.
 
 Engineering log and technical notes: [`docs/engineering-log.md`](docs/engineering-log.md), [`docs/training-notes.jsonl`](docs/training-notes.jsonl).
@@ -160,6 +160,28 @@ One-shot, effort low (Glimmer: reasoning strength low), 5 runs per cell, re-scor
 | p6_str_dtype_checks | 5 / 2610 | 5 / 2326 | 4 / 2210 |
 | n8_string_to_bool | 5 / 2807 | 5 / 2553 | 1 / 2772 |
 
+### Glimmer, more runs at low (p1, p4, n7)
+
+The same 15-run command was started twice by mistake, so each of these three cases has two batches of 15 runs (counted, reasoning strength low, re-scored at seed 1). Both ran on the same single-slot server together with another batch, so wall-clock times are not reported. Every unsolved run ended with "max attempts reached".
+
+| case | batch A: solved / first try / avg tokens | batch B: solved / first try / avg tokens | pooled solved | files (A, B) |
+|---|---|---|---|---|
+| p1_epoch_seconds | 14/15 / 9 / 2576 | 12/15 / 7 / 2732 | 26/30 | `bench_20261029-094121_muse-glimmer_local.json`, `bench_20261029-100243_muse-glimmer_local.json` |
+| n7_float32_scalars | 5/15 / 1 / 5319 | 3/15 / 0 / 5483 | 8/30 | `bench_20261029-101016_muse-glimmer_local.json`, `bench_20261029-103635_muse-glimmer_local.json` |
+| p4_label_histogram | 0/15 / 0 / 6656 | 0/15 / 0 / 6429 | 0/30 | `bench_20261029-084225_muse-glimmer_local.json`, `bench_20261029-085922_muse-glimmer_local.json` |
+
+The two identical batches differ by 2 solved runs on p1 and on n7, which shows the run-to-run spread at n=15. The 5-run rows above (p1 3/5, n7 2/5, p4 0/5) and the medium batches (p1 4/5, n7 0/5, p4 0/5) should be read with that spread in mind; no claim is made about the effect of the reasoning strength.
+
+### Results on p7 (a function copied from scikit-FIBERS)
+
+p7_censor_chained_iloc contains the function `censor` copied verbatim from the open-source project scikit-FIBERS (MIT license) at commit 356c6d5, before the project fixed a pandas 3 chained-assignment problem (its issue #19); the wrapper, test, inputs and the patches that grade it were written for this project and the project's own tests were not used (see `docs/THIRD_PARTY_NOTICES.md` and `docs/CASES.md`). One-shot, effort low (Glimmer: reasoning strength low), 5 runs per model, re-scored at seed 1. All 15 runs were solved on the first attempt and passed the re-scored differential, so this case did not separate the models; the model patches were not compared with the project's own fix. Token counts only.
+
+| model | solved | first try | avg tokens per run | file |
+|---|---|---|---|---|
+| muse-spark-1.3 | 5/5 | 5 | 3378 | `bench_20261029-084833_muse-spark-1.3.json` |
+| muse-wonder-1.0 | 5/5 | 5 | 2760 | `bench_20261029-084952_muse-wonder-1.0.json` |
+| muse-glimmer (local) | 5/5 | 5 | 2502 | `bench_20261029-085203_muse-glimmer_local.json` |
+
 ## Tools mode (experimental, p4 only)
 
 `--tools` lets the model call `run_tests` and `run_probe` during an attempt (one conversation per attempt, at most 12 tool calls, and the same 60000-token run budget, which is checked only before each model call and was exceeded in several runs). `run_probe` runs inputs chosen by the model through the original code on the old library and through the candidate on the new library; it is an oracle for the original behavior on those inputs. The gate is unchanged and is not available to the model.
@@ -176,7 +198,7 @@ Same setting without tools (table above): spark 0/5 (avg 21230 tokens), wonder 3
 
 ## Benchmark cases
 
-All cases are **synthetic**: small programs written for this project and derived from library release notes and from running both versions. They are not taken from real open-source projects. Each case keeps its recorded inputs (`inputs.json`, `golden.json`), held-out inputs that are never shown to the model (`hidden_inputs.json`, `hidden_golden.json`), a `known_good.json` patch and `known_bad/` patches. Golden outputs come from the OLD library version.
+Nine of the ten cases are **synthetic**: small programs written for this project and derived from library release notes and from running both versions. p7 is different: the function `censor` is copied verbatim from the open-source project scikit-FIBERS (MIT license, commit 356c6d5, notice in `docs/THIRD_PARTY_NOTICES.md`); the wrapper, tests and inputs that grade it were written for this project. Each case keeps its recorded inputs (`inputs.json`, `golden.json`), held-out inputs that are never shown to the model (`hidden_inputs.json`, `hidden_golden.json`), a `known_good.json` patch and `known_bad/` patches. Golden outputs come from the OLD library version.
 
 | case | library change (old -> new) | what silently changes |
 |---|---|---|
@@ -189,6 +211,7 @@ All cases are **synthetic**: small programs written for this project and derived
 | p5_chained_assignment | pandas 2.3.3 -> 3.0.6 | chained assignment `df[col][mask] = v` no longer modifies `df`; only a `ChainedAssignmentError` warning is emitted, no exception |
 | p6_str_dtype_checks | pandas 2.3.3 -> 3.0.6 | string columns become `str` dtype (`dtype == object` is False), missing values are NaN, not None |
 | n8_string_to_bool | NumPy 1.26.4 -> 2.5.4 | `astype(bool)` on strings: non-empty means True, so "0" becomes True |
+| p7_censor_chained_iloc | pandas 2.3.3 -> 3.0.6 | chained `df['Censoring'].iloc[i] = v` in scikit-FIBERS `censor`: the write is lost, so the `Censoring` column is not updated |
 
 p5, p6 and n8 are our own reproductions derived from documented behavior changes (pandas 3.0.0 and NumPy 2.0.0 release notes), not incidents from real projects; the sources and their caveats are in `docs/CASES.md`. For p2, p3 and p4 no real project incident was found either.
 

@@ -1,0 +1,391 @@
+[
+  {
+    "case": "p1_epoch_seconds",
+    "model": "muse-glimmer",
+    "effort": "low",
+    "runs": 15,
+    "successes": 14,
+    "first_try": 9,
+    "avg_tokens": 2576,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "local_server": {
+        "build_info": "b11960-8642541b2",
+        "model_file": "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf",
+        "served_models": [
+          "muse-glimmer"
+        ]
+      },
+      "max_tokens": 12000
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 2701,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the int64 representation of a DatetimeArray changed so that `astype('int64')` no longer yields nanoseconds; the value is ~1000\u00d7 smaller, making `//10**9` produce seconds/1000. Detecting the pandas major version and using a version-appropriate divisor restores the correct Unix seconds on both 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 58,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-094122_p1_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 60,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 3,
+        "tokens_used": 6004,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the default datetime resolution changed so `astype('int64')` yields microseconds instead of nanoseconds. Dividing microseconds by 1e9 therefore yields seconds/1000, producing the truncated values seen on 3.0.6. Adjusting the divisor based on the pandas major version restores correct Unix seconds on both 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 58,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-094326_p1_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 60,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1644,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the internal resolution of datetime64 changed so that astype('int64') now yields microseconds instead of nanoseconds. Dividing by 10**9 therefore produces values ~1000\u00d7 too small. Adjust the divisor based on the pandas version so the conversion to Unix seconds is correct on both 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 58,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-094747_p1_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 60,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1175,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3.0 changed the integer representation returned by astype('int64') on DatetimeArray, so the same //10**9 division yields values ~1000\u00d7 too small. Adjust the divisor based on the pandas major version to keep the Unix seconds result identical on both 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 58,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-094902_p1_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 60,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 3494,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed the integer representation returned by astype('int64') on a DatetimeArray from nanoseconds to microseconds, so dividing by 10**9 now yields a value 1000\u00d7 too small. The code must adjust the divisor based on the pandas major version to keep the epoch-seconds result identical on both 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 58,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-095011_p1_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 60,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1356,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the `astype('int64')` on a DatetimeArray changed to return microseconds instead of nanoseconds, so dividing by 1e9 yields values ~1000\u00d7 too small. Adjust the divisor based on the pandas major version.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 58,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-095237_p1_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 60,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1348,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3.0 changed the integer representation returned by DatetimeArray.astype('int64') so the nanosecond epoch is no longer produced; the values are ~1000\u00d7 smaller, making //10**9 produce truncated seconds. Adjust the divisor based on the pandas major version so the same code yields correct seconds on both 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 58,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-095338_p1_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 60,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 4631,
+        "run_dir": "runs/20261029-095454_p1_epoch_seconds",
+        "fs_deny": true
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 3175,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the `DatetimeArray.astype('int64')` changed from nanoseconds to microseconds, so dividing by 1e9 yields values 1000\u00d7 too small. Adjust the divisor based on the pandas major version to keep the epoch seconds correct on both 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 58,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-095835_p1_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 60,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1138,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 `DatetimeIndex.astype('int64')` changed from nanoseconds to microseconds, so `// 10**9` now yields seconds/1000. Adjust the divisor based on the pandas major version to keep seconds correct on both 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 58,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-100058_p1_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 60,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1175,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the integer representation returned by astype('int64') on a DatetimeArray changed unit from nanoseconds to microseconds, so //10**9 now yields milliseconds-scale values. Adjust the divisor based on the pandas major version to keep seconds correct on both 2.x and 3.x.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 58,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-100204_p1_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 60,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 3,
+        "tokens_used": 4999,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed the integer representation returned by astype('int64') on a DatetimeArray, so the nanosecond epoch values are now scaled differently. Dividing by 1e9 on the new version yields values ~1000\u00d7 too small. Adjust the divisor based on the pandas major version to keep the conversion to Unix seconds correct on both 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 58,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-100314_p1_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 60,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1638,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed the default internal time unit for datetime64 so `astype('int64')` now yields microseconds instead of nanoseconds. Dividing by 10**9 therefore yields values 1000\u00d7 too small. Adjust the divisor based on the pandas major version so the conversion to epoch seconds stays correct on both 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 58,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-100638_p1_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 60,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2189,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed the internal resolution used by to_datetime/astype so that astype('int64') now yields microseconds instead of nanoseconds. Dividing by 10**9 therefore yields seconds/1000. Using a version-dependent divisor restores seconds on both old and new pandas.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 58,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-100732_p1_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 60,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1966,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed the internal resolution used by to_datetime/astype('int64') from nanoseconds to microseconds, so `astype('int64') // 10**9` now yields values ~1000\u00d7 too small. Adjust the divisor based on the pandas major version to recover seconds on both old and new releases.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 58,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-100858_p1_epoch_seconds",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 60,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 14
+  }
+]

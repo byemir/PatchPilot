@@ -1,0 +1,193 @@
+[
+  {
+    "case": "n7_float32_scalars",
+    "model": "muse-glimmer",
+    "effort": "low",
+    "runs": 15,
+    "successes": 3,
+    "first_try": 0,
+    "avg_tokens": 5483,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "local_server": {
+        "build_info": "b11960-8642541b2",
+        "model_file": "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf",
+        "served_models": [
+          "muse-glimmer"
+        ]
+      },
+      "max_tokens": 12000
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 4338,
+        "hidden_checked": true,
+        "diagnosis": "The multiplication and comparison of a NumPy float32 scalar with a Python float changed semantics between NumPy 1.26 and 2.5, causing the per-sample value `x` to be rounded differently and the `x > bonus` test to flip. Making the loop use plain Python floats removes the NumPy-version-dependent scalar promotion and gives deterministic arithmetic on both versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 154,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-103635_n7_float32_scalars",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 3,
+        "tokens_used": 4992,
+        "hidden_checked": true,
+        "diagnosis": "The difference is caused by NumPy 2 changing the promotion rules for float32 scalars multiplied by Python floats, which alters the rounded float32 intermediate values used for the `x > bonus` test and the accumulated total. Converting the values to native Python floats before multiplication and comparison makes the arithmetic independent of NumPy version promotion, restoring the original golden results.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 154,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-103930_n7_float32_scalars",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 6200,
+        "run_dir": "runs/20261029-104234_n7_float32_scalars",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 6384,
+        "run_dir": "runs/20261029-104654_n7_float32_scalars",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 6012,
+        "run_dir": "runs/20261029-105125_n7_float32_scalars",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 6109,
+        "run_dir": "runs/20261029-105536_n7_float32_scalars",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 5285,
+        "run_dir": "runs/20261029-110000_n7_float32_scalars",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 5985,
+        "run_dir": "runs/20261029-110324_n7_float32_scalars",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 4815,
+        "run_dir": "runs/20261029-110642_n7_float32_scalars",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 6889,
+        "run_dir": "runs/20261029-110816_n7_float32_scalars",
+        "fs_deny": true
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 4239,
+        "hidden_checked": true,
+        "diagnosis": "Iterating over a NumPy float32 array yields NumPy scalars whose arithmetic and comparison semantics changed subtly between NumPy 1.26 and 2.5, causing the `x > bonus` test and the float32 accumulator to diverge. Converting the NumPy array to native Python floats before the loop makes the arithmetic and comparisons deterministic and identical across NumPy versions while preserving the float32 input values.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 154,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-111057_n7_float32_scalars",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 146,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 5244,
+        "run_dir": "runs/20261029-111235_n7_float32_scalars",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 5859,
+        "run_dir": "runs/20261029-111423_n7_float32_scalars",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 5067,
+        "run_dir": "runs/20261029-111631_n7_float32_scalars",
+        "fs_deny": true
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 4833,
+        "run_dir": "runs/20261029-111815_n7_float32_scalars",
+        "fs_deny": true
+      }
+    ],
+    "scored_pass": 3
+  }
+]
