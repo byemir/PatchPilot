@@ -1,0 +1,6 @@
+{
+ "files": {
+  "app.py": "import numpy as np\n\n\ndef fleet_report(devices, gain):\n    \"\"\"Report on devices.\n\n    devices: [{\"flag\": text read from a file (\"0\" off, any other number on), \"level\": 0..255}, ...]. gain: float.\n    Returns, per device, [enabled, level + 100, level * gain rounded to 6 decimals], the total of level * gain\n    rounded to 6 decimals, and the number of enabled devices.\n    \"\"\"\n    rows = []\n    total = np.float64(0)\n    for d in devices:\n        on = d[\"flag\"] != \"0\"\n        boosted = int(np.int64(d[\"level\"]) + 100)\n        scaled = float(d[\"level\"]) * gain\n        total = total + scaled\n        rows.append([on, boosted, round(float(scaled), 6)])\n    return {\"rows\": rows, \"total\": round(float(total), 6), \"enabled\": sum(r[0] for r in rows)}\n"
+ },
+ "note": "treats every string except \"0\" as on; wrong for \"00\""
+}

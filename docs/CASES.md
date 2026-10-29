@@ -41,3 +41,16 @@ Result files: results/bench_20261029-0757*..0804* (hosted, six files) and result
 - Written by us: the wrapper `censor_records` (maps the seed to 1..1000 so every run is seeded; `censor` does not seed for 0 or None), the visible test, inputs, known_good and known_bad. The project's own tests were not used.
 - Validation: VALID; the new library (pandas 3.0.6) differs from the old (2.3.3) on 4 of 4 visible and 4 of 5 hidden probes (the fifth has censoring_frequency 0.0). known_bad: `chained_row` rejected at visible, `only_zero_writes` rejected at differential.
 - Measurements (effort low, 5 runs per model, re-scored at seed 1): muse-spark-1.3 5/5, first try 5, avg 3378 tokens; muse-wonder-1.0 5/5, 5, 2760; muse-glimmer (local) 5/5, 5, 2502. Model patches not compared with the project's fix.
+
+## p8_session_report_three_breaks (pandas 2.3.3 to 3.0.6), three silent breaks in one function
+Our own reproduction (not project code). `session_report` combines three documented pandas 3 changes, each changing a different part of the output:
+- Epoch seconds: `df["ts"].astype("int64") // 10**9` on datetimes parsed from strings gives integers 1000x smaller. Source: pandas 3.0.0 release notes, "Datetime/timedelta resolution inference": "The new default resolution when parsing strings is microseconds" and "One big exception is converting to integers, which will give integers 1000x smaller." https://pandas.pydata.org/docs/whatsnew/v3.0.0.html
+- Flag column: `df["flag"][big] = "large"` is a chained assignment and no longer modifies `df` (same source as p5; pandas 3.0.6 emits only a `ChainedAssignmentError` warning).
+- Null notes: `v is None` finds no nulls because the missing value sentinel of the `str` dtype is `NaN` (same source as p6).
+- Validation: VALID; the new library differs on 4 of 4 visible and 5 of 5 hidden probes; known_good accepted; known_bad `flag_still_chained` rejected at visible, `empty_note_missing` at hidden, `version_specific_unit` (divides by 10**6) at visible.
+
+## n9_fleet_report_three_breaks (NumPy 1.26.4 to 2.5.4), three silent breaks in one function
+Our own reproduction (not project code). `fleet_report` combines three NumPy 2 changes:
+- String flags: `astype(bool)` on strings, "0" becomes True. Source: NumPy 2.0.0 release notes, "Truthiness of NumPy strings changed" (gh-23871). https://numpy.org/devdocs/release/2.0.0-notes.html
+- `np.uint8(level) + 100`: 300 on 1.26.4 and 44 (wrapped) on 2.5.4 for level 200; and `np.float32(level) * gain` plus a float32 running total: results differ at the sixth decimal (24.69134 versus 24.691339). The release notes say only that NEP 50 type promotion was adopted and "can lead to changes in output dtypes and lower precision results for mixed-dtype operations"; the specific values above were measured by us on these two versions, not quoted from the notes.
+- Validation: VALID; the new library differs on 4 of 4 visible and 4 of 5 hidden probes (the fifth is an empty device list); known_good accepted; known_bad `flag_equals_one`, `wrap_mod_256` and `total_still_float32` rejected at visible, `not_zero_string` at hidden.

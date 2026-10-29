@@ -1,0 +1,62 @@
+[
+ {
+  "devices": [
+   {
+    "flag": "1",
+    "level": 200
+   },
+   {
+    "flag": "0",
+    "level": 50
+   },
+   {
+    "flag": "12",
+    "level": 255
+   },
+   {
+    "flag": "10",
+    "level": 10
+   }
+  ],
+  "gain": 0.1234567
+ },
+ {
+  "devices": [
+   {
+    "flag": "1",
+    "level": 180
+   },
+   {
+    "flag": "1",
+    "level": 100
+   }
+  ],
+  "gain": 1.5
+ },
+ {
+  "devices": [
+   {
+    "flag": "0",
+    "level": 220
+   },
+   {
+    "flag": "7",
+    "level": 30
+   },
+   {
+    "flag": "0",
+    "level": 160
+   }
+  ],
+  "gain": 0.75
+ },
+ {
+  "devices": [
+   {
+    "flag": "5",
+    "level": 255
+   }
+  ],
+  "gain": 2.5
+ }
+]

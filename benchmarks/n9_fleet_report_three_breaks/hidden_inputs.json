@@ -1,0 +1,74 @@
+[
+ {
+  "devices": [
+   {
+    "flag": "00",
+    "level": 99
+   },
+   {
+    "flag": "000",
+    "level": 200
+   },
+   {
+    "flag": "0",
+    "level": 255
+   }
+  ],
+  "gain": 0.3333333
+ },
+ {
+  "devices": [
+   {
+    "flag": "1",
+    "level": 155
+   },
+   {
+    "flag": "1",
+    "level": 156
+   },
+   {
+    "flag": "0",
+    "level": 0
+   }
+  ],
+  "gain": 2.2
+ },
+ {
+  "devices": [],
+  "gain": 1.0
+ },
+ {
+  "devices": [
+   {
+    "flag": "100",
+    "level": 77
+   },
+   {
+    "flag": "0",
+    "level": 188
+   },
+   {
+    "flag": "02",
+    "level": 254
+   },
+   {
+    "flag": "9",
+    "level": 1
+   }
+  ],
+  "gain": 0.0731
+ },
+ {
+  "devices": [
+   {
+    "flag": "0",
+    "level": 140
+   },
+   {
+    "flag": "0",
+    "level": 141
+   }
+  ],
+  "gain": 4.0
+ }
+]

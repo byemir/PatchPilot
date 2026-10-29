@@ -1,0 +1,6 @@
+{
+ "files": {
+  "app.py": "import pandas as pd\n\n\ndef session_report(events, cutoff):\n    \"\"\"Summarise user events.\n\n    events: [{\"user\": ..., \"ts\": \"YYYY-MM-DD HH:MM:SS\" (UTC, naive), \"amount\": ..., \"note\": text or null}, ...].\n    Returns the rows [user, epoch seconds, flag] (\"large\" when amount > cutoff, else \"ok\"), the positions of the events\n    whose note is null, and the last epoch seconds.\n    \"\"\"\n    df = pd.DataFrame(events, columns=[\"user\", \"ts\", \"amount\", \"note\"])\n    df[\"ts\"] = pd.to_datetime(df[\"ts\"])\n    df[\"epoch\"] = (df[\"ts\"] - pd.Timestamp(\"1970-01-01\")) // pd.Timedelta(seconds=1)\n    df[\"flag\"] = \"ok\"\n    big = df[\"amount\"] > cutoff\n    df.loc[big, \"flag\"] = \"large\"\n    missing = [i for i, v in enumerate(df[\"note\"]) if pd.isna(v) or v == \"\"]\n    rows = [[str(r.user), int(r.epoch), str(r.flag)] for r in df.itertuples()]\n    return {\"rows\": rows, \"missing_notes\": missing, \"last_epoch\": int(df[\"epoch\"].max())}\n"
+ },
+ "note": "also treats an empty note as missing"
+}
