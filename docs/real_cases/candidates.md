@@ -2,6 +2,8 @@
 
 168 distinct hits from docs/real_cases/search_20261029_run2; 75 passed the mechanical screen and are decided by hand below. Rules: `scripts/real_case_screen.py`. A hit found by several queries is listed once, at its first position.
 
+How to read this file: the table below has one row per hit (168 rows) with the mechanical screen decision. The next two sections hold later decisions on the same hits (75 rows for the hits marked `inspect`, then 11 rows after reading the code of the finalists), so the file has 254 table rows but 168 distinct hits. The last section lists the accepted cases.
+
 | first seen | hit | type | license | decision | reason |
 |---|---|---|---|---|---|
 | Q1#1 (also Q2#1) | [ucgmsim/velocity_modelling#64](https://github.com/ucgmsim/velocity_modelling/pull/64) Drop the pandas<3.0 upper bound | PR | none | rejected | C2: license none is not MIT/BSD/Apache |
@@ -257,7 +259,7 @@ Read in the order of the table above (first-seen position). `finalist` = needs t
 
 ## Follow-up after reading the code of the finalists
 
-Code read at the parent of the merge commit (`gh api .../contents/PATH?ref=SHA^`). Q3#30 (ziagl888/Kythera#229) is still being read.
+Code read at the parent of the merge commit (`gh api .../contents/PATH?ref=SHA^`). Q3#30 (ziagl888/Kythera#229) was read afterwards; its outcome is in the last section.
 
 | first seen | hit | decision | reason |
 |---|---|---|---|
