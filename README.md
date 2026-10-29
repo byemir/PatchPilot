@@ -134,19 +134,6 @@ Muse Glimmer 30B (Q4_K_M, llama.cpp b11960, one Apple M2 Ultra Mac). One-shot pr
 
 19 of 30 runs were solved, 15 on the first attempt, and 19 accepted patches passed the re-scored differential. Of the 58 attempts, 39 were rejected: 29 at the visible check, 6 at the hidden check and 4 at the differential. The longest completion was 2389 tokens (cap 12000) and 0 replies were empty, so the unsolved runs are gate rejections, not truncation, as far as the recorded attempts show. In the three requests of the server log excerpt that was inspected, generation ran at 24.1 to 26.4 tokens per second. For context: the hosted models solved 125 of 125 runs on the five cases other than p4 and, on p4 (one-shot, isolation layer), spark-1.3 0 of 5 and wonder-1.0 3 of 5; Glimmer solved 19 of 25 on the five cases and 0 of 5 on p4. These are different models with different quantization and reasoning mechanisms, one batch per case: no claim is made about the reasons. Token counts include the reasoning trace; the usage object does not report reasoning tokens separately.
 
-## Tools mode (experimental, p4 only)
-
-`--tools` lets the model call `run_tests` and `run_probe` during an attempt (one conversation per attempt, at most 12 tool calls, and the same 60000-token run budget, which is checked only before each model call and was exceeded in several runs). `run_probe` runs inputs chosen by the model through the original code on the old library and through the candidate on the new library; it is an oracle for the original behavior on those inputs. The gate is unchanged and is not available to the model.
-
-p4_label_histogram, effort=low, 5 runs per model, differential used as a gate, accepted patches re-scored at another seed (result files have counted=true, tools=true, fs_deny=true):
-
-| model | solved | first try | accepted patches passing the re-scored differential | runs ended by the token budget | avg tokens | file |
-|---|---|---|---|---|---|---|
-| muse-spark-1.3 | 2/5 | 1 | 2 of 2 | 3 | 53834 | `bench_20261028-094310_muse-spark-1.3_tools.json` |
-| muse-wonder-1.0 | 2/5 | 1 | 2 of 2 | 3 | 67056 | `bench_20261028-095554_muse-wonder-1.0_tools.json` |
-
-Same setting without tools (table above): spark 0/5 (avg 21230 tokens), wonder 3/5 (avg 13066). First failing gate per attempt, 16 attempts with tools: visible 2, hidden 0, differential 8, invalid reply 2, accepted 4; 28 attempts without tools: visible 13, hidden 9, differential 3, accepted 3. No run with tools reached a third attempt. Two of the four accepted patches were submitted from the last files passed to a tool after the token budget stopped the conversation. With tools, prompt tokens (the context is re-sent on every call) were 61 percent (spark) and 73 percent (wonder) of all tokens. n=5 per model, one synthetic case, runs differ: this pilot gives no evidence that the tools improve the success rate, and with the same budget they used 2.5 to 5.1 times the tokens per run. Only token counts were recorded.
-
 ### Glimmer at reasoning strength medium (four cases)
 
 Same server, same protocol and same case files, with `reasoning_strength` set to medium per request (5 runs per case, one batch per case, counted=true, re-scored at seed 1). Low is the table above. Different batches, n=5 per cell: this is not enough to say whether the setting matters. Wall-clock times are not reported for the medium batches because another job ran on the same machine during the first one.
@@ -169,6 +156,20 @@ One-shot, effort low (Glimmer: reasoning strength low), 5 runs per cell, re-scor
 | p5_chained_assignment | 5 / 1407 | 5 / 1511 | 4 / 1493 |
 | p6_str_dtype_checks | 5 / 2610 | 5 / 2326 | 4 / 2210 |
 | n8_string_to_bool | 5 / 2807 | 5 / 2553 | 1 / 2772 |
+
+## Tools mode (experimental, p4 only)
+
+`--tools` lets the model call `run_tests` and `run_probe` during an attempt (one conversation per attempt, at most 12 tool calls, and the same 60000-token run budget, which is checked only before each model call and was exceeded in several runs). `run_probe` runs inputs chosen by the model through the original code on the old library and through the candidate on the new library; it is an oracle for the original behavior on those inputs. The gate is unchanged and is not available to the model.
+
+p4_label_histogram, effort=low, 5 runs per model, differential used as a gate, accepted patches re-scored at another seed (result files have counted=true, tools=true, fs_deny=true):
+
+| model | solved | first try | accepted patches passing the re-scored differential | runs ended by the token budget | avg tokens | file |
+|---|---|---|---|---|---|---|
+| muse-spark-1.3 | 2/5 | 1 | 2 of 2 | 3 | 53834 | `bench_20261028-094310_muse-spark-1.3_tools.json` |
+| muse-wonder-1.0 | 2/5 | 1 | 2 of 2 | 3 | 67056 | `bench_20261028-095554_muse-wonder-1.0_tools.json` |
+
+Same setting without tools (table above): spark 0/5 (avg 21230 tokens), wonder 3/5 (avg 13066). First failing gate per attempt, 16 attempts with tools: visible 2, hidden 0, differential 8, invalid reply 2, accepted 4; 28 attempts without tools: visible 13, hidden 9, differential 3, accepted 3. No run with tools reached a third attempt. Two of the four accepted patches were submitted from the last files passed to a tool after the token budget stopped the conversation. With tools, prompt tokens (the context is re-sent on every call) were 61 percent (spark) and 73 percent (wonder) of all tokens. n=5 per model, one synthetic case, runs differ: this pilot gives no evidence that the tools improve the success rate, and with the same budget they used 2.5 to 5.1 times the tokens per run. Only token counts were recorded.
+
 
 ## Benchmark cases
 
