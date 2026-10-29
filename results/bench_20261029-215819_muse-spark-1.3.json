@@ -1,0 +1,455 @@
+[
+  {
+    "case": "q1_score_aliases",
+    "model": "muse-spark-1.3",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 5,
+    "avg_tokens": 1753,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": null,
+      "local_server": null,
+      "max_tokens": null
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1407,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 enables Copy-on-Write by default, so `low = frame[\"score\"]` followed by `low[mask] = value` no longer mutates `frame`; the floor/cap clipping silently stops applying.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-215820_q1_score_aliases",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 151,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1544,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 enables Copy-on-Write always, so `low = frame[\"score\"]` is a copy and `low[low < floor] = floor` no longer mutates `frame`; clipping was silently lost.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-215831_q1_score_aliases",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 151,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2135,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 enables Copy-on-Write by default, so `low = frame[\"score\"]` is no longer a view and chained assignment `low[mask] = floor` no longer mutates `frame`, leaving scores unclipped.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-215842_q1_score_aliases",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 151,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1918,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 enables Copy-on-Write by default, so `low = frame[\"score\"]` is a copy and `low[mask] = value` no longer mutates `frame`, leaving the floor/cap unapplied.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-215855_q1_score_aliases",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 151,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1759,
+        "hidden_checked": true,
+        "diagnosis": "Chained assignment `low=frame['score']; low[mask]=...` relied on SettingWithCopy side-effects; with Copy-on-Write enabled by default in pandas 3 it mutates a copy so `frame` is unchanged and flooring/capping is lost.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-215908_q1_score_aliases",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 151,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  },
+  {
+    "case": "q2_epoch_with_gaps",
+    "model": "muse-spark-1.3",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 5,
+    "avg_tokens": 3600,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": null,
+      "local_server": null,
+      "max_tokens": null
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 4266,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers non-nano datetime64 units (e.g. us) so astype int64 is no longer nanoseconds, and //1e9 truncates to ~milliseconds; forcing nanoseconds restores seconds.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 125,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-215919_q2_epoch_with_gaps",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 126,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3907,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers non-nano datetime64 units (e.g. us) so astype int64 is no longer nanoseconds, and //10**9 truncates by ~1000x and collapses distinct seconds.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 125,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-215943_q2_epoch_with_gaps",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 126,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3900,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 to_datetime infers non-nano resolution (e.g. us) and astype int64 returns counts in that unit, not nanoseconds, so //10**9 no longer yields seconds.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 125,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-220006_q2_epoch_with_gaps",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 126,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2782,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers non-nanosecond datetime64 resolution in to_datetime, so astype(int64) no longer returns nanoseconds and //10**9 is 1000x too small.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 125,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-220028_q2_epoch_with_gaps",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 126,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 3144,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 infers non-nano datetime resolution (s/ms/us) so `astype('int64')` is no longer always nanoseconds, and `//10**9` then divides by 1000x too much.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 125,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-220047_q2_epoch_with_gaps",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 126,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  },
+  {
+    "case": "q3_scalar_repr",
+    "model": "muse-spark-1.3",
+    "effort": "low",
+    "runs": 5,
+    "successes": 5,
+    "first_try": 5,
+    "avg_tokens": 1644,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": null,
+      "local_server": null,
+      "max_tokens": null
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1741,
+        "hidden_checked": true,
+        "diagnosis": "repr() of NumPy scalars changed in NumPy 2.0 to include the type (e.g. np.float64(3.25) vs 3.25), so using {value!r} on values.max() is version-dependent.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-220107_q3_scalar_repr",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 137,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1809,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2.0 changed repr of numpy scalars to include the type prefix (e.g. np.float64(3.25) vs 3.25), so using !r directly on values.max() broke output.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-220116_q3_scalar_repr",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 137,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1764,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 changed repr of scalars like np.float64 from '3.25' to 'np.float64(3.25)', so using !r on values.max() now emits the type prefix.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-220125_q3_scalar_repr",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 137,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1511,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 changed repr(np.float64(x)) from 'x' to 'np.float64(x)', so using !r on values.max() (a NumPy scalar) now includes the type prefix.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-220134_q3_scalar_repr",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 137,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1397,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 changed repr(np.float64(...)) from `3.25` to `np.float64(3.25)`, so using `!r` on `values.max()` now includes the type prefix.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-220143_q3_scalar_repr",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 137,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 5
+  }
+]

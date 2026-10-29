@@ -25,6 +25,7 @@ One function in one file, your own inputs, a local open-weight model, a patch th
 ## What this does not show
 
 - It has not been run on whole repositories; it works on one function at a time.
-- All 14 case folders are small functions we wrote, derived from documented library changes. None is code taken from a real project, so success on them says nothing about how often real code is fixed. o1 and o2 are the same documented mechanism (datetime resolution), o3 is the same as p5 and p8 (chained assignment).
+- All 17 case folders are small functions we wrote, derived from documented library changes. None is code taken from a real project, so success on them says nothing about how often real code is fixed. o1 and o2 are the same documented mechanism (datetime resolution), o3 is the same as p5 and p8 (chained assignment).
 - Models solved all 75 runs on o1, o2 and o3, so these cases show coverage, not difficulty.
+- On q1 to q3 (visible inputs allow a partial fix) 29 first-pass attempts were rejected by the hidden check, which a visible-tests-only workflow would have accepted; local Glimmer solved 42 of 45 runs there, hosted models 30 of 30 (README, "Results on q1, q2 and q3").
 - Everything ran on one machine, with small samples (5 runs per setting).

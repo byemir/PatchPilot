@@ -1,0 +1,5 @@
+{
+ "files": {
+  "app.py": "\"\"\"Own code (written for this project): epoch seconds for a list of timestamp strings, with gaps kept as None.\"\"\"\nimport pandas as pd\n\n\ndef epoch_with_gaps(times):\n    stamps = pd.to_datetime(times)\n    seconds = stamps.as_unit(\"ns\").astype(\"int64\") // 10**9\n    return [None if pd.isna(t) else int(s) for t, s in zip(stamps, seconds)]\n"
+ }
+}

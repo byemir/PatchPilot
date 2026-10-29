@@ -1,0 +1,6 @@
+{
+ "files": {
+  "app.py": "\"\"\"Own code (written for this project): epoch seconds for a list of timestamp strings, with gaps kept as None.\"\"\"\nimport pandas as pd\n\n\ndef epoch_with_gaps(times):\n    stamps = pd.to_datetime(times)\n    seconds = stamps.astype(\"int64\") // 10**6\n    return [None if pd.isna(t) else int(s) for t, s in zip(stamps, seconds)]\n"
+ },
+ "note": "assumes the new microsecond unit: right on the new library for plain strings, wrong on the old one"
+}

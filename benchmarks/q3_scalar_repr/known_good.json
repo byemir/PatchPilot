@@ -1,0 +1,5 @@
+{
+ "files": {
+  "app.py": "\"\"\"Own code (written for this project): one report line per column with its largest value, as text.\"\"\"\nimport numpy as np\n\n\ndef describe_columns(columns):\n    lines = []\n    for name in sorted(columns):\n        values = np.array(columns[name])\n        lines.append(f\"{name}={values.max().item()!r}\")\n    return lines\n"
+ }
+}

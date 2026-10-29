@@ -4,7 +4,7 @@ Agent that proposes and verifies patches for Python code that broke silently aft
 **At a glance**
 
 - A patch is accepted only if it passes three gates: the visible tests, hidden tests the model never sees, and a differential check against the old library.
-- Fourteen cases (pandas 2.3 to 3.0, NumPy 1.26 to 2.x), all written for this project: the code under repair is ours, derived from documented library changes. No third-party code is in the repository. Not tried on whole real repositories. What real projects show about the problem is in `docs/IMPACT.md`.
+- Seventeen cases (pandas 2.3 to 3.0, NumPy 1.26 to 2.x), all written for this project: the code under repair is ours, derived from documented library changes. No third-party code is in the repository. Not tried on whole real repositories. What real projects show about the problem is in `docs/IMPACT.md`.
 - Hosted Muse Spark and Muse Wonder solved 125 of 125 runs on five cases; on the hardest one (p4), Spark 0 of 5 and Wonder 3 of 5. Muse Glimmer running locally solved 19 of 30 runs on six cases (low reasoning).
 - All runs were made on one Apple M2 Ultra Mac; no other platform was tested.
 - Why it matters and what it does not show: [`docs/IMPACT.md`](docs/IMPACT.md). One command from a function to a gated patch: `python -m patchpilot.repair` (see "Try it on your own function").
@@ -100,7 +100,7 @@ Limits: the function must live in one self-contained file (standard library plus
 Example in `examples/own_function/`: `subject_dropout.py`, a function we wrote that marks a share of subjects as dropped out with a chained assignment (the write is lost on pandas 3). The same function is the benchmark case `o3_subject_dropout`, where muse-glimmer (local, effort low) solved 15 of 15 runs, 15 on the first attempt (see "Results on o1, o2 and o3"); `bash scripts/demo_own_function.sh` builds a case from it and repairs it, `bash scripts/demo_repair.sh` runs the one-command tool on a copy. A run with muse-spark-1.3 on the `n8` function rebuilt with `make_case` solved on the first attempt (3350 tokens); that was a single run, not a success rate. `bash scripts/run_offline_tests.sh` runs the eight offline tests (no model call, no real key; 70 seconds in total on our Mac in the last run: 4, 35, 11, 13, 0, 0, 4 and 3 s; `landlock_test` skips itself on macOS).
 
 ## Limitations
-All fourteen cases are small programs we wrote, derived from documented library changes; PatchPilot has not been tried on whole real repositories or on code from other projects (earlier versions of this repository contained functions copied from three open-source projects; they were removed, see the engineering log). Sample sizes in `results/` are small (1 to 5 runs per case and setting; the first three files have 3 runs per case, one smoke test has 1), so they show direction only. Only token counts were recorded, no dollar cost per run. The first two bench files and earlier runs ran without the differential gate (see the engineering log).
+All seventeen cases are small programs we wrote, derived from documented library changes; PatchPilot has not been tried on whole real repositories or on code from other projects (earlier versions of this repository contained functions copied from three open-source projects; they were removed, see the engineering log). Sample sizes in `results/` are small (1 to 5 runs per case and setting; the first three files have 3 runs per case, one smoke test has 1), so they show direction only. Only token counts were recorded, no dollar cost per run. The first two bench files and earlier runs ran without the differential gate (see the engineering log).
 Not tested or not measured: dollar cost and run time of hosted calls (not recorded), Linux beyond one cloud VM and Windows, memory inspection tools (`lldb`, `vmmap`, `gcore`), other same-user processes that hold secrets, external network, whole real open-source repositories and code from other projects, Muse Spark Open and other open-weight models, other quantizations of Muse Glimmer, reasoning levels of Glimmer other than low and medium (medium on four cases only), hosted effort levels other than low (one minimal-effort batch), a tools run with a larger token budget and tools mode with a local endpoint.
 
 Engineering log and technical notes: [`docs/engineering-log.md`](docs/engineering-log.md), [`docs/training-notes.jsonl`](docs/training-notes.jsonl).
@@ -238,6 +238,20 @@ o1 (`np.array(DatetimeIndex, dtype=int64)`) and o2 (`astype("int64") // 10**9`) 
 
 All 75 runs were solved and all 75 accepted patches passed the re-scored differential; one Glimmer run on o1 needed a second attempt. The cases did not separate the models, so they add coverage of two documented mechanisms, not difficulty. The patches were not read; token counts only. Earlier versions of this repository had cases built from functions copied from open-source projects (p7, r1, r2); they were removed so that all code here is ours, and their result files were removed with them.
 
+### Results on q1, q2 and q3 (visible inputs allow a partial fix)
+
+These three cases were written so that an incomplete fix passes the visible tests and fails only the held-out ones: q1 has two broken writes but the visible inputs exercise only the first, q2 and q3 have held-out inputs with gaps, UTC offsets, nanosecond strings, integers and booleans that the visible inputs do not contain (the held-out inputs for these three were written by hand and passed to `make_case` with `--hidden-inputs`). Same protocol as above (one-shot, effort low, differential gate on, re-scored at seed 1, counted=true, fs_deny=true).
+
+| model | case | runs | solved | first try | avg tokens per run | attempts rejected at the hidden check |
+|---|---|---|---|---|---|---|
+| muse-glimmer (local) | q1 | 15 | 15 | 15 | 1231 | 0 |
+| muse-glimmer (local) | q2 | 15 | 14 | 9 | 2526 | 9 |
+| muse-glimmer (local) | q3 | 15 | 13 | 3 | 2192 | 18 |
+| muse-spark-1.3 | q1 / q2 / q3 | 5 each | 5 / 5 / 5 | 5 / 5 / 5 | 1753 / 3600 / 1644 | 0 |
+| muse-wonder-1.0 | q1 / q2 / q3 | 5 each | 5 / 5 / 5 | 5 / 3 / 5 | 1453 / 3763 / 1242 | 0 / 2 / 0 |
+
+Files: `bench_20261029-210614_muse-glimmer_local.json`, `bench_20261029-215819_muse-spark-1.3.json`, `bench_20261029-220335_muse-wonder-1.0.json`. All 72 solved runs passed the re-scored differential. The three Glimmer runs that were not solved ended after three attempts without an accepted patch (one on q2, two on q3). Across the 75 runs, 29 attempts passed the visible check and were rejected by the hidden check (Glimmer 27, Wonder 2); no attempt was rejected at the visible check or at the differential. A workflow with visible tests only would have accepted those 29 patches. For example, one Glimmer attempt on q3 turned the integer maxima into floats (`count=3.0` where the old library gives `count=3`). The per-attempt counts come from the local attempt files under `runs/`, which are not tracked, so they can be reproduced only on the machine that made them; the solved and first-try counts are in the result files. Reasons were not examined beyond the gate that rejected each attempt. Hosted models solved everything at the first or second attempt, so these cases separate the models only weakly; they show what the hidden gate catches.
+
 ## Differential generator 2
 
 The differential gate judges a patch on generated inputs and reports WEAK, not PASS, when fewer than 20 of them are valid (`MIN_VALID`). On one earlier case the first generator produced 10 valid inputs because it changed the columns of a table independently (lists of different length) and treated dates as plain text; the gate said WEAK for patches that branch on `pd.__version__` and are wrong for nanosecond input. Generator 2 changes equal-length list fields together and keeps date strings valid, with optional 3, 6 or 9 fractional digits. A case folder opts in with `"gen": 2` in `case.json` (`make_case` writes it; the eleven older cases do not have it and behave as before). Measured then, on two since-removed cases and 10 recorded patches (no model call): valid inputs 29 to 157 and 10 to 160, both version-branching patches rejected, one more patch rejected for a sub-microsecond difference (8999.484757 versus 8999.484758). Those cases are no longer in the repository, so that table cannot be reproduced from it; generator 2 was written after seeing that failure, so it is not an independent test. What is reproducible here: `patchpilot/gen2_test.py` (8 checks) rebuilds a constructed version-branching patch of `o2` (`known_bad/branch_on_version.json`): generator 1 gives 21 valid inputs, generator 2 gives 132, and generator 2 rejects it with divergences on nanosecond input.
@@ -262,7 +276,7 @@ Same setting without tools (table above): spark 0/5 (avg 21230 tokens), wonder 3
 
 ## Benchmark cases
 
-All fourteen cases are **synthetic**: small programs written for this project and derived from library release notes and from running both versions; none contains code from another project. Each case keeps its recorded inputs (`inputs.json`, `golden.json`), held-out inputs that are never shown to the model (`hidden_inputs.json`, `hidden_golden.json`), a `known_good.json` patch and `known_bad/` patches. Golden outputs come from the OLD library version.
+All seventeen cases are **synthetic**: small programs written for this project and derived from library release notes and from running both versions; none contains code from another project. Each case keeps its recorded inputs (`inputs.json`, `golden.json`), held-out inputs that are never shown to the model (`hidden_inputs.json`, `hidden_golden.json`), a `known_good.json` patch and `known_bad/` patches. Golden outputs come from the OLD library version.
 
 | case | library change (old -> new) | what silently changes |
 |---|---|---|
@@ -280,6 +294,9 @@ All fourteen cases are **synthetic**: small programs written for this project an
 | o1_elapsed_seconds | pandas 2.3.3 -> 3.0.6 | `np.array(DatetimeIndex, dtype=np.int64)` is in microseconds: elapsed seconds come out 1000x too small |
 | o2_bars_epoch_seconds | pandas 2.3.3 -> 3.0.6 | `astype("int64") // 10**9` on datetimes parsed from strings: epoch seconds 1000x too small |
 | o3_subject_dropout | pandas 2.3.3 -> 3.0.6 | chained `table["observed"].iloc[i] = 0`: the write is lost, the flags stay 1 |
+| q1_score_aliases | pandas 2.3.3 -> 3.0.6 | two writes through variables that point into the frame (`low = frame["score"]; low[...] = ...`) no longer change the frame |
+| q2_epoch_with_gaps | pandas 2.3.3 -> 3.0.6 | epoch seconds from `astype("int64") // 10**9` are 1000x smaller; missing values and UTC-offset timestamps only in the held-out inputs |
+| q3_scalar_repr | NumPy 1.26.4 -> 2.5.4 | `repr` of a NumPy scalar is now `np.float64(3.25)`; integer and boolean columns only in the held-out inputs |
 
 p5, p6, n8, p8 and n9 are our own reproductions derived from documented behavior changes (pandas 3.0.0 and NumPy 2.0.0 release notes; the uint8 and float32 values in n9 were measured by us, see `docs/CASES.md`), not incidents from real projects; the sources and their caveats are in `docs/CASES.md`. For p2, p3 and p4 no real project incident was found either.
 

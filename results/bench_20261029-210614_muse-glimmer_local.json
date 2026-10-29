@@ -1,0 +1,1169 @@
+[
+  {
+    "case": "q1_score_aliases",
+    "model": "muse-glimmer",
+    "effort": "low",
+    "runs": 15,
+    "successes": 15,
+    "first_try": 15,
+    "avg_tokens": 1231,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "local_server": {
+        "build_info": "b11960-8642541b2",
+        "model_file": "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf",
+        "served_models": [
+          "muse-glimmer"
+        ]
+      },
+      "max_tokens": 12000
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1188,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 enables copy-on-write by default, so `low = frame['score']; low[low < floor] = floor` modifies a temporary view/copy and no longer writes back to `frame`. The in-place clipping therefore becomes a no-op on 3.0.6 while it still mutated the frame on 2.3.3. Using explicit `loc` assignment writes to the DataFrame unconditionally on both versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-210616_q1_score_aliases",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 151,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1140,
+        "hidden_checked": true,
+        "diagnosis": "The function uses chained indexing `low = frame['score']; low[mask] = value` which in pandas 3.0 with Copy-on-Write no longer mutates the original DataFrame, so floor/cap clipping is lost. Using explicit `.loc` assignment on the frame mutates in place reliably on both old and new pandas.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-210643_q1_score_aliases",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 151,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1217,
+        "hidden_checked": true,
+        "diagnosis": "The function uses chained indexing `low = frame['score']; low[low < floor] = floor` which modifies a temporary view/copy instead of the original DataFrame. Pandas 3.0 enforces copy-on-write more strictly so the assignment no longer reaches `frame['score']`, leaving the scores unclamped. Using explicit `loc` indexing mutates the frame reliably on both old and new pandas.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-210706_q1_score_aliases",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 151,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1293,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 copy-on-write is on by default, so `low = frame[\"score\"]` creates an independent view/copy and `low[low < floor] = floor` mutates only that temporary series, leaving `frame` unchanged. The original code therefore returns the un-clipped scores on the new version. Using explicit in-place `.loc` assignment on the DataFrame makes the clipping work regardless of CoW behaviour.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-210732_q1_score_aliases",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 151,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1083,
+        "hidden_checked": true,
+        "diagnosis": "The function uses chained assignment via an intermediate view `low = frame[\"score\"]`; with pandas 3 copy-on-write the assignment `low[low < floor] = floor` no longer mutates the original DataFrame, so clipping is lost. Using explicit in-place mutation with `.loc` / `.clip` works on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-210800_q1_score_aliases",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 151,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1274,
+        "hidden_checked": true,
+        "diagnosis": "The code uses chained indexing `low[low < floor] = floor` on a view of the column, which in pandas 3.0 no longer writes back to the original DataFrame; the floor/cap assignments are therefore lost and the original scores are returned. Using explicit `.loc` indexing writes directly to the frame and works on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-210822_q1_score_aliases",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 151,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1240,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3 enables copy-on-write by default, so `low = frame['score']` and `high = frame['score']` create independent views; the assignments `low[low < floor] = floor` and `high[high > cap] = cap` no longer mutate `frame`. The original code relied on the in-place mutation behaviour of pandas 2.3.3.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-210850_q1_score_aliases",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 151,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1277,
+        "hidden_checked": true,
+        "diagnosis": "The function uses chained assignment via an intermediate view `low = frame[\"score\"]` and `high = frame[\"score\"]`. With pandas 3.0 copy-on-write the intermediate objects are copies, so `low[low < floor] = floor` and `high[high > cap] = cap` no longer mutate `frame`, leaving scores unclipped. Writing directly to the frame with `.loc` mutates the original DataFrame on both old and new pandas.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-210917_q1_score_aliases",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 151,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1306,
+        "hidden_checked": true,
+        "diagnosis": "The code relies on chained assignment via a view `low = frame[\"score\"]` and `high = frame[\"score\"]`. In pandas 3.0 chained assignment no longer mutates the parent DataFrame, so the floor/cap writes are lost and the original scores are returned. Using explicit .loc assignment mutates the frame reliably on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-210945_q1_score_aliases",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 151,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1227,
+        "hidden_checked": true,
+        "diagnosis": "Assigning to a Series view (`low = frame['score']; low[...] = ...`) no longer mutates the original DataFrame under pandas 3.0 copy-on-write semantics, so the floor/cap clamping is silently lost. Use explicit `.loc` assignment on the frame so the mutation works on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-211014_q1_score_aliases",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 151,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1262,
+        "hidden_checked": true,
+        "diagnosis": "The function uses an intermediate view `low = frame['score']` and then does `low[low < floor] = floor`, which is a chained assignment. Pandas 3.0 enforces copy-on-write semantics so the assignment modifies only the temporary Series, not the original DataFrame. Using explicit `.loc` indexing writes directly to the frame and works on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-211040_q1_score_aliases",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 151,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1260,
+        "hidden_checked": true,
+        "diagnosis": "The function does `low = frame[\"score\"]` then `low[low < floor] = floor`, which is chained assignment on a possibly detached view. In pandas 3.0 this no longer mutates `frame`, so the floor/cap clipping is lost. Using explicit `.loc` assignment on the frame mutates the original data on both old and new pandas versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-211107_q1_score_aliases",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 151,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1169,
+        "hidden_checked": true,
+        "diagnosis": "The function uses chained indexing `low = frame[\"score\"]; low[low < floor] = floor` which under pandas 3.0 copy-on-write creates a copy so the original DataFrame is never modified, leaving negative values unclamped. Using explicit loc / clip writes back to the frame so clamping works on both 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-211135_q1_score_aliases",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 151,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1379,
+        "hidden_checked": true,
+        "diagnosis": "The code uses chained assignment via an intermediate view `low = frame[\"score\"]` and `high = frame[\"score\"]`; in pandas 3.0 this no longer reliably writes back to the DataFrame, so the floor/cap clipping is lost and original negative values are returned. Using an explicit, version-stable mutation avoids the SettingWithCopy change.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-211159_q1_score_aliases",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 151,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1155,
+        "hidden_checked": true,
+        "diagnosis": "The code relies on chained assignment through a view (`low = frame[\"score\"]`) which is a no-op under pandas 3.0 copy-on-write semantics, so the floor/cap never modify `frame`. Using explicit `.loc` indexing updates the DataFrame in-place on both old and new pandas.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 157,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-211231_q1_score_aliases",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 151,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 15
+  },
+  {
+    "case": "q2_epoch_with_gaps",
+    "model": "muse-glimmer",
+    "effort": "low",
+    "runs": 15,
+    "successes": 14,
+    "first_try": 9,
+    "avg_tokens": 2526,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "local_server": {
+        "build_info": "b11960-8642541b2",
+        "model_file": "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf",
+        "served_models": [
+          "muse-glimmer"
+        ]
+      },
+      "max_tokens": 12000
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1475,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the internal resolution for datetime64 changed, so stamps.astype('int64') no longer returns nanoseconds but a smaller unit. Dividing by 1e9 therefore yields milliseconds instead of seconds. Using Timestamp.timestamp() gives epoch seconds independent of the internal representation.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 125,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-211255_q2_epoch_with_gaps",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 126,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 5394,
+        "run_dir": "runs/20261029-211335_q2_epoch_with_gaps",
+        "fs_deny": true
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 3250,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3.0 changed the semantics of astype on datetime64 so `astype('int64') // 1e9` no longer yields epoch seconds; using the Timestamp API `t.timestamp()` is version-stable.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 125,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-211549_q2_epoch_with_gaps",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 126,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 2972,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3.0 changed the internal integer representation/unit used by astype('int64') on datetime values, so dividing by 1e9 no longer yields epoch seconds. Converting each timestamp via its Python datetime timestamp is version-independent.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 125,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-211711_q2_epoch_with_gaps",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 126,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1447,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 3.0 the internal time unit for DatetimeArray changed, so `stamps.astype('int64')` no longer yields nanoseconds and `// 10**9` produces values ~1000\u00d7 too small. Using the timestamp accessor gives seconds independent of the internal unit.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 125,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-211823_q2_epoch_with_gaps",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 126,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 2116,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3.0 changed the result of astype('int64') on a DatetimeArray, so stamps.astype('int64') // 1e9 no longer yields epoch seconds. Converting each Timestamp to a Python timestamp is version-stable.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 125,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-211901_q2_epoch_with_gaps",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 126,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 2901,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed the integer cast of datetime64 values so `astype('int64')` no longer yields nanoseconds, causing the //1e9 division to produce millisecond-scale numbers. Using a version-independent conversion via `Timestamp.timestamp()` gives correct epoch seconds on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 125,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-212001_q2_epoch_with_gaps",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 126,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1563,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed the internal datetime resolution so astype('int64') no longer yields nanoseconds; dividing by 1e9 now produces milliseconds instead of seconds. Using Timestamp.timestamp() gives epoch seconds independent of pandas version.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 125,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-212110_q2_epoch_with_gaps",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 126,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1363,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed the default datetime resolution so `astype('int64')` now yields microseconds instead of nanoseconds, making `//10**9` produce a value 1000\u00d7 too small. Using the timestamp accessor avoids the dtype-dependent scaling.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 125,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-212152_q2_epoch_with_gaps",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 126,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1681,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3.0 changed the meaning of `Series.astype('int64')` on datetime data from nanoseconds to seconds, so the existing `// 10**9` division now over-divides and truncates the epoch values. Detect the magnitude of the integer representation and only divide when the values are in nanoseconds.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 125,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-212227_q2_epoch_with_gaps",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 126,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 3,
+        "tokens_used": 5805,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3 changed the integer representation returned by astype('int64') on a DatetimeArray, so dividing by 1e9 no longer yields seconds; using the Timestamp.timestamp() API gives portable epoch seconds regardless of pandas version.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 125,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-212313_q2_epoch_with_gaps",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 126,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1500,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3.0 changed the default datetime resolution used by to_datetime, so astype('int64') now yields microseconds instead of nanoseconds. Dividing by 1e9 therefore returns seconds/1000. Using Timestamp.timestamp() gives correct epoch seconds independent of the underlying resolution.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 125,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-212541_q2_epoch_with_gaps",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 126,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1350,
+        "hidden_checked": true,
+        "diagnosis": "Pandas 3.0 changed the semantics of `astype('int64')` on datetime64 values so the nanosecond integer is no longer obtained reliably, causing the epoch to be truncated. Using the Timestamp's `value` attribute, which is always nanoseconds since epoch, yields the correct seconds on both pandas 2.3.3 and 3.0.6.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 125,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-212621_q2_epoch_with_gaps",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 126,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1346,
+        "hidden_checked": true,
+        "diagnosis": "pandas 3.0 changed the meaning of astype('int64') on datetime arrays so the nanosecond epoch is no longer produced in the same way, causing the integer division to truncate the epoch to ~milliseconds. Using the Timestamp timestamp() accessor yields correct seconds independent of the internal dtype change.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 125,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-212655_q2_epoch_with_gaps",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 126,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 3722,
+        "hidden_checked": true,
+        "diagnosis": "In pandas 2.x `Series.astype('int64')` on datetime64 returns nanoseconds, so `//1e9` gives seconds. In pandas 3.0 the internal representation used for the cast changed to microseconds, so the same expression yields seconds/1000. Using the datetime accessor is version-stable.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 125,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-212730_q2_epoch_with_gaps",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 126,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 14
+  },
+  {
+    "case": "q3_scalar_repr",
+    "model": "muse-glimmer",
+    "effort": "low",
+    "runs": 15,
+    "successes": 13,
+    "first_try": 3,
+    "avg_tokens": 2192,
+    "config": {
+      "max_attempts": 3,
+      "token_budget": 60000,
+      "diff_check": true,
+      "diff_n": 200,
+      "diff_seed": 0,
+      "score_seed": 1,
+      "fs_deny": true,
+      "tools": false,
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "local_server": {
+        "build_info": "b11960-8642541b2",
+        "model_file": "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf",
+        "served_models": [
+          "muse-glimmer"
+        ]
+      },
+      "max_tokens": 12000
+    },
+    "counted": true,
+    "results": [
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 2018,
+        "hidden_checked": true,
+        "diagnosis": "Using !r on a NumPy scalar prints the NumPy type representation (e.g. np.float64(3.25)) in NumPy 2.x; converting the scalar to a native Python scalar before formatting restores the plain numeric representation on both old and new NumPy.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-212906_q3_scalar_repr",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 137,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 1007,
+        "hidden_checked": true,
+        "diagnosis": "In NumPy 2.x `np.array(...).max()` returns a NumPy scalar whose `repr` includes the type `np.float64(...)`. Using `!r` on that scalar therefore prints the NumPy type. Converting the max to a native Python float before formatting makes the representation identical on NumPy 1.26 and 2.5.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-212944_q3_scalar_repr",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 137,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 2120,
+        "hidden_checked": true,
+        "diagnosis": "Using !r on a NumPy scalar prints the NumPy type representation (e.g., np.float64(3.25)) in NumPy 2.x, while the golden output expects plain Python numeric text. Converting the scalar to a native Python value removes the type wrapper.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-213005_q3_scalar_repr",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 137,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 2089,
+        "hidden_checked": true,
+        "diagnosis": "In NumPy 2 the scalar returned by `ndarray.max()` is a NumPy generic whose `repr` includes the type name, e.g. `np.float64(3.25)`. Converting the result to a native Python float before formatting removes the NumPy-specific representation and yields identical output on NumPy 1.x and 2.x.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-213044_q3_scalar_repr",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 137,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 3259,
+        "run_dir": "runs/20261029-213122_q3_scalar_repr",
+        "fs_deny": true
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 2307,
+        "hidden_checked": true,
+        "diagnosis": "The code uses `!r` which calls `repr` on a NumPy scalar; NumPy 2 changed the repr of scalars to `np.float64(...)`, so the formatted strings now contain the type name. Formatting the scalar with normal string conversion / Python float conversion removes the NumPy repr and yields the same textual value on both NumPy 1 and 2.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-213220_q3_scalar_repr",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 137,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 2150,
+        "hidden_checked": true,
+        "diagnosis": "Using `!r` on a NumPy scalar prints the NumPy type wrapper (`np.float64(3.25)`) in NumPy 2.x, while the golden output expects a plain Python numeric literal. Converting the scalar to a native Python scalar before formatting makes the representation stable across NumPy versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-213305_q3_scalar_repr",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 137,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 2133,
+        "hidden_checked": true,
+        "diagnosis": "In NumPy 2 the result of `values.max()` is a NumPy scalar whose `repr` is `np.float64(...)`. Using `!r` on that scalar therefore prints the NumPy type name. Converting the scalar to a native Python scalar before formatting makes the representation stable across NumPy 1 and 2.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-213346_q3_scalar_repr",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 137,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 954,
+        "hidden_checked": true,
+        "diagnosis": "In NumPy 2.x `ndarray.max()` returns a NumPy scalar whose `repr` is `np.float64(\u2026)`, while in 1.x the repr was a plain Python float. Using `!r` therefore embeds the NumPy type name in the output on the new version.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-213427_q3_scalar_repr",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 137,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 3,
+        "tokens_used": 3305,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2.x changed the repr of scalar types so `values.max()!r` now renders as `np.float64(3.25)`. Converting the scalar to a native Python number before formatting removes the NumPy-specific repr and yields identical text on both old and new NumPy.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-213446_q3_scalar_repr",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 137,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 1,
+        "tokens_used": 940,
+        "hidden_checked": true,
+        "diagnosis": "In NumPy 2.x, `np.ndarray.max()` returns a NumPy scalar whose `!r` representation includes the type `np.float64(...)`. Converting the scalar to a native Python scalar removes the type wrapper while keeping the same numeric value on both NumPy 1.26 and 2.5.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-213546_q3_scalar_repr",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 137,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": false,
+        "reason": "max attempts reached",
+        "tokens_used": 3289,
+        "run_dir": "runs/20261029-213603_q3_scalar_repr",
+        "fs_deny": true
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 1913,
+        "hidden_checked": true,
+        "diagnosis": "NumPy 2 changed the repr of scalar types so `values.max()!r` renders as `np.float64(...)`; converting the NumPy scalar to a native Python scalar with `.item()` makes the repr stable across NumPy 1 and 2.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-213703_q3_scalar_repr",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 137,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 3,
+        "tokens_used": 3224,
+        "hidden_checked": true,
+        "diagnosis": "In NumPy 2 the repr of a NumPy scalar changed to show the dtype wrapper, e.g. `np.float64(3.25)`. Using `!r` on `values.max()` therefore emits the NumPy-specific representation on the new version while the old version printed a plain number. Converting the scalar to a native Python scalar with `.item()` removes the NumPy type dependency so the string representation is stable across versions.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-213734_q3_scalar_repr",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 137,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      },
+      {
+        "success": true,
+        "attempts": 2,
+        "tokens_used": 2173,
+        "hidden_checked": true,
+        "diagnosis": "In NumPy 2 the repr of a numpy scalar changed to include the dtype, e.g. np.float64(3.25). Using `!r` on `values.max()` therefore emits the new repr. Converting the scalar to a native Python number before formatting makes the output stable across NumPy 1 and 2.",
+        "differential": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 136,
+          "core_divergences": 0,
+          "wide_divergences": 0
+        },
+        "run_dir": "runs/20261029-213835_q3_scalar_repr",
+        "fs_deny": true,
+        "scored": {
+          "verdict": "PASS",
+          "generated": 200,
+          "valid": 137,
+          "core_divergences": 0,
+          "wide_divergences": 0,
+          "seed": 1,
+          "examples": []
+        }
+      }
+    ],
+    "scored_pass": 13
+  }
+]
