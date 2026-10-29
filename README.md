@@ -145,6 +145,7 @@ The Glimmer runs in this repository use a model served on the same machine, not 
 - Hardware: Apple M2 Ultra, 192 GiB RAM, macOS 26.6.2
 - Server: llama.cpp `version: 0.8.0 (build 11960, commit 8642541b2)`, AppleClang 21.0.0
 - Weights: `Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf`, 16756683904 bytes, sha256 `4cc57c0f51040a226e5a72cc47b7613f7772950e460a665f7083de89f183f60e`
+- Source: https://huggingface.co/meta-models/Muse-Glimmer-30B-GGUF, revision `b44f1072cf75e918a1b82a3a17b45c4389b076e7` (recorded in the Hugging Face download metadata next to the file; the hash recorded there equals the sha256 above). The model page lists the license as apache-2.0.
 - Client: Python 3.12.16
 
 Start the server:
