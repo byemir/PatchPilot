@@ -1,0 +1,6 @@
+Q1	"chained assignment" "pandas 3"
+Q2	"copy-on-write" "pandas 3"
+Q3	"pandas 3.0" astype datetime
+Q4	"numpy 2" "NEP 50"
+Q5	"numpy 2.0" uint8 overflow
+Q6	"pandas 3" "str dtype"

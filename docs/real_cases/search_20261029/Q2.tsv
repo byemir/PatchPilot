@@ -1,0 +1,30 @@
+ChileanVirtualObservatory/asydo	3	issue	2014-08-12	Document the Universe + Component API	https://github.com/ChileanVirtualObservatory/asydo/issues/3
+Lekensteyn/pacemaker	3	issue	2014-04-09	Connecting with git (GnuTLS) causes stack trace	https://github.com/Lekensteyn/pacemaker/issues/3
+OpenGreekAndLatin/csel-dev	3	issue	2014-04-14	Rename files to meet Perseus naming canon	https://github.com/OpenGreekAndLatin/csel-dev/issues/3
+ntuaha/GovCash	3	issue	2014-04-29	預處理資料	https://github.com/ntuaha/GovCash/issues/3
+yanunon/NeteaseCloudMusic	3	issue	2014-11-09	歌曲id和song_dfsId是相同的吗	https://github.com/yanunon/NeteaseCloudMusic/issues/3
+dokai/hexagonit-swfheader	3	issue	2014-11-07	Displaying metadata	https://github.com/dokai/hexagonit-swfheader/issues/3
+justintulloch/ephemeral-execution-engine	3	issue	2026-04-22	Admission Controller & Hard Concurrency Limit (C_max)	https://github.com/justintulloch/ephemeral-execution-engine/issues/3
+rhaido/ansible-modules	3	issue	2014-12-01	Parsing error on 1.8.x?	https://github.com/rhaido/ansible-modules/issues/3
+bonsaiviking/NfSpy	3	issue	2014-10-11	Quick and dirty implementation of "cat" for nfspysh	https://github.com/bonsaiviking/NfSpy/issues/3
+knutz3n/mopidy-yamaha	3	issue	2014-10-01	Party Mode	https://github.com/knutz3n/mopidy-yamaha/issues/3
+skillachie/finsymbols	3	issue	2014-10-23	SP500 has 502 symbols. Tests validate that there are 500	https://github.com/skillachie/finsymbols/issues/3
+mattharrison/rst2epub2	3	issue	2014-05-24	UnicodeEncodeError: 'ascii' codec can't encode character u'\\u2014' in position 648:	https://github.com/mattharrison/rst2epub2/issues/3
+myint/yolk	3	issue	2014-06-23	newer Python packages store metadata in METADATA, not PKG-INFO	https://github.com/myint/yolk/issues/3
+hungtruong/Google-Translate-TTS	3	issue	2014-06-28	Fix for Noisy/Corrupted Audio	https://github.com/hungtruong/Google-Translate-TTS/issues/3
+voiser/zoe-startup-kit	3	issue	2014-08-07	Perl scripts in cmdproc not working	https://github.com/voiser/zoe-startup-kit/issues/3
+Jaymon/caches	3	issue	2014-08-07	KeyCache needs .discard() or .remove() method	https://github.com/Jaymon/caches/issues/3
+junkangwu/alpha-DPO	3	issue	2024-11-27	复现 alpha-DPO训练，过程中出现nan	https://github.com/junkangwu/alpha-DPO/issues/3
+bryanforbes/imobilesync	3	issue	2014-08-21	how get contact from ios devices	https://github.com/bryanforbes/imobilesync/issues/3
+beebotte/bbt_python	3	issue	2014-11-11	Add support for Channel Token authentication	https://github.com/beebotte/bbt_python/issues/3
+chilcote/warranty	3	issue	2014-11-16	Error when checking "date" for serials in certain warranty conditions	https://github.com/chilcote/warranty/issues/3
+valheran/DrillHandler	3	issue	2015-03-27	Read/load attribute logs	https://github.com/valheran/DrillHandler/issues/3
+masterpurav/BattleTanks	3	issue	2015-03-23	First message is not received by one client	https://github.com/masterpurav/BattleTanks/issues/3
+GlobalFishingWatch/gpsdio	3	issue	2015-03-26	Switch to basestring or six.string_types instead of hacked BaseString	https://github.com/GlobalFishingWatch/gpsdio/issues/3
+corydolphin/flask-jsonpify	3	issue	2014-04-25	Content-Type for jsonp data is not application/javascript	https://github.com/corydolphin/flask-jsonpify/issues/3
+philadams-zz/pluckr	3	issue	2014-07-09	cut compat:  ordering of fields	https://github.com/philadams-zz/pluckr/issues/3
+anjoola/cs12x-automate	3	issue	2014-12-19	Manual grading suggestion	https://github.com/anjoola/cs12x-automate/issues/3
+google-code-export/google-refine	3	issue	2015-03-13	Auto-saving during an import of large files can result in java heap errors	https://github.com/google-code-export/google-refine/issues/3
+pombreda/pyftpdlib	3	issue	2015-03-14	Stop buffering if extremely long lines are received	https://github.com/pombreda/pyftpdlib/issues/3
+shlomi-noach/mycheckpoint	3	issue	2015-03-14	mycheckpoint deploy fails with error 1140	https://github.com/shlomi-noach/mycheckpoint/issues/3
+jcplessis/pyconcordion	3	issue	2015-03-16	Moving to concordion 1.3.1	https://github.com/jcplessis/pyconcordion/issues/3

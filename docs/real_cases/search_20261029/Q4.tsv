@@ -1,0 +1,30 @@
+ChileanVirtualObservatory/asydo	2	issue	2014-08-12	Remove unused imports	https://github.com/ChileanVirtualObservatory/asydo/issues/2
+hulu/dripls	2	issue	2014-09-18	Problem with set_ts_lo.sh 	https://github.com/hulu/dripls/issues/2
+brainsik/virtualenv-burrito	50	issue	2014-09-13	Only for *nix or works on windows too?	https://github.com/brainsik/virtualenv-burrito/issues/50
+juju/docs	2	issue	2014-02-19	Our HTML should be semantic	https://github.com/juju/docs/issues/2
+timonwong/OmniMarkupPreviewer	50	issue	2014-04-14	Update broke it - 404	https://github.com/timonwong/OmniMarkupPreviewer/issues/50
+ojuba-org/othman	2	issue	2014-03-21	Tags are not updated !	https://github.com/ojuba-org/othman/issues/2
+danielsmith-eu/python-nikeplus-2013	2	issue	2014-04-11	Handshake failure	https://github.com/danielsmith-eu/python-nikeplus-2013/issues/2
+OpenGreekAndLatin/csel-dev	2	issue	2014-04-10	Missing Perseus Catalog URI (Lucifer Calaritanus, CSEL 14)	https://github.com/OpenGreekAndLatin/csel-dev/issues/2
+jathanism/do_auth	2	issue	2014-04-23	Implement optional support for CIDR notation for IP addresses	https://github.com/jathanism/do_auth/issues/2
+RinglingGameArt/GADTools	2	issue	2014-04-25	Add padding options!	https://github.com/RinglingGameArt/GADTools/issues/2
+ntuaha/GovCash	2	issue	2014-04-26	讀入網友輸入資料	https://github.com/ntuaha/GovCash/issues/2
+westerncapelabs/django-messaging-subscription	2	issue	2014-10-30	Add manifest and fix initial_data	https://github.com/westerncapelabs/django-messaging-subscription/issues/2
+python-visualization/folium	50	issue	2014-10-03	TemplateNotFound: tiles/openstreetmap/tiles.txt	https://github.com/python-visualization/folium/issues/50
+xjsender/SublimeApex	50	issue	2014-11-02	Update static resources from and save to server?	https://github.com/xjsender/SublimeApex/issues/50
+petebachant/Tow	2	issue	2014-06-03	Wiki link incorrect	https://github.com/petebachant/Tow/issues/2
+rgs1/zk_shell	2	issue	2014-06-29	Import error	https://github.com/rgs1/zk_shell/issues/2
+asobrien/NAStools	2	issue	2014-06-25	Why doesn't NAStools support X, Y, or Z?	https://github.com/asobrien/NAStools/issues/2
+OpenERP/openerp-client-lib	2	issue	2014-08-06	jsonrpc for Odoo/OpenERP 7?	https://github.com/OpenERP/openerp-client-lib/issues/2
+tyrylu/pyfmodex	2	issue	2014-08-25	Type in set_music_channel_volume, get_music_channel_volume	https://github.com/tyrylu/pyfmodex/issues/2
+flagos/python-progressbar	2	issue	2015-03-25	ProgressBar __init__ function uses same default widget list for all instances	https://github.com/flagos/python-progressbar/issues/2
+levibostian/n00b	2	issue	2015-03-27	Replace "how to program" with project ideas.	https://github.com/levibostian/n00b/issues/2
+matt-dale/rf-explorer-python-api	2	issue	2015-03-20	integer truncation	https://github.com/matt-dale/rf-explorer-python-api/issues/2
+Glassback/pegasus	2	issue	2015-03-19	Choose LICENSE	https://github.com/Glassback/pegasus/issues/2
+valheran/DrillHandler	2	issue	2015-03-27	Interval creator	https://github.com/valheran/DrillHandler/issues/2
+GlobalFishingWatch/gpsdio	2	issue	2015-03-26	Ensure every entry in the schema contains every attribute we expect	https://github.com/GlobalFishingWatch/gpsdio/issues/2
+masterpurav/BattleTanks	2	issue	2015-03-23	Health bars not getting updated	https://github.com/masterpurav/BattleTanks/issues/2
+philadams-zz/pluckr	2	issue	2014-07-09	cut compat:  field ranges	https://github.com/philadams-zz/pluckr/issues/2
+oinume/tomahawk	50	issue	2014-07-24	pexpect-3.3 installation problem (ValueError: I/O operation on closed file)	https://github.com/oinume/tomahawk/issues/50
+bonsaiviking/NfSpy	2	issue	2014-07-27	Doesn't run on OSX	https://github.com/bonsaiviking/NfSpy/issues/2
+anjoola/cs12x-automate	2	issue	2014-12-19	Added --except argument	https://github.com/anjoola/cs12x-automate/issues/2
