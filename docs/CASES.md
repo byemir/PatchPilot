@@ -3,7 +3,7 @@
 These three cases are our own reproductions derived from documented behavior changes. They are not incidents from real projects. p2, p3 and p4 also have no real project incident behind them (p3's source is the deprecation text, not a 3.0.0 release-note line).
 
 ## p5_chained_assignment (pandas 2.3 to 3.0)
-- Pattern: `df["amount"][mask] = value` (chained assignment) in `apply_discounts`. Old library modifies `df`; new library does nothing to `df` and raises no error.
+- Pattern: `df["amount"][mask] = value` (chained assignment) in `apply_discounts`. Old library modifies `df`; new library does not modify `df` and emits only a `ChainedAssignmentError` warning (a `Warning` subclass, so no exception; measured on pandas 3.0.6).
 - Source: pandas 3.0.0 release notes, "Consistent copy/view behaviour with Copy-on-Write": chained assignment "will stop working"; `SettingWithCopyWarning` is removed. https://pandas.pydata.org/docs/whatsnew/v3.0.0.html (the page does not mention `ChainedAssignmentError`).
 
 ## p6_str_dtype_checks (pandas 2.3 to 3.0)
