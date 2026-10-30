@@ -1,0 +1,11 @@
+--- a/clean.py
++++ b/clean.py
+@@ -8,7 +8,7 @@
+ 
+ def fill_categories(rows, default):
+     df = pd.DataFrame(rows)
+-    df["category"].fillna(default, inplace=True)
++    df["category"] = df["category"].fillna(default)
+     return df["category"].tolist()
+ 
+ 

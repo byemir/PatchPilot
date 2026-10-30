@@ -241,7 +241,7 @@ function seg(id, items, key){
   items.forEach(([v, label, tip]) => {const b = el("button", null, label); b.dataset.v = v; if(tip) b.title = tip; b.setAttribute("aria-pressed", String(pick[key] === v));
     b.onclick = () => {pick[key] = v; sync();}; s.appendChild(b);});
 }
-let autoApply = false, autoWrite = false, autoQ = [], autoBusy = false, resetArmed = false;
+let manual = false, scrollTo = -1, autoApply = false, autoWrite = false, autoQ = [], autoBusy = false, resetArmed = false;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 function sync(){
   const repair = pick.mode === "repair";
@@ -356,11 +356,12 @@ function render(){
       c6.appendChild(bt);
     }
     tr.appendChild(c6);
-    tr.onclick = () => {open = open === i ? -1 : i; render();}; tr.onkeydown = (e) => {if(e.key === "Enter" || e.key === " "){e.preventDefault(); tr.onclick();}};
+    tr.onclick = () => {manual = true; open = open === i ? -1 : i; render();}; tr.onkeydown = (e) => {if(e.key === "Enter" || e.key === " "){e.preventDefault(); tr.onclick();}};
     body.appendChild(tr);
     if(open === i){const d = el("tr", "detail"), dc = el("td"); dc.colSpan = 6; fill(dc, r); d.appendChild(dc); body.appendChild(d);}
   });
   tb.appendChild(body); b.appendChild(tb);
+  if(scrollTo >= 0){scrollTo = -1; const d = document.querySelector("tr.detail"); if(d) d.scrollIntoView({block: "center", behavior: "smooth"});}
 }
 function diffView(text, applied){
   const box = el("div", "diff"); box.appendChild(el("div", "cap", applied ? "Written to the file" : "Patch"));
@@ -403,7 +404,7 @@ function onEvent(ev){
   const k = ev.index;
   if(ev.event === "start"){rows = Array.from({length: ev.total}, (_, i) => retain[i] || {}); sumb = {}; autoQ = []; return;}
   if(k !== undefined && retain[k]) return;
-  if(ev.event === "triage" || ev.event === "result"){Object.assign(rows[k], ev.row); rows[k].job = curJob; rows[k].working = false; if(ev.event === "result" && ev.row.diff){open = open < 0 ? k : open; if(running && !readonly && autoApply){autoQ.push(k); pump();}}}
+  if(ev.event === "triage" || ev.event === "result"){Object.assign(rows[k], ev.row); rows[k].job = curJob; rows[k].working = false; if(ev.event === "result" && ev.row.diff){if(!manual && !readonly){open = k; scrollTo = k;} if(running && !readonly && autoApply){autoQ.push(k); pump();}}}
   else if(ev.event === "repairing"){rows[k].working = true;}
   else if(ev.event === "attempt"){rows[k].att = (rows[k].att || []).concat([ev.attempt]);}
   else if(ev.event === "applied"){rows[k].applied = true;}
@@ -445,7 +446,7 @@ async function tick(){
 function follow(){running = true; sync(); clearInterval(poll); poll = setInterval(tick, 400); tick();}
 
 async function startJob(mode, only){
-  showErr(""); readonly = false; $("history").value = ""; since = 0; open = -1;
+  showErr(""); readonly = false; $("history").value = ""; since = 0; open = -1; manual = false; scrollTo = -1;
   retain = {}; jobOnly = only ? new Set(only) : null;
   if(only) rows.forEach((r, k) => {if(only.includes(k)) r.working = true; else retain[k] = JSON.parse(JSON.stringify(r));});
   else rows = [];

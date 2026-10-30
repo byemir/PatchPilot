@@ -1,0 +1,10 @@
+--- a/export.py
++++ b/export.py
+@@ -23,5 +23,6 @@
+ 
+ def label_rows(rows):
+     df = pd.DataFrame(rows)
+-    df["label"] = df["who"].str.upper() + ":" + df["category"].astype(str)
++    cat_str = df["category"].astype(str).fillna("None")
++    df["label"] = df["who"].str.upper() + ":" + cat_str
+     return df["label"].tolist()

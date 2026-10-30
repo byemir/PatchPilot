@@ -150,3 +150,7 @@ No real third-party project was available, and none is to be copied in, so `exam
 ## 2026-10-30: ledger on the Mac
 
 Check from the app took 13 s (21 functions: 14 same, 7 differ, the same as on the Linux VM). Repair with the local Glimmer, effort low: 7 of 7 repaired on the first attempt, all gates passed, differential verdict PASS for each; 338 s and 12,547 tokens in total. Report and diffs: `examples/ledger_result/`. One run.
+
+## 2026-10-30: first hosted run through the app
+
+The ledger set with muse-spark-1.3 (key file read by the scan process, never by the page): 7 of 7 repaired on the first attempt, differential PASS for each, 167 s and 19,376 tokens in total. Report and diffs: `examples/ledger_result_spark/`. Spark used more tokens than the local Glimmer on the same functions (19,376 against 12,547) and was faster (167 s against 338 s). One run each.

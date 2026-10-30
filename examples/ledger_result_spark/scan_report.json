@@ -1,0 +1,719 @@
+{
+  "manifest": "/private/tmp/pp_led/scan.json",
+  "model": "muse-spark-1.3",
+  "endpoint": null,
+  "effort": "low",
+  "triage_only": false,
+  "applied": false,
+  "seconds": 167.0,
+  "tokens": 19376,
+  "counts": {
+    "healthy": 14,
+    "repaired": 7
+  },
+  "targets": [
+    {
+      "file": "ledger/clean.py",
+      "function": "normalize_names",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/clean.py",
+      "function": "fill_categories",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 2 of 2 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "default": "misc",
+          "rows": [
+            {
+              "amount": 12.5,
+              "category": "food",
+              "date": "2026-01-03",
+              "who": "ana"
+            },
+            {
+              "amount": 80.0,
+              "category": null,
+              "date": "2026-01-19",
+              "who": "bo"
+            },
+            {
+              "amount": 700.0,
+              "category": "rent",
+              "date": "2026-02-02",
+              "who": "ana"
+            },
+            {
+              "amount": 33.25,
+              "category": "food",
+              "date": "2026-02-14",
+              "who": "cy"
+            },
+            {
+              "amount": 33.25,
+              "category": "food",
+              "date": "2026-02-14",
+              "who": "cy"
+            }
+          ]
+        },
+        "old": [
+          "food",
+          "misc",
+          "rent",
+          "food",
+          "food"
+        ],
+        "new": [
+          "food",
+          NaN,
+          "rent",
+          "food",
+          "food"
+        ]
+      },
+      "source_sha256": "3bcafddedb48deb22b32f002fc257902d4800c4775144f6c7b8e1566000915d9",
+      "model": "muse-spark-1.3",
+      "effort": "low",
+      "endpoint": null,
+      "seconds": 15.3,
+      "tokens": 1882,
+      "run_dir": "/private/tmp/pp_led/.patchpilot/20261030-190745/runs/20261030-190803_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "Pandas 3 enables Copy-on-Write, so df[\"category\"].fillna(default, inplace=True) mutates only a temporary Series copy and no longer propagates to df, leaving NaNs; assigning the result back fixes it on both versions.",
+          "tokens": 1882,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 148,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "Pandas 3 enables Copy-on-Write, so df[\"category\"].fillna(default, inplace=True) mutates only a temporary Series copy and no longer propagates to df, leaving NaNs; assigning the result back fixes it on both versions.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 148,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "clean.fill_categories.diff"
+    },
+    {
+      "file": "ledger/clean.py",
+      "function": "parse_amounts",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/clean.py",
+      "function": "drop_dupes",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 2 of 2 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "key": "date",
+          "rows": [
+            {
+              "amount": 12.5,
+              "category": "food",
+              "date": "2026-01-03",
+              "who": "ana"
+            },
+            {
+              "amount": 80.0,
+              "category": null,
+              "date": "2026-01-19",
+              "who": "bo"
+            },
+            {
+              "amount": 700.0,
+              "category": "rent",
+              "date": "2026-02-02",
+              "who": "ana"
+            },
+            {
+              "amount": 33.25,
+              "category": "food",
+              "date": "2026-02-14",
+              "who": "cy"
+            },
+            {
+              "amount": 33.25,
+              "category": "food",
+              "date": "2026-02-14",
+              "who": "cy"
+            }
+          ]
+        },
+        "old": [
+          {
+            "amount": 12.5,
+            "category": "food",
+            "date": "2026-01-03",
+            "who": "ana"
+          },
+          {
+            "amount": 80.0,
+            "category": null,
+            "date": "2026-01-19",
+            "who": "bo"
+          },
+          {
+            "amount": 700.0,
+            "category": "rent",
+            "date": "2026-02-02",
+            "who": "ana"
+          },
+          {
+            "amount": 33.25,
+            "category": "food",
+            "date": "2026-02-14",
+            "who": "cy"
+          }
+        ],
+        "new": [
+          {
+            "amount": 12.5,
+            "category": "food",
+            "date": "2026-01-03",
+            "who": "ana"
+          },
+          {
+            "amount": 80.0,
+            "category": NaN,
+            "date": "2026-01-19",
+            "who": "bo"
+          },
+          {
+            "amount": 700.0,
+            "category": "rent",
+            "date": "2026-02-02",
+            "who": "ana"
+          },
+          {
+            "amount": 33.25,
+            "category": "food",
+            "date": "2026-02-14",
+            "who": "cy"
+          }
+        ]
+      },
+      "source_sha256": "3bcafddedb48deb22b32f002fc257902d4800c4775144f6c7b8e1566000915d9",
+      "model": "muse-spark-1.3",
+      "effort": "low",
+      "endpoint": null,
+      "seconds": 21.2,
+      "tokens": 3263,
+      "run_dir": "/private/tmp/pp_led/.patchpilot/20261030-190745/runs/20261030-190822_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "pandas 3 infers a str dtype for string columns so missing categories become NaN instead of None, and to_dict(\"records\") then yields NaN which json dumps as NaN instead of null.",
+          "tokens": 3263,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 151,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "pandas 3 infers a str dtype for string columns so missing categories become NaN instead of None, and to_dict(\"records\") then yields NaN which json dumps as NaN instead of null.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 151,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "clean.drop_dupes.diff"
+    },
+    {
+      "file": "ledger/report.py",
+      "function": "totals_by_month",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/report.py",
+      "function": "top_spenders",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/report.py",
+      "function": "flag_large",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 2 of 2 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "limit": 50,
+          "rows": [
+            {
+              "amount": 12.5,
+              "category": "food",
+              "date": "2026-01-03",
+              "who": "ana"
+            },
+            {
+              "amount": 80.0,
+              "category": null,
+              "date": "2026-01-19",
+              "who": "bo"
+            },
+            {
+              "amount": 700.0,
+              "category": "rent",
+              "date": "2026-02-02",
+              "who": "ana"
+            },
+            {
+              "amount": 33.25,
+              "category": "food",
+              "date": "2026-02-14",
+              "who": "cy"
+            },
+            {
+              "amount": 33.25,
+              "category": "food",
+              "date": "2026-02-14",
+              "who": "cy"
+            }
+          ]
+        },
+        "old": [
+          false,
+          true,
+          true,
+          false,
+          false
+        ],
+        "new": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "source_sha256": "a18ca0e124d43a7fc8d4bfb18a547f6e64412ad9f165ec94303d90ce2a97cb02",
+      "model": "muse-spark-1.3",
+      "effort": "low",
+      "endpoint": null,
+      "seconds": 16.9,
+      "tokens": 2382,
+      "run_dir": "/private/tmp/pp_led/.patchpilot/20261030-190745/runs/20261030-190848_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "flag_large used chained assignment df[\"large\"][mask]=True, which no longer mutates the DataFrame under pandas 3 Copy-on-Write, so no flags were set.",
+          "tokens": 2382,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 136,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "flag_large used chained assignment df[\"large\"][mask]=True, which no longer mutates the DataFrame under pandas 3 Copy-on-Write, so no flags were set.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 136,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "report.flag_large.diff"
+    },
+    {
+      "file": "ledger/report.py",
+      "function": "days_since",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/report.py",
+      "function": "epoch_seconds",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 2 of 2 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "dates": [
+            "2026-01-01 00:00:00",
+            "2026-06-30 12:00:00"
+          ]
+        },
+        "old": [
+          1767225600,
+          1782820800
+        ],
+        "new": [
+          1767225,
+          1782820
+        ]
+      },
+      "source_sha256": "a18ca0e124d43a7fc8d4bfb18a547f6e64412ad9f165ec94303d90ce2a97cb02",
+      "model": "muse-spark-1.3",
+      "effort": "low",
+      "endpoint": null,
+      "seconds": 24.3,
+      "tokens": 3441,
+      "run_dir": "/private/tmp/pp_led/.patchpilot/20261030-190745/runs/20261030-190909_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "pandas 3 infers per-data datetime resolution (s/ms/us/ns) instead of always ns, so Series.astype('int64') no longer always returns nanoseconds and //10**9 is wrong.",
+          "tokens": 3441,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 144,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "pandas 3 infers per-data datetime resolution (s/ms/us/ns) instead of always ns, so Series.astype('int64') no longer always returns nanoseconds and //10**9 is wrong.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 144,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "report.epoch_seconds.diff"
+    },
+    {
+      "file": "ledger/export.py",
+      "function": "to_csv_lines",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/export.py",
+      "function": "category_share",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/export.py",
+      "function": "spend_table",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/export.py",
+      "function": "biggest_per_person",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/export.py",
+      "function": "label_rows",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 1 of 2 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "rows": [
+            {
+              "amount": 12.5,
+              "category": "food",
+              "date": "2026-01-03",
+              "who": "ana"
+            },
+            {
+              "amount": 80.0,
+              "category": null,
+              "date": "2026-01-19",
+              "who": "bo"
+            },
+            {
+              "amount": 700.0,
+              "category": "rent",
+              "date": "2026-02-02",
+              "who": "ana"
+            },
+            {
+              "amount": 33.25,
+              "category": "food",
+              "date": "2026-02-14",
+              "who": "cy"
+            },
+            {
+              "amount": 33.25,
+              "category": "food",
+              "date": "2026-02-14",
+              "who": "cy"
+            }
+          ]
+        },
+        "old": [
+          "ANA:food",
+          "BO:None",
+          "ANA:rent",
+          "CY:food",
+          "CY:food"
+        ],
+        "new": [
+          "ANA:food",
+          NaN,
+          "ANA:rent",
+          "CY:food",
+          "CY:food"
+        ]
+      },
+      "source_sha256": "94cb15fa0f80671359c499e12fbfab584b2395fb5f01551f0ed299f75812b431",
+      "model": "muse-spark-1.3",
+      "effort": "low",
+      "endpoint": null,
+      "seconds": 26.7,
+      "tokens": 4004,
+      "run_dir": "/private/tmp/pp_led/.patchpilot/20261030-190745/runs/20261030-190937_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "In pandas 3 string columns use the new str dtype where astype(str) preserves missing values instead of stringifying them to 'None', so ':'-concatenation propagates NA to NaN.",
+          "tokens": 4004,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 154,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "In pandas 3 string columns use the new str dtype where astype(str) preserves missing values instead of stringifying them to 'None', so ':'-concatenation propagates NA to NaN.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 154,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "export.label_rows.diff"
+    },
+    {
+      "file": "ledger/stats.py",
+      "function": "range_text",
+      "lib": "numpy",
+      "status": "repaired",
+      "detail": "the new library differs on 2 of 2 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "values": [
+            3.5,
+            1.25,
+            9.0
+          ]
+        },
+        "old": "range: [1.25, 9.0]",
+        "new": "range: [np.float64(1.25), np.float64(9.0)]"
+      },
+      "source_sha256": "950b00ff9a4737ce48b4000617e710ab05c89aa8715fcb4fe12e39cc47565845",
+      "model": "muse-spark-1.3",
+      "effort": "low",
+      "endpoint": null,
+      "seconds": 9.9,
+      "tokens": 1845,
+      "run_dir": "/private/tmp/pp_led/.patchpilot/20261030-190745/runs/20261030-191005_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "NumPy 2.0 changed scalar repr to include the type (e.g. np.float64(1.25)), so formatting numpy scalars inside a list now prints the prefix; converting to Python scalars restores the old output.",
+          "tokens": 1845,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 134,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "NumPy 2.0 changed scalar repr to include the type (e.g. np.float64(1.25)), so formatting numpy scalars inside a list now prints the prefix; converting to Python scalars restores the old output.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 134,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "stats.range_text.diff"
+    },
+    {
+      "file": "ledger/stats.py",
+      "function": "running_balance",
+      "lib": "numpy",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/stats.py",
+      "function": "add_bonus",
+      "lib": "numpy",
+      "status": "repaired",
+      "detail": "the new library differs on 1 of 2 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "bonus": 100,
+          "score": 200
+        },
+        "old": 300,
+        "new": 44
+      },
+      "source_sha256": "950b00ff9a4737ce48b4000617e710ab05c89aa8715fcb4fe12e39cc47565845",
+      "model": "muse-spark-1.3",
+      "effort": "low",
+      "endpoint": null,
+      "seconds": 16.5,
+      "tokens": 2559,
+      "run_dir": "/private/tmp/pp_led/.patchpilot/20261030-190745/runs/20261030-191016_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "NumPy 2 NEP 50 made Python ints weak so np.uint8(score)+bonus stays uint8 and wraps modulo 256 (300->44), while NumPy 1 promoted to a larger int.",
+          "tokens": 2559,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 136,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "NumPy 2 NEP 50 made Python ints weak so np.uint8(score)+bonus stays uint8 and wraps modulo 256 (300->44), while NumPy 1 promoted to a larger int.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 136,
+        "core_divergences": 0,
+        "wide_divergences": 50
+      },
+      "applied": false,
+      "diff_file": "stats.add_bonus.diff"
+    },
+    {
+      "file": "ledger/stats.py",
+      "function": "nearest_percentile",
+      "lib": "numpy",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/stats.py",
+      "function": "zscores",
+      "lib": "numpy",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/stats.py",
+      "function": "bucket_counts",
+      "lib": "numpy",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/stats.py",
+      "function": "mean_of_means",
+      "lib": "numpy",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    }
+  ]
+}

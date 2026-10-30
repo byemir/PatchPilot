@@ -1,0 +1,11 @@
+--- a/stats.py
++++ b/stats.py
+@@ -3,7 +3,7 @@
+ 
+ def range_text(values):
+     a = np.array(values)
+-    return f"range: {[np.min(a), np.max(a)]}"
++    return f"range: {[np.min(a).tolist(), np.max(a).tolist()]}"
+ 
+ 
+ def running_balance(amounts):

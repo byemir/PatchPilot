@@ -1,0 +1,11 @@
+--- a/stats.py
++++ b/stats.py
+@@ -11,7 +11,7 @@
+ 
+ 
+ def add_bonus(score, bonus):
+-    return int(np.uint8(score) + bonus)
++    return int(score) + int(bonus)
+ 
+ 
+ def nearest_percentile(values, q):

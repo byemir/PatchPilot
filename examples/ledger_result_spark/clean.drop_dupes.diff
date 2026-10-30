@@ -1,0 +1,31 @@
+--- a/clean.py
++++ b/clean.py
+@@ -8,7 +8,7 @@
+ 
+ def fill_categories(rows, default):
+     df = pd.DataFrame(rows)
+-    df["category"].fillna(default, inplace=True)
++    df["category"] = df["category"].fillna(default)
+     return df["category"].tolist()
+ 
+ 
+@@ -19,4 +19,18 @@
+ 
+ def drop_dupes(rows, key):
+     df = pd.DataFrame(rows)
+-    return df.drop_duplicates(subset=[key]).to_dict("records")
++    records = df.drop_duplicates(subset=[key]).to_dict("records")
++    for rec in records:
++        for k, v in list(rec.items()):
++            if v is None:
++                continue
++            try:
++                is_na = pd.isna(v)
++            except (TypeError, ValueError):
++                continue
++            try:
++                if bool(is_na):
++                    rec[k] = None
++            except (TypeError, ValueError):
++                continue
++    return records
