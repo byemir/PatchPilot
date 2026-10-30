@@ -361,7 +361,7 @@ function render(){
     if(open === i){const d = el("tr", "detail"), dc = el("td"); dc.colSpan = 6; fill(dc, r); d.appendChild(dc); body.appendChild(d);}
   });
   tb.appendChild(body); b.appendChild(tb);
-  if(scrollTo >= 0){scrollTo = -1; const d = document.querySelector("tr.detail"); if(d) d.scrollIntoView({block: "center", behavior: "smooth"});}
+  if(scrollTo >= 0){scrollTo = -1; const d = document.querySelector("tr.detail"); if(d) d.scrollIntoView({block: "center", behavior: "instant"});}
 }
 function diffView(text, applied){
   const box = el("div", "diff"); box.appendChild(el("div", "cap", applied ? "Written to the file" : "Patch"));
@@ -396,6 +396,8 @@ function fill(cell, r){
     cell.appendChild(w);
   });
   if(r.diff) cell.appendChild(diffView(r.diff, r.applied));
+  if(r.working && !r.diff){const w = el("div", "panel"); w.appendChild(el("div", "cap", "Working"));
+    const p = el("div", "hint"); p.appendChild(el("i", "spin")); p.appendChild(document.createTextNode("The model is writing a patch; the three gates appear here when it is ready.")); p.style.padding = "10px 14px"; w.appendChild(p); cell.appendChild(w);}
   if(!att(r).length && !r.diff && r.example){const p = el("div", "panel"); p.appendChild(el("div", "cap", "Example input")); p.appendChild(el("pre", null, fmt(r.example.input))); cell.appendChild(p);}
 }
 
@@ -405,7 +407,7 @@ function onEvent(ev){
   if(ev.event === "start"){rows = Array.from({length: ev.total}, (_, i) => retain[i] || {}); sumb = {}; autoQ = []; return;}
   if(k !== undefined && retain[k]) return;
   if(ev.event === "triage" || ev.event === "result"){Object.assign(rows[k], ev.row); rows[k].job = curJob; rows[k].working = false; if(ev.event === "result" && ev.row.diff){if(!manual && !readonly){open = k; scrollTo = k;} if(running && !readonly && autoApply){autoQ.push(k); pump();}}}
-  else if(ev.event === "repairing"){rows[k].working = true;}
+  else if(ev.event === "repairing"){rows[k].working = true; if(!manual && !readonly){open = k; scrollTo = k;}}
   else if(ev.event === "attempt"){rows[k].att = (rows[k].att || []).concat([ev.attempt]);}
   else if(ev.event === "applied"){rows[k].applied = true;}
   else if(ev.event === "undone"){rows[k].applied = false;}

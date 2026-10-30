@@ -52,6 +52,7 @@ def main() -> int:
             pg.wait_for_selector("tr.row button:has-text('Write file?')", timeout=15000)
             check("Auto-apply arms the button and writes nothing", src.read_text() == orig)
             check("the fixed row opens by itself", pg.locator("tr.detail").count() == 1)
+            check("the fixed row shows its patch", "Patch" in pg.inner_text("tr.detail"))
             pg.click("tr.row button:has-text('Write file?')")
             pg.wait_for_selector("text=written", timeout=5000)
             check("a manual confirm writes the patch", src.read_text() != orig)
