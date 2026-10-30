@@ -1,0 +1,9 @@
+--- a/hot_readings_text.py
++++ b/hot_readings_text.py
+@@ -4,4 +4,5 @@
+ 
+ def hot_readings_text(values, threshold):
+     arr = np.asarray(values, dtype=np.float64)
+-    return "hot: " + str(list(arr[arr > threshold]))
++    filtered = arr[arr > threshold]
++    return "hot: " + str(filtered.tolist())

@@ -8,6 +8,8 @@ tests=(
   "patchpilot.tools_test"
   "patchpilot.make_case_test"
   "patchpilot.repair_test"
+  "patchpilot.scan_test"
+  "patchpilot.view_test"
   "patchpilot.isolation_test"
   "patchpilot.landlock_test"
   "patchpilot.gen2_test"

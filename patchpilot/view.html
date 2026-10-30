@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PatchPilot scan</title>
+<style>
+:root{--bg:#0f1318;--panel:#171d25;--line:#273140;--text:#e6ebf2;--dim:#8d9bb0;--ok:#3ecf8e;--bad:#ff6b6b;--warn:#f5b84a;--blue:#6aa8ff;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:17px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+header{padding:18px 28px;border-bottom:1px solid var(--line);display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+h1{margin:0;font-size:24px;letter-spacing:.2px}
+.chips{display:flex;gap:10px;flex-wrap:wrap}
+.chip{padding:4px 12px;border-radius:999px;background:var(--panel);border:1px solid var(--line);font-size:15px;color:var(--dim)}
+.chip b{color:var(--text)}
+.spacer{flex:1}
+button{background:var(--blue);color:#06101f;border:0;border-radius:8px;padding:9px 16px;font:600 15px inherit;cursor:pointer}
+button.ghost{background:var(--panel);color:var(--text);border:1px solid var(--line)}
+main{display:grid;grid-template-columns:340px 1fr;min-height:calc(100vh - 70px)}
+@media(max-width:900px){main{grid-template-columns:1fr}}
+nav{border-right:1px solid var(--line);padding:12px;overflow:auto}
+.item{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:10px;cursor:pointer;border:1px solid transparent}
+.item:hover{background:var(--panel)}
+.item.sel{background:var(--panel);border-color:var(--line)}
+.dot{width:12px;height:12px;border-radius:50%;flex:none;background:var(--dim)}
+.s-repaired .dot{background:var(--ok)}.s-silent .dot,.s-not_repaired .dot,.s-error .dot,.s-case_failed .dot{background:var(--bad)}
+.s-loud .dot{background:var(--warn)}.s-healthy .dot{background:var(--blue)}
+.item .n{font-family:var(--mono);font-size:15px}.item .f{color:var(--dim);font-size:13px}
+section{padding:22px 30px;overflow:auto}
+h2{margin:0 0 4px;font-size:24px;font-family:var(--mono)}
+.sub{color:var(--dim);margin-bottom:18px}
+.tag{display:inline-block;padding:2px 10px;border-radius:6px;font-size:14px;font-weight:600;margin-left:8px}
+.t-repaired{background:#12372a;color:var(--ok)}.t-healthy{background:#15294a;color:var(--blue)}
+.t-loud{background:#3d2e0e;color:var(--warn)}.t-not_repaired,.t-error,.t-case_failed,.t-silent,.t-invalid{background:#44181a;color:var(--bad)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:16px}
+.card h3{margin:0 0 10px;font-size:15px;text-transform:uppercase;letter-spacing:1px;color:var(--dim)}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:700px){.cmp{grid-template-columns:1fr}}
+pre{margin:0;white-space:pre-wrap;word-break:break-word;font:14px/1.5 var(--mono)}
+.box{background:#0b0f14;border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.box .l{color:var(--dim);font-size:13px;margin-bottom:4px}
+.attempt{border-top:1px solid var(--line);padding:14px 0}
+.attempt:first-of-type{border-top:0;padding-top:0}
+.ahead{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.ahead b{font-size:18px}
+.gates{display:flex;gap:8px;align-items:center}
+.gate{min-width:150px;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:#0b0f14;color:var(--dim);font-size:15px;transition:all .35s}
+.gate .st{font-size:13px;display:block}
+.gate.ok{border-color:var(--ok);color:var(--ok);background:#0f2a21}
+.gate.fail{border-color:var(--bad);color:var(--bad);background:#33161a}
+.gate.skipped,.gate.off,.gate.na{opacity:.5}
+.arrow{color:var(--dim)}
+.diag{color:var(--dim);margin:8px 0 0}
+.counter{margin-top:8px;border-left:3px solid var(--bad);padding:6px 12px;background:#2a1417;border-radius:0 8px 8px 0}
+.diff .a{color:var(--ok);background:#0f2a21}.diff .r{color:var(--bad);background:#33161a}.diff .h{color:var(--blue)}
+.hidden{visibility:hidden}
+.empty{color:var(--dim);padding:40px}
+</style>
+</head>
+<body>
+<header>
+  <h1>PatchPilot scan</h1>
+  <div class="chips" id="chips"></div>
+  <div class="spacer"></div>
+  <button class="ghost" id="replay">Replay this</button>
+  <button id="playall">Play all</button>
+</header>
+<main>
+  <nav id="nav"></nav>
+  <section id="detail"><div class="empty">Loading…</div></section>
+</main>
+<script>
+"use strict";
+let DATA = null, cur = 0, timers = [], auto = false;
+const $ = (id) => document.getElementById(id);
+function el(tag, cls, text){const e = document.createElement(tag); if(cls) e.className = cls; if(text !== undefined && text !== null) e.textContent = text; return e;}
+function fmt(x){if(typeof x === "string") return x; const c = JSON.stringify(x); return c.length <= 110 ? c : JSON.stringify(x, null, 1);}
+const GATE_NAMES = {visible: "1  Visible tests", hidden: "2  Hidden tests", differential: "3  Differential"};
+const STATUS_TEXT = {repaired: "repaired", healthy: "healthy", loud: "fails loudly", silent: "silent break", not_repaired: "not repaired", error: "error", case_failed: "case failed", invalid: "invalid"};
+
+function clearTimers(){timers.forEach(clearTimeout); timers = [];}
+function later(ms, fn){timers.push(setTimeout(fn, ms));}
+
+function renderNav(){
+  const nav = $("nav"); nav.textContent = "";
+  DATA.targets.forEach((t, i) => {
+    const it = el("div", "item s-" + t.status + (i === cur ? " sel" : ""));
+    it.appendChild(el("span", "dot"));
+    const w = el("div");
+    w.appendChild(el("div", "n", t.function || t.file));
+    w.appendChild(el("div", "f", (t.function ? t.file + " · " : "") + (STATUS_TEXT[t.status] || t.status)));
+    it.appendChild(w);
+    it.onclick = () => {auto = false; show(i, true);};
+    nav.appendChild(it);
+  });
+}
+
+function renderChips(){
+  const c = $("chips"); c.textContent = ""; const s = DATA.summary || {};
+  const add = (k, v) => {if(v === null || v === undefined || v === "") return; const d = el("span", "chip"); d.appendChild(document.createTextNode(k + " ")); d.appendChild(el("b", null, String(v))); c.appendChild(d);};
+  if(s.counts) Object.entries(s.counts).forEach(([k, v]) => add(STATUS_TEXT[k] || k, v));
+  add("model", s.model); add("tokens", s.tokens); add("seconds", s.seconds);
+}
+
+function diffBox(text){
+  const box = el("div", "box diff"); const pre = el("pre");
+  text.split("\n").forEach((ln) => {
+    const cls = ln.startsWith("+++") || ln.startsWith("---") || ln.startsWith("@@") ? "h" : ln.startsWith("+") ? "a" : ln.startsWith("-") ? "r" : "";
+    const s = el("div", cls, ln === "" ? " " : ln); pre.appendChild(s);
+  });
+  box.appendChild(pre); return box;
+}
+
+function show(i, animate){
+  clearTimers(); cur = i; renderNav();
+  const t = DATA.targets[i], d = $("detail"); d.textContent = "";
+  const h = el("h2", null, t.function || t.file); h.appendChild(el("span", "tag t-" + t.status, STATUS_TEXT[t.status] || t.status)); d.appendChild(h);
+  d.appendChild(el("div", "sub", [t.file, t.lib, t.detail].filter(Boolean).join(" · ")));
+
+  if(t.example){
+    const c = el("div", "card"); c.appendChild(el("h3", null, "What changed with the upgrade (first input that differs)"));
+    c.appendChild(box1("input", fmt(t.example.input)));
+    const g = el("div", "cmp"); g.appendChild(box1("old library", fmt(t.example.old))); g.appendChild(box1("new library", fmt(t.example.new)));
+    c.appendChild(g); d.appendChild(c);
+  }
+  const atts = Array.isArray(t.attempts) ? t.attempts : null;
+  const list = atts || [];
+  if(list.length){
+    const c = el("div", "card"); c.appendChild(el("h3", null, "Repair attempts and the three gates"));
+    list.forEach((a, k) => {
+      const wrap = el("div", "attempt");
+      const head = el("div", "ahead"); head.appendChild(el("b", null, "Attempt " + (a.attempt || k + 1)));
+      if(a.tokens) head.appendChild(el("span", "chip", a.tokens + " tokens"));
+      const out = el("span", "tag " + (a.gates.outcome === "accepted" ? "t-repaired" : "t-not_repaired"), a.gates.outcome); out.classList.add("hidden");
+      head.appendChild(out); wrap.appendChild(head);
+      const gs = el("div", "gates"); const boxes = [];
+      ["visible", "hidden", "differential"].forEach((g, gi) => {
+        if(gi) gs.appendChild(el("span", "arrow", "→"));
+        const b = el("div", "gate"); b.appendChild(document.createTextNode(GATE_NAMES[g])); const st = el("span", "st", animate ? "…" : label(a.gates[g])); b.appendChild(st);
+        gs.appendChild(b); boxes.push([b, st, a.gates[g]]);
+      });
+      wrap.appendChild(gs);
+      if(a.diagnosis) wrap.appendChild(el("div", "diag", "Model: " + a.diagnosis));
+      let ce = null;
+      if(a.counterexample){
+        ce = el("div", "counter"); ce.appendChild(el("div", null, "Counterexample returned to the model"));
+        ce.appendChild(el("pre", null, "input    " + fmt(a.counterexample.input) + "\nexpected " + fmt(a.counterexample.expected) + "\ngot      " + fmt(a.counterexample.got) + (a.counterexample.where ? "  (" + a.counterexample.where + ")" : "")));
+        if(animate) ce.classList.add("hidden"); wrap.appendChild(ce);
+      }
+      c.appendChild(wrap);
+      const reveal = () => {boxes.forEach(([b, st, v]) => {b.className = "gate " + v; st.textContent = label(v);}); out.classList.remove("hidden"); if(ce) ce.classList.remove("hidden");};
+      if(animate){
+        const base = 500 + k * 2600;
+        boxes.forEach(([b, st, v], gi) => later(base + gi * 650, () => {b.className = "gate " + v; st.textContent = label(v);}));
+        later(base + 2000, () => {out.classList.remove("hidden"); if(ce) ce.classList.remove("hidden");});
+      } else reveal();
+    });
+    d.appendChild(c);
+  }
+  if(t.diagnosis && !list.length){const c = el("div", "card"); c.appendChild(el("h3", null, "Diagnosis")); c.appendChild(el("div", null, t.diagnosis)); d.appendChild(c);}
+  if(t.diff){const c = el("div", "card"); c.appendChild(el("h3", null, "Accepted patch" + (t.applied ? " (applied)" : " (not applied)"))); c.appendChild(diffBox(t.diff)); if(animate) c.classList.add("hidden"); d.appendChild(c);
+    if(animate) later(500 + list.length * 2600, () => c.classList.remove("hidden"));}
+  if(t.differential && t.differential.valid !== undefined){const c = el("div", "sub", "Differential check: " + t.differential.verdict + " · " + t.differential.valid + " valid of " + t.differential.generated + " generated inputs · " + t.differential.core_divergences + " divergences"); d.appendChild(c);}
+  if(!t.example && !list.length && !t.diff) d.appendChild(el("div", "empty", "Nothing to repair here."));
+  if(auto){const total = 600 + list.length * 2600 + 2800; later(total, () => {if(cur + 1 < DATA.targets.length) show(cur + 1, true); else auto = false;});}
+}
+function label(v){return {ok: "passed", fail: "rejected", skipped: "not reached", off: "off", "n/a": "none"}[v] || v;}
+function box1(l, text){const b = el("div", "box"); b.appendChild(el("div", "l", l)); b.appendChild(el("pre", null, text)); return b;}
+
+$("replay").onclick = () => {auto = false; show(cur, true);};
+$("playall").onclick = () => {auto = true; show(0, true);};
+document.addEventListener("keydown", (e) => {
+  if(e.key === "ArrowDown" || e.key === "j"){auto = false; show(Math.min(cur + 1, DATA.targets.length - 1), false);}
+  else if(e.key === "ArrowUp" || e.key === "k"){auto = false; show(Math.max(cur - 1, 0), false);}
+  else if(e.key === " "){e.preventDefault(); auto = false; show(cur, true);}
+});
+fetch("/api/data").then((r) => r.json()).then((j) => {
+  DATA = j; document.title = j.title; renderChips();
+  const first = Math.max(0, j.targets.findIndex((t) => t.status === "repaired" || t.status === "not_repaired"));
+  show(first, false);
+}).catch(() => {$("detail").textContent = "Could not load /api/data";});
+</script>
+</body>
+</html>

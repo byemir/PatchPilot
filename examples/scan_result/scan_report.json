@@ -1,0 +1,245 @@
+{
+  "manifest": "examples/sample_repo/scan.json (run on a copy)",
+  "model": "muse-glimmer",
+  "endpoint": "http://127.0.0.1:8080/v1",
+  "effort": "low",
+  "triage_only": false,
+  "applied": false,
+  "seconds": 183.1,
+  "tokens": 7812,
+  "counts": {
+    "healthy": 2,
+    "loud": 1,
+    "not_repaired": 1,
+    "repaired": 4
+  },
+  "targets": [
+    {
+      "file": "analytics/session_span.py",
+      "function": "span_seconds",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 3 of 3 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "stamps": [
+            "2025-03-01 10:00:00",
+            "2025-03-01 12:30:15"
+          ]
+        },
+        "old": 9015,
+        "new": 9
+      },
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 26.2,
+      "tokens": 1049,
+      "run_dir": "runs/20261030-114408_case",
+      "attempts": 1,
+      "diagnosis": "In pandas 3.0 `astype('int64')` on a datetime Series returns values in a different time unit than nanoseconds, so dividing by 10**9 yields seconds/1000. Using a Timedelta difference avoids the unit assumption.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 120,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "session_span.span_seconds.diff"
+    },
+    {
+      "file": "analytics/late_flags.py",
+      "function": "late_flags",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 3 of 3 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "days": [
+            1,
+            5,
+            9,
+            3,
+            12
+          ],
+          "cutoff": 4
+        },
+        "old": [
+          0,
+          1,
+          1,
+          0,
+          1
+        ],
+        "new": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 18.6,
+      "tokens": 896,
+      "run_dir": "runs/20261030-114438_case",
+      "attempts": 1,
+      "diagnosis": "The loop uses chained indexing `table[\"late\"].iloc[position] = 1` which pandas 3.0 treats as a copy, so the assignment is lost. Using a single-step loc assignment makes the mutation reliable on both pandas 2.3.3 and 3.0.6.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 152,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "late_flags.late_flags.diff"
+    },
+    {
+      "file": "analytics/counts_by_size.py",
+      "function": "counts_by_size",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 3 of 3 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "sizes": [
+            "small",
+            "large",
+            "small",
+            "medium"
+          ]
+        },
+        "old": {
+          "small": 2,
+          "medium": 1,
+          "large": 1,
+          "huge": 0
+        },
+        "new": {
+          "small": 2,
+          "medium": 1,
+          "large": 1
+        }
+      },
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 20.8,
+      "tokens": 1007,
+      "run_dir": "runs/20261030-114501_case",
+      "attempts": 1,
+      "diagnosis": "pandas 3.0 changed groupby behavior for categorical columns so missing categories are dropped, causing the result dict to omit size classes with zero counts. The fix is to explicitly include all CLASSES with a default of 0.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 142,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "counts_by_size.counts_by_size.diff"
+    },
+    {
+      "file": "analytics/weekly_totals.py",
+      "function": "weekly_totals",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "sensors/hot_readings_text.py",
+      "function": "hot_readings_text",
+      "lib": "numpy",
+      "status": "repaired",
+      "detail": "the new library differs on 3 of 3 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "values": [
+            21.5,
+            30.25,
+            18.0,
+            33.5
+          ],
+          "threshold": 25.0
+        },
+        "old": "hot: [30.25, 33.5]",
+        "new": "hot: [np.float64(30.25), np.float64(33.5)]"
+      },
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 17.0,
+      "tokens": 936,
+      "run_dir": "runs/20261030-114524_case",
+      "attempts": 1,
+      "diagnosis": "In NumPy 2.x, `str(np.float64(...))` renders as `np.float64(...)` instead of a plain numeric repr, so `str(list(arr[mask]))` now includes the NumPy type names. Converting the filtered array to native Python scalars with `.tolist()` makes the string representation stable across NumPy 1.26 and 2.5.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 152,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "hot_readings_text.hot_readings_text.diff"
+    },
+    {
+      "file": "sensors/total_with_tax.py",
+      "function": "total_with_tax",
+      "lib": "numpy",
+      "status": "not_repaired",
+      "detail": "max attempts reached",
+      "example": {
+        "input": {
+          "prices": [
+            19.99,
+            5.49,
+            120.0
+          ],
+          "rate": 0.2
+        },
+        "old": 174.575999451,
+        "new": 174.57600069
+      },
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 83.1,
+      "tokens": 3924,
+      "run_dir": "runs/20261030-114543_case"
+    },
+    {
+      "file": "sensors/normalize.py",
+      "function": "normalize",
+      "lib": "numpy",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "legacy/total_volume.py",
+      "function": "total_volume",
+      "lib": "numpy",
+      "status": "loud",
+      "detail": "raises AttributeError on the new library for 2 of 2 inputs",
+      "example": {
+        "input": {
+          "dims": [
+            2,
+            3,
+            4
+          ]
+        },
+        "old": 24,
+        "new": {
+          "error": "AttributeError"
+        }
+      }
+    }
+  ]
+}

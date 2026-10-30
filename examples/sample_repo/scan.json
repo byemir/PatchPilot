@@ -1,0 +1,13 @@
+{
+  "note": "Sample repository for `python -m patchpilot.scan` (all code written for this project). Paths are relative to this file.",
+  "targets": [
+    {"file": "analytics/session_span.py", "function": "span_seconds", "lib": "pandas", "inputs": "probes/span_seconds.json"},
+    {"file": "analytics/late_flags.py", "function": "late_flags", "lib": "pandas", "inputs": "probes/late_flags.json"},
+    {"file": "analytics/counts_by_size.py", "function": "counts_by_size", "lib": "pandas", "inputs": "probes/counts_by_size.json"},
+    {"file": "analytics/weekly_totals.py", "function": "weekly_totals", "lib": "pandas", "inputs": "probes/weekly_totals.json"},
+    {"file": "sensors/hot_readings_text.py", "function": "hot_readings_text", "lib": "numpy", "inputs": "probes/hot_readings_text.json"},
+    {"file": "sensors/total_with_tax.py", "function": "total_with_tax", "lib": "numpy", "inputs": "probes/total_with_tax.json"},
+    {"file": "sensors/normalize.py", "function": "normalize", "lib": "numpy", "inputs": "probes/normalize.json"},
+    {"file": "legacy/total_volume.py", "function": "total_volume", "lib": "numpy", "inputs": "probes/total_volume.json"}
+  ]
+}

@@ -1,0 +1,9 @@
+--- a/counts_by_size.py
++++ b/counts_by_size.py
+@@ -7,4 +7,5 @@
+ def counts_by_size(sizes):
+     table = pd.DataFrame({"size": pd.Categorical(sizes, categories=CLASSES)})
+     counted = table.groupby("size").size()
+-    return {str(k): int(v) for k, v in counted.items()}
++    # Ensure all classes are present even if count is zero for compatibility across pandas versions
++    return {cls: int(counted.get(cls, 0)) for cls in CLASSES}

@@ -1,0 +1,10 @@
+--- a/session_span.py
++++ b/session_span.py
+@@ -4,5 +4,5 @@
+ 
+ def span_seconds(stamps):
+     parsed = pd.to_datetime(pd.Series(stamps))
+-    ticks = parsed.astype("int64")
+-    return int((ticks.max() - ticks.min()) // 10**9)
++    delta = parsed.max() - parsed.min()
++    return int(delta.total_seconds())
