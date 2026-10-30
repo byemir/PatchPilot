@@ -164,6 +164,7 @@ th.r,td.r{text-align:right;white-space:nowrap}
 .legend b{font-variant-numeric:tabular-nums;color:var(--ink)}
 .prog{height:6px;border-radius:99px;background:var(--surface);overflow:hidden;margin:14px 0 0;border:1px solid var(--line)}
 .prog i{display:block;height:100%;background:var(--blue);transition:width .35s}
+.scope{margin:8px 4px 0}
 .proglab{font-size:13px;color:var(--dim);font-weight:600;margin-top:6px}
 tr.row td:first-child{min-width:240px}
 .fn{word-break:normal;overflow-wrap:anywhere}
@@ -192,6 +193,7 @@ tr.row td:first-child{border-left:4px solid var(--st,transparent)}
     <button class="btn primary go" id="run">▶ Run</button>
     <button class="btn stop go" id="stop" hidden>■ Stop</button>
   </div>
+  <div class="hint scope">ⓘ Pure functions · JSON inputs · old vs new library</div>
   <div id="progwrap" hidden><div class="prog"><i id="progfill" style="width:0"></i></div><div class="proglab" id="proglab"></div></div>
   <div id="err" class="err" hidden></div>
   <div id="board"></div>
@@ -211,7 +213,7 @@ async function api(path, body){
   if(j === null) throw new Error("unreadable answer from the server");
   return j;
 }
-let S = null, jobRepair = false, rows = [], running = false, readonly = false, since = 0, poll = null, open = -1, fin = null, pick = {mode: "check", model: "local"}, sumb = {};
+let retain = {}, jobOnly = null, curJob = null, S = null, jobRepair = false, rows = [], running = false, readonly = false, since = 0, poll = null, open = -1, fin = null, pick = {mode: "check", model: "local"}, sumb = {};
 const STATUS = {
   healthy: ["Same", "var(--blue)", "var(--blue-soft)"], loud: ["Raises", "var(--warn)", "var(--warn-soft)"], silent: ["Differs", "var(--bad)", "var(--bad-soft)"],
   repaired: ["Fixed", "var(--ok)", "var(--ok-soft)"], not_repaired: ["Not fixed", "var(--bad)", "var(--bad-soft)"], error: ["Error", "var(--bad)", "var(--bad-soft)"],
@@ -261,8 +263,9 @@ function counts(){
 }
 function progress(){
   const w = $("progwrap"); if(!running || !rows.length){w.hidden = true; return;}
-  const n = rows.length, tri = rows.filter((r) => r.status).length, silent = rows.filter((r) => ["silent", "repaired", "not_repaired", "error", "case_failed"].includes(r.status)).length;
-  const res = rows.filter((r) => ["repaired", "not_repaired", "error", "case_failed"].includes(r.status)).length;
+  const sel = (k) => !jobOnly || jobOnly.has(k);
+  const n = rows.length, tri = rows.filter((r) => r.status).length, silent = rows.filter((r, k) => sel(k) && ["silent", "repaired", "not_repaired", "error", "case_failed"].includes(r.status)).length;
+  const res = rows.filter((r, k) => sel(k) && ["repaired", "not_repaired", "error", "case_failed"].includes(r.status)).length;
   const units = n + (jobRepair ? silent : 0), done = tri + (jobRepair ? res : 0);
   w.hidden = false; $("progfill").style.width = (units ? 100 * done / units : 0) + "%";
   $("proglab").textContent = tri < n ? "Checking " + tri + " / " + n : "Repairing " + res + " / " + silent;
@@ -296,7 +299,7 @@ function render(){
     else {const x = el("td", "file", r.status ? (r.detail || "") : ""); x.colSpan = 2; tr.appendChild(x);}
     const c4 = el("td");
     if(r.working){const p = el("span", "pill"); p.appendChild(el("i", "spin")); p.appendChild(document.createTextNode("Working")); c4.appendChild(p);}
-    else if(r.status === "silent" && running && jobRepair){const p = el("span", "pill", "Queued"); p.style.color = "var(--dim)"; p.style.background = "var(--surface)"; c4.appendChild(p);}
+    else if(r.status === "silent" && running && jobRepair && (!jobOnly || jobOnly.has(i))){const p = el("span", "pill", "Queued"); p.style.color = "var(--dim)"; p.style.background = "var(--surface)"; c4.appendChild(p);}
     else if(r.status){const [lab, fg, bg] = STATUS[r.status] || [r.status, "var(--dim)", "var(--surface)"]; const p = el("span", "pill", lab); p.style.color = fg; p.style.background = bg; c4.appendChild(p);}
     else c4.appendChild(el("span", "hint", "…"));
     tr.appendChild(c4);
@@ -306,13 +309,25 @@ function render(){
     if(r.tokens){c5.appendChild(el("br")); c5.appendChild(el("span", "chip", r.tokens.toLocaleString("en-US") + " tok · " + Math.round(r.seconds || 0) + " s"));}
     tr.appendChild(c5);
     const c6 = el("td", "r");
-    if(r.applied) c6.appendChild(el("span", "wrote", "✓ written"));
+    if(r.applied){
+      c6.appendChild(el("span", "wrote", "✓ written"));
+      if(!readonly && r.job){
+        const ub = el("button", "btn small", "Undo");
+        ub.onclick = async (e) => {e.stopPropagation(); try{await api("/api/undo", {index: i, job: r.job}); r.applied = false; showErr("");}catch(er){showErr(er.message);} render();};
+        c6.appendChild(ub);
+      }
+    }
+    else if(!running && !readonly && ["not_repaired", "error", "case_failed", "silent"].includes(r.status)){
+      const rb = el("button", "btn small", r.status === "silent" ? "Repair" : "Retry");
+      rb.onclick = (e) => {e.stopPropagation(); startJob("repair", [i]);};
+      c6.appendChild(rb);
+    }
     else if(r.status === "repaired" && !readonly && r.diff) {
       const bt = el("button", "btn small " + (r.armed ? "warn" : "primary"), r.armed ? "Write file?" : "Apply");
       bt.onclick = async (e) => {e.stopPropagation();
         if(!r.armed){r.armed = true; setTimeout(() => {r.armed = false; render();}, 4000); render(); return;}
         r.armed = false; bt.disabled = true;
-        try{await api("/api/apply", {index: i}); r.applied = true; showErr("");}catch(er){showErr(er.message);} render();};
+        try{await api("/api/apply", {index: i, job: r.job}); r.applied = true; showErr("");}catch(er){showErr(er.message);} render();};
       c6.appendChild(bt);
     }
     tr.appendChild(c6);
@@ -361,11 +376,13 @@ function fill(cell, r){
 /* ---------- job events ---------- */
 function onEvent(ev){
   const k = ev.index;
-  if(ev.event === "start"){rows = Array.from({length: ev.total}, () => ({})); sumb = {};}
-  else if(ev.event === "triage" || ev.event === "result"){Object.assign(rows[k], ev.row); rows[k].working = false; if(ev.event === "result" && ev.row.diff) open = open < 0 ? k : open;}
+  if(ev.event === "start"){rows = Array.from({length: ev.total}, (_, i) => retain[i] || {}); sumb = {}; return;}
+  if(k !== undefined && retain[k]) return;
+  if(ev.event === "triage" || ev.event === "result"){Object.assign(rows[k], ev.row); rows[k].job = curJob; rows[k].working = false; if(ev.event === "result" && ev.row.diff) open = open < 0 ? k : open;}
   else if(ev.event === "repairing"){rows[k].working = true;}
   else if(ev.event === "attempt"){rows[k].att = (rows[k].att || []).concat([ev.attempt]);}
   else if(ev.event === "applied"){rows[k].applied = true;}
+  else if(ev.event === "undone"){rows[k].applied = false;}
   else if(ev.event === "done"){sumb.line = (ev.tokens ? ev.tokens.toLocaleString("en-US") + " tokens · " : "") + Math.round(ev.seconds) + " s";}
   else if(ev.event === "error"){showErr(ev.message);}
   else if(ev.event === "stopped"){rows.forEach((r) => r.working = false); showErr("Stopped");}
@@ -379,12 +396,18 @@ async function tick(){
 }
 function follow(){running = true; sync(); clearInterval(poll); poll = setInterval(tick, 400); tick();}
 
-$("run").onclick = async () => {
-  showErr(""); readonly = false; $("history").value = ""; since = 0; rows = []; open = -1;
-  jobRepair = pick.mode === "repair";
-  const body = {manifest: $("manifest").value, mode: pick.mode, model: pick.model, endpoint: $("endpoint").value, effort: "low", max_attempts: parseInt($("attempts").value, 10) || 3};
-  try{await api("/api/run", body); follow();}catch(e){showErr(e.message);}
-};
+async function startJob(mode, only){
+  showErr(""); readonly = false; $("history").value = ""; since = 0; open = -1;
+  retain = {}; jobOnly = only ? new Set(only) : null;
+  if(only) rows.forEach((r, k) => {if(only.includes(k)) r.working = true; else retain[k] = JSON.parse(JSON.stringify(r));});
+  else rows = [];
+  jobRepair = mode === "repair";
+  const body = {manifest: $("manifest").value, mode, model: pick.model, endpoint: $("endpoint").value, effort: "low", max_attempts: parseInt($("attempts").value, 10) || 3};
+  if(only) body.only = only;
+  try{const r = await api("/api/run", body); curJob = r.id; follow();}
+  catch(e){showErr(e.message); rows.forEach((r) => r.working = false); retain = {}; jobOnly = null; render();}
+}
+$("run").onclick = () => startJob(pick.mode, null);
 $("stop").onclick = async () => {try{await api("/api/stop", {});}catch(e){showErr(e.message);}};
 $("history").onchange = async () => {
   const id = $("history").value; showErr("");
@@ -406,7 +429,7 @@ async function loadState(keep){
 $("endpoint").oninput = () => {clearTimeout(hTimer); hTimer = setTimeout(checkHealth, 400);};
 let theme = "auto";
 $("theme").onclick = () => {theme = theme === "auto" ? "dark" : theme === "dark" ? "light" : "auto"; if(theme === "auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", theme);};
-loadState(false).then(async () => {const j = await api("/api/job?since=0"); if(j.status){jobRepair = !!(j.params && j.params.mode === "repair"); if(j.status === "running" || j.status === "stopping"){running = true; follow();} else {(j.events || []).forEach(onEvent); since = j.n; rows.forEach((r) => r.working = false); render();}}}).catch((e) => showErr(e.message));
+loadState(false).then(async () => {const j = await api("/api/job?since=0"); if(j.status){curJob = j.id; jobRepair = !!(j.params && j.params.mode === "repair"); if(j.status === "running" || j.status === "stopping"){running = true; follow();} else {(j.events || []).forEach(onEvent); since = j.n; rows.forEach((r) => r.working = false); render();}}}).catch((e) => showErr(e.message));
 </script>
 </body>
 </html>

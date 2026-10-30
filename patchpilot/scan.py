@@ -127,12 +127,20 @@ def main(argv=None) -> int:
     ap.add_argument("--effort", default="low")
     ap.add_argument("--endpoint", help="base URL of a local OpenAI-compatible server (loopback only, no API key)")
     ap.add_argument("--max-attempts", type=int, default=3)
+    ap.add_argument("--only", help="repair only these targets (comma-separated positions in the manifest, from 0); all are still checked")
     ap.add_argument("--token-budget", type=int, default=60000)
     ap.add_argument("--out-dir", default="scan_out", help="where the report and the diffs are written")
     ap.add_argument("--runs-dir", default=str(ROOT / "runs"))
     ap.add_argument("--apply", action="store_true", help="overwrite each repaired file with its accepted patch")
     ap.add_argument("--events", action="store_true", help="print one JSON object per line (progress events) instead of text")
     o = ap.parse_args(argv)
+    only = None
+    if o.only is not None:
+        try:
+            only = {int(x) for x in o.only.split(",")}
+        except ValueError:
+            print("scan: --only wants positions like 0,3,5", file=sys.stderr)
+            return 2
 
     mp = Path(o.manifest)
     if not mp.is_file():
@@ -183,6 +191,8 @@ def main(argv=None) -> int:
         emit({"event": "triage", "index": k, "row": row})
     if not o.triage_only:
         for k, src, probes, old, new in jobs:  # pass 2: repair the silent ones
+            if only is not None and k not in only:
+                continue
             t = targets[k]
             emit({"event": "repairing", "index": k})
 

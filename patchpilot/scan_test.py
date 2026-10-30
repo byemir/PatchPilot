@@ -99,6 +99,12 @@ try:
         check("a patch that fixes nothing is not accepted: exit code 1, file untouched",
               rc == 1 and rep["targets"][0]["status"] == "not_repaired"
               and (repo / "analytics" / "session_span.py").read_text() == before["session_span.py"], out[-400:])
+        script()
+        rc, out = run([str(repo / "scan.json"), "--only", "0", "--max-attempts", "1", "--out-dir", str(tmp / "o3"), "--runs-dir", str(tmp / "runs")])
+        rep = json.loads((tmp / "o3" / "scan_report.json").read_text())
+        check("--only repairs just the chosen target; the others are still checked",
+              rep["counts"] == {"healthy": 2, "loud": 1, "repaired": 1, "silent": 4} and rep["targets"][0]["status"] == "repaired", str(rep["counts"]))
+        check("--only with a bad value: exit code 2", run([str(repo / "scan.json"), "--only", "a"])[0] == 2)
         (repo / "bad.json").write_text("{}")
         rc, out = run([str(repo / "bad.json")])
         check("a manifest without targets: exit code 2", rc == 2)

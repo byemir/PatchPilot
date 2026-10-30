@@ -157,12 +157,61 @@ def main() -> int:
         check("apply writes the accepted patch", code == 200 and src.read_text() == "def f(x):\n    return x + 0\n")
         check("a second apply is refused", call(app, "/api/apply", {"index": 0})[0] == 409)
 
+        # undo
+        check("undo before any apply is refused", call(app, "/api/undo", {"index": 3})[0] in (400, 409))
+        code, r = call(app, "/api/undo", {"index": 0})
+        check("undo puts the original file back", code == 200 and src.read_text() == before)
+        check("a second undo is refused", call(app, "/api/undo", {"index": 0})[0] == 409)
+        check("apply works again after undo", call(app, "/api/apply", {"index": 0})[0] == 200)
+        src.write_text(src.read_text() + "# mine\n")
+        code, r = call(app, "/api/undo", {"index": 0})
+        check("undo is refused when the file was edited after Apply", code == 409 and src.read_text().endswith("# mine\n"))
+        src.write_text(before)
+        check("an unknown job id is refused", call(app, "/api/apply", {"index": 0, "job": "nope"})[0] == 400)
+
         src.write_text(before)
         app.runner = fake_runner(src, {"app.py": "x = 1\n", "other.py": "y = 2\n"})
         call(app, "/api/run", {"manifest": "proj/scan.json", "mode": "check"})
         wait(app, ("done",))
         code, r = call(app, "/api/apply", {"index": 0})
         check("a patch touching two files is not applied", code == 409 and src.read_text() == before)
+
+        # an older job can still be applied after a newer one started
+        app.runner = fake_runner(src, {"app.py": "def f(x):\n    return x + 1\n"})
+        call(app, "/api/run", {"manifest": "proj/scan.json", "mode": "check"})
+        wait(app, ("done",))
+        id_a = app.job.id
+        app.runner = fake_runner(src, {"app.py": "x = 2\n"})
+        call(app, "/api/run", {"manifest": "proj/scan.json", "mode": "check"})
+        wait(app, ("done",))
+        check("a new job does not hide the rows of an older one", app.job.id != id_a
+              and call(app, "/api/apply", {"index": 0, "job": id_a})[0] == 200 and src.read_text() == "def f(x):\n    return x + 1\n")
+        call(app, "/api/undo", {"index": 0, "job": id_a})
+        src.write_text(before)
+
+        # one row only, and the hosted model choice
+        seen = []
+        inner = fake_runner(src, {"app.py": "x = 1\n"})
+        app.runner = lambda argv, on_line, holder: (seen.append(argv), inner(argv, on_line, holder))[1]
+        base = {"manifest": "proj/scan.json", "mode": "repair", "model": "local", "endpoint": "http://127.0.0.1:8080/v1"}
+        check("a bad row selection is refused", all(call(app, "/api/run", {**base, "only": o})[0] == 400 for o in ([], [1], [-1], [True], "0")))
+        code, r = call(app, "/api/run", {**base, "only": [0]})
+        wait(app, ("done",))
+        a = seen[-1]
+        check("one row is repaired with --only", code == 200 and a[a.index("--only") + 1] == "0" and "--endpoint" in a)
+        key = tmp / "key"
+        key.write_text("SECRET-KEY-VALUE")
+        saved = appmod.meta_client.KEY_PATH
+        appmod.meta_client.KEY_PATH = key
+        try:
+            check("a hosted model is offered only when the key file exists", call(app, "/api/state")[1]["hosted"] == list(appmod.HOSTED))
+            code, r = call(app, "/api/run", {"manifest": "proj/scan.json", "mode": "repair", "model": "muse-spark-1.3"})
+            wait(app, ("done",))
+            a = seen[-1]
+            check("a hosted model run passes --model and no local endpoint", code == 200 and a[a.index("--model") + 1] == "muse-spark-1.3" and "--endpoint" not in a)
+            check("the page and the job events never contain the key", "SECRET-KEY-VALUE" not in json.dumps(call(app, "/api/state")[1]) + json.dumps(call(app, "/api/job?since=0")[1]))
+        finally:
+            appmod.meta_client.KEY_PATH = saved
 
         # real subprocess, check only, on the sample repository
         shutil.copytree(REPO / "examples" / "sample_repo", root / "sample")

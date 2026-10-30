@@ -17,6 +17,7 @@ import json
 import os
 import re
 import secrets
+import shutil
 import signal
 import subprocess
 import sys
@@ -57,6 +58,8 @@ class Job:
                 self.rows[k].update(ev["row"])
             elif ev["event"] == "applied":
                 self.rows[k]["applied"] = True
+            elif ev["event"] == "undone":
+                self.rows[k]["applied"] = False
             self.events.append(ev)
 
     def since(self, n: int) -> dict:
@@ -92,6 +95,7 @@ class App:
         self.token = secrets.token_urlsafe(24)
         self.runner = runner
         self.job: Job | None = None
+        self.jobs: dict[str, Job] = {}
         self.lock = threading.Lock()
         self.port = 0
 
@@ -155,6 +159,17 @@ class App:
             effort, attempts = p.get("effort", "low"), p.get("max_attempts", 3)
             if effort not in ("low", "medium") or not isinstance(attempts, int) or not 1 <= attempts <= 5:
                 return 400, {"error": "bad effort or attempts"}
+            only = p.get("only")
+            argv_only: list[str] = []
+            if only is not None:
+                try:
+                    n_targets = len(json.loads((self.root / rel).read_text())["targets"])
+                except (OSError, ValueError, KeyError):
+                    return 400, {"error": "unreadable manifest"}
+                if (not isinstance(only, list) or not only or len(only) > n_targets
+                        or not all(isinstance(i, int) and not isinstance(i, bool) and 0 <= i < n_targets for i in only)):
+                    return 400, {"error": "bad row selection"}
+                argv_only = ["--only", ",".join(str(i) for i in sorted(set(only)))]
             argv_model: list[str] = []
             if mode == "repair":
                 if p.get("model") == "local":
@@ -176,8 +191,9 @@ class App:
             out.mkdir(parents=True)
             job = Job(jid, rel, out, {k: p.get(k) for k in ("mode", "model", "effort", "max_attempts")})
             self.job = job
+            self.jobs[jid] = job
         argv = [str(self.root / rel), "--events", "--out-dir", str(out), "--runs-dir", str(out / "runs"), "--effort", effort,
-                "--max-attempts", str(attempts), *argv_model] + (["--triage-only"] if mode == "check" else [])
+                "--max-attempts", str(attempts), *argv_model, *argv_only] + (["--triage-only"] if mode == "check" else [])
         threading.Thread(target=self._run, args=(job, argv), daemon=True).start()
         return 200, {"id": jid}
 
@@ -225,11 +241,16 @@ class App:
                 pass
         return 200, {"ok": True}
 
-    def apply(self, index) -> tuple[int, dict]:
-        job = self.job
-        if not job or not isinstance(index, int) or not 0 <= index < len(job.rows):
+    def _find(self, index, jid):
+        job = self.jobs.get(jid) if isinstance(jid, str) else self.job
+        if not job or not isinstance(index, int) or isinstance(index, bool) or not 0 <= index < len(job.rows):
+            return None, None
+        return job, job.rows[index]
+
+    def apply(self, index, jid=None) -> tuple[int, dict]:
+        job, row = self._find(index, jid)
+        if job is None:
             return 400, {"error": "unknown function"}
-        row = job.rows[index]
         if row.get("status") != "repaired" or row.get("applied"):
             return 409, {"error": "nothing to apply"}
         try:
@@ -244,10 +265,36 @@ class App:
                 return 409, {"error": "the patch touches more than one file; apply the diff by hand"}
             if hashlib.sha256(src.read_bytes()).hexdigest() != row.get("source_sha256"):
                 return 409, {"error": "the file changed since the scan; run it again"}
+            backup = job.out_dir / "backup" / f"{index}.orig"  # the original, so Undo can put it back
+            backup.parent.mkdir(exist_ok=True)
+            shutil.copy2(src, backup)
             repair.apply_patch(src, current, files["app.py"])
+            row["backup"] = str(backup)
+            row["applied_sha"] = hashlib.sha256(src.read_bytes()).hexdigest()
         except (KeyError, ValueError, OSError, RuntimeError) as e:
             return 409, {"error": f"not applied: {e}"}
         job.add({"event": "applied", "index": index})
+        return 200, {"ok": True}
+
+    def undo(self, index, jid=None) -> tuple[int, dict]:
+        job, row = self._find(index, jid)
+        if job is None:
+            return 400, {"error": "unknown function"}
+        if not row.get("applied") or not row.get("backup"):
+            return 409, {"error": "nothing to undo"}
+        try:
+            src = Path(row["path"]).resolve()
+            src.relative_to(self.root)
+            backup = Path(row["backup"])
+            backup.resolve().relative_to(job.out_dir.resolve())
+            if hashlib.sha256(src.read_bytes()).hexdigest() != row.get("applied_sha"):
+                return 409, {"error": "the file was edited after Apply; not restoring over your changes"}
+            tmp = src.with_name(src.name + ".patchpilot.tmp")
+            shutil.copy2(backup, tmp)
+            os.replace(tmp, src)
+        except (KeyError, ValueError, OSError) as e:
+            return 409, {"error": f"not restored: {e}"}
+        job.add({"event": "undone", "index": index})
         return 200, {"ok": True}
 
     def report(self, rid: str) -> tuple[int, dict]:
@@ -336,7 +383,9 @@ def make_handler(app: App):
             elif self.path == "/api/stop":
                 self._json(*app.stop())
             elif self.path == "/api/apply":
-                self._json(*app.apply(body.get("index")))
+                self._json(*app.apply(body.get("index"), body.get("job")))
+            elif self.path == "/api/undo":
+                self._json(*app.undo(body.get("index"), body.get("job")))
             else:
                 self.send_error(404)
 

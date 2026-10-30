@@ -11,6 +11,7 @@ tests=(
   "patchpilot.scan_test"
   "patchpilot.view_test"
   "patchpilot.app_test"
+  "patchpilot.capture_test"
   "patchpilot.isolation_test"
   "patchpilot.landlock_test"
   "patchpilot.gen2_test"
