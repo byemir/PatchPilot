@@ -90,9 +90,20 @@ def build(args) -> dict:
     return {"title": "PatchPilot scan", "summary": summary, "targets": rows}
 
 
+def finite(x):
+    """NaN and Infinity are not valid JSON for a browser (a function may return them); they become text."""
+    if isinstance(x, float) and (x != x or x in (float("inf"), float("-inf"))):
+        return str(x)
+    if isinstance(x, dict):
+        return {k: finite(v) for k, v in x.items()}
+    if isinstance(x, (list, tuple)):
+        return [finite(v) for v in x]
+    return x
+
+
 def make_handler(data: dict):
     page = (HERE / "view.html").read_bytes()
-    payload = json.dumps(data).encode()
+    payload = json.dumps(finite(data), allow_nan=False).encode()
 
     class H(BaseHTTPRequestHandler):
         def do_GET(self):

@@ -150,6 +150,26 @@ input.num{width:52px;text-align:center}
 .btn.small{padding:5px 14px;font-size:13px}
 .btn.warn{background:var(--warn);border-color:var(--warn);color:#fff}
 th.r,td.r{text-align:right;white-space:nowrap}
+
+.sumrow{display:flex;align-items:center;gap:26px;margin:18px 0 18px;flex-wrap:wrap}
+.donut{width:112px;height:112px;flex:none;position:relative}
+.donut svg{width:100%;height:100%;transform:rotate(-90deg)}
+.donut .mid{position:absolute;inset:0;display:grid;place-content:center;text-align:center;font-weight:700;font-size:24px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.donut .mid small{display:block;font-size:12px;font-weight:600;color:var(--dim);letter-spacing:0}
+.sumcol{flex:1;min-width:300px}
+.sumcol .tiles{margin:0 0 10px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 22px;font-size:13px;font-weight:600;color:var(--dim)}
+.legend span{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.legend i{width:12px;height:12px;border-radius:4px;display:inline-block}
+.legend b{font-variant-numeric:tabular-nums;color:var(--ink)}
+.prog{height:6px;border-radius:99px;background:var(--surface);overflow:hidden;margin:14px 0 0;border:1px solid var(--line)}
+.prog i{display:block;height:100%;background:var(--blue);transition:width .35s}
+.proglab{font-size:13px;color:var(--dim);font-weight:600;margin-top:6px}
+tr.row td:first-child{min-width:240px}
+.fn{word-break:normal;overflow-wrap:anywhere}
+tr.row td:first-child{border-left:4px solid var(--st,transparent)}
+.chip{display:inline-block;font-size:12px;color:var(--dim);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:1px 9px;margin-top:4px;white-space:nowrap}
+.gdots i{width:13px;height:13px}
 @media(max-width:900px){.tiles{grid-template-columns:1fr 1fr}input[type=text]{width:150px}}
 </style>
 </head>
@@ -172,6 +192,7 @@ th.r,td.r{text-align:right;white-space:nowrap}
     <button class="btn primary go" id="run">▶ Run</button>
     <button class="btn stop go" id="stop" hidden>■ Stop</button>
   </div>
+  <div id="progwrap" hidden><div class="prog"><i id="progfill" style="width:0"></i></div><div class="proglab" id="proglab"></div></div>
   <div id="err" class="err" hidden></div>
   <div id="board"></div>
 </main>
@@ -238,7 +259,16 @@ function counts(){
   const blocked = rows.reduce((a, r) => a + att(r).filter((x) => x.gates.outcome !== "accepted").length, 0);
   return {n, differs, fixed: g("repaired"), blocked, same: g("healthy"), loud: g("loud"), pending: rows.filter((r) => !r.status).length};
 }
+function progress(){
+  const w = $("progwrap"); if(!running || !rows.length){w.hidden = true; return;}
+  const n = rows.length, tri = rows.filter((r) => r.status).length, silent = rows.filter((r) => ["silent", "repaired", "not_repaired", "error", "case_failed"].includes(r.status)).length;
+  const res = rows.filter((r) => ["repaired", "not_repaired", "error", "case_failed"].includes(r.status)).length;
+  const units = n + (jobRepair ? silent : 0), done = tri + (jobRepair ? res : 0);
+  w.hidden = false; $("progfill").style.width = (units ? 100 * done / units : 0) + "%";
+  $("proglab").textContent = tri < n ? "Checking " + tri + " / " + n : "Repairing " + res + " / " + silent;
+}
 function render(){
+  progress();
   const b = $("board"); b.textContent = "";
   if(!S || !S.manifests.length){const e = el("div", "empty"); e.appendChild(el("b", null, "∅")); e.appendChild(document.createTextNode("No scan.json in this folder")); b.appendChild(e); return;}
   if(!rows.length){const e = el("div", "empty"); e.appendChild(el("b", null, "▶")); e.appendChild(document.createTextNode("Pick a file, press Run")); b.appendChild(e); return;}
@@ -246,15 +276,21 @@ function render(){
   const tiles = el("div", "tiles");
   [["", c.n, "functions"], ["bad", c.differs, "differ"], ["ok", c.fixed, "fixed"], ["blue", c.blocked, "bad patches blocked"]].forEach(([cls, v, l]) => {
     const t = el("div", "tile " + cls); t.appendChild(el("div", "v", String(v))); t.appendChild(el("div", "l", l)); tiles.appendChild(t);});
-  b.appendChild(tiles);
-  const m = el("div", "meter"); const seg1 = (cls, k) => {const i = el("i", cls); i.style.width = (c.n ? 100 * k / c.n : 0) + "%"; m.appendChild(i);};
-  seg1("m-ok", c.fixed); seg1("m-bad", c.differs - c.fixed); seg1("m-warn", c.loud); seg1("m-blue", c.same); b.appendChild(m);
+  const sr = el("div", "sumrow"), dn = el("div", "donut");
+  const segs = [["var(--ok)", c.fixed, "Fixed"], ["var(--bad)", c.differs - c.fixed, "Differs"], ["var(--warn)", c.loud, "Raises"], ["var(--blue)", c.same, "Same"], ["var(--line)", c.pending, "Waiting"]];
+  const NS = "http://www.w3.org/2000/svg", svg = document.createElementNS(NS, "svg"); svg.setAttribute("viewBox", "0 0 42 42");
+  const R = 15.915, tot = Math.max(c.n, 1); let off = 0;
+  segs.forEach(([col, k]) => {if(!k) return; const ci = document.createElementNS(NS, "circle"); ci.setAttribute("cx", "21"); ci.setAttribute("cy", "21"); ci.setAttribute("r", String(R)); ci.setAttribute("fill", "none"); ci.setAttribute("stroke", col); ci.setAttribute("stroke-width", "6");
+    const len = 100 * k / tot; ci.setAttribute("stroke-dasharray", (len - 0.6).toFixed(2) + " " + (100 - len + 0.6).toFixed(2)); ci.setAttribute("stroke-dashoffset", String(-off)); off += len; svg.appendChild(ci);});
+  dn.appendChild(svg); const mid = el("div", "mid", c.differs ? (c.fixed + "/" + c.differs) : String(c.n)); mid.appendChild(el("small", null, c.differs ? "fixed" : "functions")); dn.appendChild(mid); sr.appendChild(dn);
+  const lg = el("div", "legend"); segs.forEach(([col, k, name]) => {if(!k && name === "Waiting") return; const sp = el("span"); const sw = el("i"); sw.style.background = col; sp.appendChild(sw); sp.appendChild(document.createTextNode(name)); sp.appendChild(el("b", null, String(k))); lg.appendChild(sp);});
+  const col = el("div", "sumcol"); col.appendChild(tiles); col.appendChild(lg); sr.appendChild(col); b.appendChild(sr);
   if(sumb.line) b.appendChild(el("div", "hint", sumb.line));
   const tb = el("table"), th = el("thead"), hr = el("tr");
   [["Function"], ["Old lib"], ["New lib"], ["Result"], ["Tries"], [""]].forEach(([x], i) => hr.appendChild(el("th", i === 5 ? "r" : null, x))); th.appendChild(hr); tb.appendChild(th);
   const body = el("tbody");
   rows.forEach((r, i) => {
-    const tr = el("tr", "row"); tr.tabIndex = 0; tr.setAttribute("aria-expanded", String(open === i));
+    const tr = el("tr", "row"); tr.style.setProperty("--st", r.working ? "var(--blue)" : (STATUS[r.status] || [0, "transparent"])[1]); tr.tabIndex = 0; tr.setAttribute("aria-expanded", String(open === i));
     const c1 = el("td"); const f = el("div", "fn"); f.appendChild(el("span", "chev", "▸")); f.appendChild(document.createTextNode(r.function || "")); c1.appendChild(f); c1.appendChild(el("div", "file", r.file || "")); tr.appendChild(c1);
     if(r.example){tr.appendChild(el("td", "out", short(r.example.old, 60))); tr.appendChild(el("td", "out bad", short(r.example.new, 60)));}
     else {const x = el("td", "file", r.status ? (r.detail || "") : ""); x.colSpan = 2; tr.appendChild(x);}
@@ -265,8 +301,9 @@ function render(){
     else c4.appendChild(el("span", "hint", "…"));
     tr.appendChild(c4);
     const c5 = el("td", "att");
-    att(r).forEach((a) => {const d = el("span", "gdots" + (a.gates.outcome === "accepted" ? " acc" : "")); GATES.forEach(([g]) => d.appendChild(el("i", a.gates[g] === "ok" ? "ok" : a.gates[g] === "fail" ? "fail" : ""))); c5.appendChild(d);});
+    att(r).forEach((a) => {const d = el("span", "gdots" + (a.gates.outcome === "accepted" ? " acc" : "")); GATES.forEach(([g]) => d.appendChild(el("i", a.gates[g] === "ok" ? "ok" : a.gates[g] === "fail" ? "fail" : ""))); d.title = GATES.map(([g, n]) => n + " " + (ICON[a.gates[g]] || "–")).join("   "); c5.appendChild(d);});
     if(!att(r).length) c5.textContent = typeof r.attempts === "number" ? String(r.attempts) : "";
+    if(r.tokens){c5.appendChild(el("br")); c5.appendChild(el("span", "chip", r.tokens.toLocaleString("en-US") + " tok · " + Math.round(r.seconds || 0) + " s"));}
     tr.appendChild(c5);
     const c6 = el("td", "r");
     if(r.applied) c6.appendChild(el("span", "wrote", "✓ written"));
@@ -369,7 +406,7 @@ async function loadState(keep){
 $("endpoint").oninput = () => {clearTimeout(hTimer); hTimer = setTimeout(checkHealth, 400);};
 let theme = "auto";
 $("theme").onclick = () => {theme = theme === "auto" ? "dark" : theme === "dark" ? "light" : "auto"; if(theme === "auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", theme);};
-loadState(false).then(async () => {const j = await api("/api/job?since=0"); if(j.status === "running"){jobRepair = !!(j.params && j.params.mode === "repair"); running = true; follow();}}).catch((e) => showErr(e.message));
+loadState(false).then(async () => {const j = await api("/api/job?since=0"); if(j.status){jobRepair = !!(j.params && j.params.mode === "repair"); if(j.status === "running" || j.status === "stopping"){running = true; follow();} else {(j.events || []).forEach(onEvent); since = j.n; rows.forEach((r) => r.working = false); render();}}}).catch((e) => showErr(e.message));
 </script>
 </body>
 </html>

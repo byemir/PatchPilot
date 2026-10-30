@@ -1,0 +1,11 @@
+--- a/last_seen_epoch.py
++++ b/last_seen_epoch.py
+@@ -3,4 +3,7 @@
+ 
+ def last_seen_epoch(stamps):
+     ts = pd.to_datetime(pd.Series(stamps))
+-    return int(ts.astype("int64").max() // 10**9)
++    # pandas 3.x changed astype('int64') for datetimes from nanoseconds to microseconds
++    major = int(pd.__version__.split('.')[0])
++    divisor = 10**6 if major >= 3 else 10**9
++    return int(ts.astype("int64").max() // divisor)

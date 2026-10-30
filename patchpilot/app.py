@@ -262,17 +262,6 @@ class App:
         return 200, view.build(A)
 
 
-def finite(x):
-    """JSON from json.dumps may hold NaN or Infinity (a function can return them); browsers reject those, so they become text."""
-    if isinstance(x, float) and (x != x or x in (float("inf"), float("-inf"))):
-        return str(x)
-    if isinstance(x, dict):
-        return {k: finite(v) for k, v in x.items()}
-    if isinstance(x, (list, tuple)):
-        return [finite(v) for v in x]
-    return x
-
-
 def make_handler(app: App):
     page = (HERE / "app.html").read_text()
     page = page.replace("</head>", f'<meta name="pp-token" content="{app.token}">\n</head>', 1).encode()
@@ -288,7 +277,7 @@ def make_handler(app: App):
             return True
 
         def _json(self, code: int, obj) -> None:
-            body = json.dumps(finite(obj), allow_nan=False).encode()
+            body = json.dumps(view.finite(obj), allow_nan=False).encode()
             self.send_response(code)
             self.send_header("Content-Type", "application/json")
             self.send_header("Content-Length", str(len(body)))

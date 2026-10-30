@@ -1,0 +1,9 @@
+--- a/flag_big_orders.py
++++ b/flag_big_orders.py
+@@ -4,5 +4,5 @@
+ def flag_big_orders(rows, limit):
+     df = pd.DataFrame(rows)
+     df["big"] = False
+-    df["big"][df["amount"] > limit] = True
++    df.loc[df["amount"] > limit, "big"] = True
+     return df["big"].tolist()

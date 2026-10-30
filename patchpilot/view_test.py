@@ -72,4 +72,10 @@ with tempfile.TemporaryDirectory() as t:
         check("other paths are not served", e.code == 404)
     srv.shutdown()
     check("the server listens on the loopback address only", srv.server_address[0] == "127.0.0.1")
+nan_data = {"title": "t", "summary": {}, "targets": [{"function": "f", "example": {"old": float("nan"), "new": float("inf")}}]}
+srv2 = ThreadingHTTPServer(("127.0.0.1", 0), view.make_handler(nan_data))
+threading.Thread(target=srv2.serve_forever, daemon=True).start()
+raw = urllib.request.urlopen(f"http://127.0.0.1:{srv2.server_address[1]}/api/data").read().decode()
+srv2.shutdown()
+check("NaN and Infinity reach the page as text, not as invalid JSON", "NaN" not in raw and json.loads(raw)["targets"][0]["example"] == {"old": "nan", "new": "inf"})
 print(f"view_test: {passed} checks passed")
