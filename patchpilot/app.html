@@ -171,6 +171,14 @@ tr.row td:first-child{min-width:240px}
 tr.row td:first-child{border-left:4px solid var(--st,transparent)}
 .chip{display:inline-block;font-size:12px;color:var(--dim);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:1px 9px;margin-top:4px;white-space:nowrap}
 .gdots i{width:13px;height:13px}
+.btn.press{animation:press .8s ease-in-out}
+@keyframes press{0%{transform:scale(1)}35%{transform:scale(.86);box-shadow:0 0 0 7px rgba(37,99,235,.28)}70%{transform:scale(1.05)}100%{transform:scale(1)}}
+.btn.writing{display:inline-flex;align-items:center;gap:6px}
+.btn.warn .spin{border-color:rgba(255,255,255,.45);border-top-color:#fff;margin-right:0}
+.wrote.pop{display:inline-block;animation:pop .6s ease-out}
+@keyframes pop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.25);opacity:1}100%{transform:scale(1)}}
+.seg.auto button{padding:8px 12px;font-size:13px}
+@media(prefers-reduced-motion:reduce){.btn.press,.wrote.pop{animation:none}}
 @media(max-width:900px){.tiles{grid-template-columns:1fr 1fr}input[type=text]{width:150px}}
 </style>
 </head>
@@ -188,7 +196,9 @@ tr.row td:first-child{border-left:4px solid var(--st,transparent)}
     <input type="text" id="endpoint" aria-label="Local model address" hidden>
     <span class="hint" id="health" hidden><i class="dot" id="hdot"></i><span id="htxt"></span></span>
     <label class="hint" id="attwrap" hidden>tries <input type="text" class="num" id="attempts" value="3" inputmode="numeric"></label>
+    <span class="seg auto" id="auto"></span>
     <span class="sp"></span>
+    <button class="btn" id="reset" title="Put every file the app wrote back to its first content">↺ Reset</button>
     <select id="history" aria-label="Past runs"></select>
     <button class="btn primary go" id="run">▶ Run</button>
     <button class="btn stop go" id="stop" hidden>■ Stop</button>
@@ -231,6 +241,8 @@ function seg(id, items, key){
   items.forEach(([v, label, tip]) => {const b = el("button", null, label); b.dataset.v = v; if(tip) b.title = tip; b.setAttribute("aria-pressed", String(pick[key] === v));
     b.onclick = () => {pick[key] = v; sync();}; s.appendChild(b);});
 }
+let autoApply = false, autoWrite = false, autoQ = [], autoBusy = false, resetArmed = false;
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 function sync(){
   const repair = pick.mode === "repair";
   seg("mode", [["check", "Check", "Old vs new library. No model."], ["repair", "Repair", "Check, then fix with a model"]], "mode");
@@ -244,7 +256,18 @@ function sync(){
   $("run").disabled = running || readonly && false || !(S && S.manifests.length);
   $("manifest").disabled = running; $("history").disabled = running;
   $("stop").hidden = !running; $("run").hidden = running;
+  autoUi();
   if(loc) checkHealth();
+}
+function autoUi(){
+  const a = $("auto"); a.textContent = "";
+  [["apply", "Auto-apply", "Press Apply for each fixed function", autoApply], ["write", "Auto-write", "Also confirm and write the file", autoWrite]].forEach(([v, label, tip, on]) => {
+    const b = el("button", null, label); b.title = tip; b.setAttribute("aria-pressed", String(on));
+    b.onclick = () => {if(v === "apply"){autoApply = !autoApply; if(!autoApply) autoWrite = false;} else {autoWrite = !autoWrite; if(autoWrite) autoApply = true;} autoUi();};
+    a.appendChild(b);});
+  const n = S ? S.changed || 0 : 0, rb = $("reset");
+  rb.textContent = resetArmed ? "Reset files?" : "↺ Reset" + (n ? " (" + n + ")" : "");
+  rb.className = "btn" + (resetArmed ? " warn" : ""); rb.disabled = running || !n;
 }
 let hTimer = null;
 async function checkHealth(){
@@ -310,10 +333,10 @@ function render(){
     tr.appendChild(c5);
     const c6 = el("td", "r");
     if(r.applied){
-      c6.appendChild(el("span", "wrote", "✓ written"));
+      c6.appendChild(el("span", "wrote" + (r.flash ? " pop" : ""), "✓ written"));
       if(!readonly && r.job){
         const ub = el("button", "btn small", "Undo");
-        ub.onclick = async (e) => {e.stopPropagation(); try{await api("/api/undo", {index: i, job: r.job}); r.applied = false; showErr("");}catch(er){showErr(er.message);} render();};
+        ub.onclick = async (e) => {e.stopPropagation(); try{await api("/api/undo", {index: i, job: r.job}); r.applied = false; showErr("");}catch(er){showErr(er.message);} render(); loadState(true);};
         c6.appendChild(ub);
       }
     }
@@ -323,11 +346,13 @@ function render(){
       c6.appendChild(rb);
     }
     else if(r.status === "repaired" && !readonly && r.diff) {
-      const bt = el("button", "btn small " + (r.armed ? "warn" : "primary"), r.armed ? "Write file?" : "Apply");
+      const writing = r.anim === "writing";
+      const bt = el("button", "btn small " + (r.armed || writing ? "warn" : "primary") + (r.anim === "press" ? " press" : "") + (writing ? " writing" : ""), writing ? "" : r.armed ? "Write file?" : "Apply");
+      if(writing){bt.appendChild(el("i", "spin")); bt.appendChild(document.createTextNode("Writing…")); bt.disabled = true;}
       bt.onclick = async (e) => {e.stopPropagation();
         if(!r.armed){r.armed = true; setTimeout(() => {r.armed = false; render();}, 4000); render(); return;}
         r.armed = false; bt.disabled = true;
-        try{await api("/api/apply", {index: i, job: r.job}); r.applied = true; showErr("");}catch(er){showErr(er.message);} render();};
+        try{await api("/api/apply", {index: i, job: r.job}); r.applied = true; showErr("");}catch(er){showErr(er.message);} render(); loadState(true);};
       c6.appendChild(bt);
     }
     tr.appendChild(c6);
@@ -376,9 +401,9 @@ function fill(cell, r){
 /* ---------- job events ---------- */
 function onEvent(ev){
   const k = ev.index;
-  if(ev.event === "start"){rows = Array.from({length: ev.total}, (_, i) => retain[i] || {}); sumb = {}; return;}
+  if(ev.event === "start"){rows = Array.from({length: ev.total}, (_, i) => retain[i] || {}); sumb = {}; autoQ = []; return;}
   if(k !== undefined && retain[k]) return;
-  if(ev.event === "triage" || ev.event === "result"){Object.assign(rows[k], ev.row); rows[k].job = curJob; rows[k].working = false; if(ev.event === "result" && ev.row.diff) open = open < 0 ? k : open;}
+  if(ev.event === "triage" || ev.event === "result"){Object.assign(rows[k], ev.row); rows[k].job = curJob; rows[k].working = false; if(ev.event === "result" && ev.row.diff){open = open < 0 ? k : open; if(running && !readonly && autoApply){autoQ.push(k); pump();}}}
   else if(ev.event === "repairing"){rows[k].working = true;}
   else if(ev.event === "attempt"){rows[k].att = (rows[k].att || []).concat([ev.attempt]);}
   else if(ev.event === "applied"){rows[k].applied = true;}
@@ -387,6 +412,29 @@ function onEvent(ev){
   else if(ev.event === "error"){showErr(ev.message);}
   else if(ev.event === "stopped"){rows.forEach((r) => r.working = false); showErr("Stopped");}
 }
+async function pump(){
+  if(autoBusy) return; autoBusy = true;
+  while(autoQ.length){
+    const k = autoQ.shift(), r = rows[k];
+    if(!r || !r.diff || r.applied) continue;
+    r.anim = "press"; render(); await sleep(800);
+    if(rows[k] !== r) continue;
+    r.anim = ""; r.armed = true; render();
+    if(!autoWrite) continue;  // stays at "Write file?" until you confirm
+    await sleep(900);
+    if(rows[k] !== r) continue;
+    r.armed = false; r.anim = "writing"; render(); await sleep(700);
+    try{await api("/api/apply", {index: k, job: r.job}); r.applied = true; r.flash = true; showErr(""); setTimeout(() => {r.flash = false; render();}, 1500);}catch(er){showErr(er.message);}
+    r.anim = ""; render(); loadState(true);
+  }
+  autoBusy = false;
+}
+$("reset").onclick = async () => {
+  if(!resetArmed){resetArmed = true; autoUi(); setTimeout(() => {resetArmed = false; autoUi();}, 4000); return;}
+  resetArmed = false; autoUi();
+  try{const d = await api("/api/reset", {}); showErr(d.skipped && d.skipped.length ? "Left alone (edited by hand): " + d.skipped.join(", ") : ""); if(curJob) await tick(); await loadState(true);}
+  catch(e){showErr(e.message);}
+};
 async function tick(){
   try{
     const j = await api("/api/job?since=" + since);

@@ -133,7 +133,7 @@ class App:
     def state(self) -> dict:
         return {"root": self.root.name, "manifests": self.manifests(), "hosted": list(HOSTED) if meta_client.KEY_PATH.exists() else [],
                 "endpoint": "http://127.0.0.1:8080/v1", "previous": self.previous(),
-                "job": self.job.since(0)["status"] if self.job else None}
+                "changed": self.changed(), "job": self.job.since(0)["status"] if self.job else None}
 
     def health(self, endpoint: str) -> dict:
         if not ENDPOINT_RE.match(endpoint):
@@ -241,6 +241,86 @@ class App:
                 pass
         return 200, {"ok": True}
 
+    # ---- baseline: the first content of every file the app wrote, so Reset can put the whole folder back
+    def _bl(self) -> Path:
+        return self.root / ".patchpilot" / "baseline"
+
+    def _bl_load(self) -> dict:
+        try:
+            d = json.loads((self._bl() / "index.json").read_text())
+            return d if isinstance(d, dict) else {}
+        except (OSError, ValueError):
+            return {}
+
+    def _bl_save(self, idx: dict) -> None:
+        b = self._bl()
+        b.mkdir(parents=True, exist_ok=True)
+        t = b / "index.json.tmp"
+        t.write_text(json.dumps(idx))
+        os.replace(t, b / "index.json")
+
+    def _bl_before(self, src: Path) -> None:  # call before the app writes src
+        rel = str(src.relative_to(self.root))
+        idx = self._bl_load()
+        now = hashlib.sha256(src.read_bytes()).hexdigest()
+        if rel not in idx or idx[rel].get("written") != now:  # first write, or the file was changed by hand since: start over from here
+            bf = self._bl() / "files" / rel
+            bf.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(src, bf)
+            idx[rel] = {"orig": now, "written": now}
+            self._bl_save(idx)
+
+    def _bl_after(self, src: Path) -> None:  # call after the app wrote src
+        rel = str(src.relative_to(self.root))
+        idx = self._bl_load()
+        if rel in idx:
+            idx[rel]["written"] = hashlib.sha256(src.read_bytes()).hexdigest()
+            self._bl_save(idx)
+
+    def changed(self) -> int:
+        n = 0
+        for rel, e in self._bl_load().items():
+            try:
+                if hashlib.sha256((self.root / rel).read_bytes()).hexdigest() != e.get("orig"):
+                    n += 1
+            except OSError:
+                n += 1
+        return n
+
+    def reset(self) -> tuple[int, dict]:
+        if self.job and self.job.status in ("running", "stopping"):
+            return 409, {"error": "a run is in progress"}
+        idx = self._bl_load()
+        restored, skipped, back = 0, [], set()
+        for rel, e in list(idx.items()):
+            try:
+                src = (self.root / rel).resolve()
+                src.relative_to(self.root)
+                files = (self._bl() / "files").resolve()
+                bf = (files / rel).resolve()
+                bf.relative_to(files)
+                cur = hashlib.sha256(src.read_bytes()).hexdigest() if src.exists() else None
+                if cur == e.get("orig"):
+                    del idx[rel]
+                    continue
+                if cur != e.get("written") or hashlib.sha256(bf.read_bytes()).hexdigest() != e.get("orig"):
+                    skipped.append(rel)  # edited by hand since the app wrote it, or the saved copy is damaged: leave it alone
+                    continue
+                tmp = src.with_name(src.name + ".patchpilot.tmp")
+                shutil.copy2(bf, tmp)
+                os.replace(tmp, src)
+                back.add(str(src))
+                restored += 1
+                del idx[rel]
+            except (OSError, ValueError, KeyError):
+                skipped.append(rel)
+        self._bl_save(idx)
+        for job in list(self.jobs.values()):
+            for k, row in enumerate(job.rows):
+                if row.get("applied") and row.get("path") and str(Path(row["path"]).resolve()) in back:
+                    job.add({"event": "undone", "index": k})
+        return 200, {"ok": True, "restored": restored, "skipped": skipped}
+
     def _find(self, index, jid):
         job = self.jobs.get(jid) if isinstance(jid, str) else self.job
         if not job or not isinstance(index, int) or isinstance(index, bool) or not 0 <= index < len(job.rows):
@@ -268,7 +348,9 @@ class App:
             backup = job.out_dir / "backup" / f"{index}.orig"  # the original, so Undo can put it back
             backup.parent.mkdir(exist_ok=True)
             shutil.copy2(src, backup)
+            self._bl_before(src)
             repair.apply_patch(src, current, files["app.py"])
+            self._bl_after(src)
             row["backup"] = str(backup)
             row["applied_sha"] = hashlib.sha256(src.read_bytes()).hexdigest()
         except (KeyError, ValueError, OSError, RuntimeError) as e:
@@ -292,6 +374,7 @@ class App:
             tmp = src.with_name(src.name + ".patchpilot.tmp")
             shutil.copy2(backup, tmp)
             os.replace(tmp, src)
+            self._bl_after(src)
         except (KeyError, ValueError, OSError) as e:
             return 409, {"error": f"not restored: {e}"}
         job.add({"event": "undone", "index": index})
@@ -384,6 +467,8 @@ def make_handler(app: App):
                 self._json(*app.stop())
             elif self.path == "/api/apply":
                 self._json(*app.apply(body.get("index"), body.get("job")))
+            elif self.path == "/api/reset":
+                self._json(*app.reset())
             elif self.path == "/api/undo":
                 self._json(*app.undo(body.get("index"), body.get("job")))
             else:
