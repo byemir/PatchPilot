@@ -1,0 +1,12 @@
+--- a/clean_names.py
++++ b/clean_names.py
+@@ -3,6 +3,7 @@
+ 
+ def clean_names(names):
+     s = pd.Series(names)
+-    if s.dtype == object:
+-        s = s.str.strip().str.title()
++    # Apply cleaning unconditionally so it works with both object dtype (pandas 2.x)
++    # and StringDtype (pandas 3.x)
++    s = s.str.strip().str.title()
+     return s.tolist()

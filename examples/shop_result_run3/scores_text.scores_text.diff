@@ -1,0 +1,10 @@
+--- a/scores_text.py
++++ b/scores_text.py
+@@ -3,4 +3,6 @@
+ 
+ def scores_text(teams, raw):
+     rounded = np.round(np.asarray(raw, dtype=np.float64), 1)
+-    return str(dict(zip(teams, rounded)))
++    # Convert NumPy scalars to native Python floats for stable str() output across NumPy versions
++    values = rounded.tolist()
++    return str(dict(zip(teams, values)))
