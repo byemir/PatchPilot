@@ -34,6 +34,19 @@ The same gates and the same benchmark runner are used for all three models. The 
     llama-server -m ~/models/muse-glimmer/Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf -a muse-glimmer -ngl 99 -c 65536 -np 1 --host 127.0.0.1 --port 8080 --chat-template-kwargs '{"reasoning_strength":"low"}'
     python -m patchpilot.bench --endpoint http://127.0.0.1:8080/v1 --cases n6_uint8_scaling --effort low --repeats 5 --score-seed 1
 
+## Third-party software and models
+PatchPilot's own code (`patchpilot/`, `scripts/`) imports only the Python standard library. What it uses from others, all unmodified and under their own licenses:
+
+| component | role | license |
+|---|---|---|
+| pandas 2.3 and 3.0 | the library under repair; installed only in the sandbox environments, never imported by PatchPilot | BSD 3-Clause |
+| NumPy 1.26 and 2.x | the library under repair; same | BSD 3-Clause |
+| llama.cpp | serves the local open-weight model | MIT |
+| Muse Spark 1.3 and Muse Wonder 1.0 | Meta Model API, called at runtime | Meta's API terms |
+| Muse Glimmer 30B (GGUF) | Meta open-weight model, served locally | Apache 2.0, as listed on its model page |
+
+Every model the repair loop calls is a Meta model. No third-party source code is copied into the repository.
+
 ## How it works
 For each case the agent receives the program source, the golden output (from the old library) and the actual output on the new library, and proposes a patch. By default this is one model call per attempt with a JSON reply and no tool use; `--tools` mode (see below) adds a tool conversation per attempt. A rejected attempt returns feedback to the model. A patch is accepted only if all three gates pass:
 
