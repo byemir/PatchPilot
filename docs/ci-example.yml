@@ -1,0 +1,24 @@
+# Example only: this file is in docs/, so GitHub does not run it. Copy it to .github/workflows/ to use it.
+# It asks one question on every pull request that changes a library version: do any of the listed
+# functions now return different output on the new version without raising? No model, no API key.
+name: silent-break-gate
+on:
+  pull_request:
+    paths: ["requirements*.txt", "pyproject.toml", "scan.json", "probes/**"]
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Build the old and new library environments (a few minutes)
+        run: PYTHON312=$(which python3.12) ./scripts/setup_envs.sh
+      - name: Fail if a listed function changed silently
+        run: python -m patchpilot.scan scan.json --triage-only --fail-on-silent --out-dir scan_out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: scan_report, path: scan_out/scan_report.json }
+# Exit code 1 = at least one function in scan.json is "silent" (output differs, nothing raised).
+# The scan.json and the probe inputs come from you (python -m patchpilot.capture can record them from your own tests).
+# This workflow was not run on GitHub; the flag itself is checked offline in patchpilot/scan_test.py.

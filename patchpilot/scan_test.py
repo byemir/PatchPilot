@@ -71,6 +71,8 @@ try:
         rep = json.loads((tmp / "o0" / "scan_report.json").read_text())
         check("triage classifies the sample repo", rep["counts"] == {"healthy": 2, "loud": 1, "silent": 5} and rc == 0, str(rep["counts"]))
         check("triage-only calls no model and changes no file", {p.name: p.read_text() for p in repo.rglob("*.py")} == before)
+        rc_g, _ = run([str(repo / "scan.json"), "--triage-only", "--fail-on-silent", "--out-dir", str(tmp / "o0g")])
+        check("--fail-on-silent: exit 1 while silent breaks are left", rc_g == 1, str(rc_g))
 
         script()
         rc, out = run([str(repo / "scan.json"), "--apply", "--max-attempts", "1", "--out-dir", str(tmp / "o1"),

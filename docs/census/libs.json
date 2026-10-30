@@ -1,0 +1,150 @@
+{
+ "dask": {
+  "files": 184,
+  "pandas_files": 54,
+  "loc": 33214,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "featuretools": {
+  "files": 293,
+  "pandas_files": 77,
+  "loc": 8182,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "geopandas": {
+  "files": 32,
+  "pandas_files": 19,
+  "loc": 17326,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "imbalanced-learn": {
+  "files": 57,
+  "pandas_files": 3,
+  "loc": 2052,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "lifetimes": {
+  "files": 12,
+  "pandas_files": 9,
+  "loc": 2772,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "mlxtend": {
+  "files": 119,
+  "pandas_files": 10,
+  "loc": 1706,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "pandas-datareader": {
+  "files": 30,
+  "pandas_files": 15,
+  "loc": 2478,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "pingouin": {
+  "files": 20,
+  "pandas_files": 14,
+  "loc": 8399,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "plotly": {
+  "files": 1503,
+  "pandas_files": 3,
+  "loc": 2858,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "scikit-learn": {
+  "files": 351,
+  "pandas_files": 10,
+  "loc": 10608,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "seaborn": {
+  "files": 54,
+  "pandas_files": 25,
+  "loc": 15378,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "sktime": {
+  "files": 1301,
+  "pandas_files": 374,
+  "loc": 128113,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "statsmodels": {
+  "files": 453,
+  "pandas_files": 98,
+  "loc": 90633,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "tsfresh": {
+  "files": 31,
+  "pandas_files": 19,
+  "loc": 5931,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "xarray": {
+  "files": 120,
+  "pandas_files": 37,
+  "loc": 49411,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 3,
+  "sites": [
+   "datetime xarray/coding/calendar_ops.py:250",
+   "datetime xarray/groupers.py:932",
+   "datetime xarray/groupers.py:933"
+  ]
+ },
+ "yfinance": {
+  "files": 34,
+  "pandas_files": 15,
+  "loc": 7513,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ }
+}

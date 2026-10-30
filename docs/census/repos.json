@@ -1,0 +1,74 @@
+{
+ "PythonDataScienceHandbook": {
+  "files": 146,
+  "pandas_files": 39,
+  "loc": 4137,
+  "chained": 0,
+  "inplace": 2,
+  "datetime": 0,
+  "sites": [
+   "inplace notebooks/05.06-Linear-Regression.ipynb:129",
+   "inplace notebooks_v1/05.06-Linear-Regression.ipynb:123"
+  ]
+ },
+ "fastbook": {
+  "files": 46,
+  "pandas_files": 3,
+  "loc": 511,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "handson-ml2": {
+  "files": 28,
+  "pandas_files": 4,
+  "loc": 1768,
+  "chained": 0,
+  "inplace": 1,
+  "datetime": 0,
+  "sites": [
+   "inplace 02_end_to_end_machine_learning_project.ipynb:201"
+  ]
+ },
+ "handson-ml3": {
+  "files": 29,
+  "pandas_files": 4,
+  "loc": 1761,
+  "chained": 0,
+  "inplace": 1,
+  "datetime": 0,
+  "sites": [
+   "inplace 02_end_to_end_machine_learning_project.ipynb:210"
+  ]
+ },
+ "machine-learning-book": {
+  "files": 70,
+  "pandas_files": 22,
+  "loc": 5866,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "pydata-book": {
+  "files": 16,
+  "pandas_files": 12,
+  "loc": 2511,
+  "chained": 1,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": [
+   "chained ch05.ipynb:188"
+  ]
+ },
+ "python-machine-learning-book-3rd-edition": {
+  "files": 64,
+  "pandas_files": 20,
+  "loc": 5154,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ }
+}

@@ -16,6 +16,14 @@ A fixed set of six keyword queries (`docs/real_cases/search_20261029_run2/querie
 
 Of those hits, twelve finalists were read in detail (`docs/real_cases/candidates.md`): ten were rejected after reading their code, with the reason for each listed there, and two met all selection rules (indsl, Kythera). Their code is not in this repository; `o1` and `o2` are our own functions for the same documented mechanism. Interpretation: the selection rules (one self-contained file, deterministic, silent, permissive license) filter out most real-world cases, which is also a statement about where this tool applies.
 
+## How common are the patterns? A static count
+
+`docs/CENSUS.md` counts three pandas-3 patterns in 16 libraries and 7 teaching repositories (list fixed before counting, all results reported, every hit read). Result: 0 real hits in the 16 libraries (3 false positives), 5 real pattern instances in the 7 teaching repositories. Interpretation: maintained libraries have already migrated; the remaining risk is in application code that this sample barely covers. It is a count of syntactic patterns, not of broken programs.
+
+## A gate for pull requests
+
+`python -m patchpilot.scan scan.json --triage-only --fail-on-silent` exits with code 1 when a listed function changes silently on the new library. No model and no API key are used. `docs/ci-example.yml` is an example GitHub Actions workflow (it is in `docs/`, so it is not active, and it was not run on GitHub).
+
 ## What you can do with it today
 
     python -m patchpilot.repair my_module.py my_function --inputs probes.json --lib pandas --endpoint http://127.0.0.1:8080/v1

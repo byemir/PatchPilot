@@ -154,3 +154,8 @@ Check from the app took 13 s (21 functions: 14 same, 7 differ, the same as on th
 ## 2026-10-30: first hosted run through the app
 
 The ledger set with muse-spark-1.3 (key file read by the scan process, never by the page): 7 of 7 repaired on the first attempt, differential PASS for each, 167 s and 19,376 tokens in total. Report and diffs: `examples/ledger_result_spark/`. Spark used more tokens than the local Glimmer on the same functions (19,376 against 12,547) and was faster (167 s against 338 s). One run each.
+
+## 2026-10-30: census and CI gate
+
+Added `scripts/census.py` (ast count of three pandas-3 patterns, counts and positions only, no source text) and ran it on a list fixed beforehand: 16 library wheels and 7 teaching repositories. Libraries: 0 chained, 0 inplace, 3 datetime (xarray, all three false positives when read). Repositories: 5 real pattern instances. All 8 hits were read. Written up with the caveats in `docs/CENSUS.md`; the low counts are reported as they are. Added `scan --fail-on-silent` (exit 1 while a target is still silent; checked in `scan_test`, 16 checks) and `docs/ci-example.yml` (not active). `census_test` (13 checks) is the thirteenth offline test.
+

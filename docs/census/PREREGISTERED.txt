@@ -1,0 +1,3 @@
+Pre-registered on 2026-10-30 21:10 (Istanbul, UTC+3) before any count was run. Every item is reported, including zeros and failures.
+Libraries (latest wheel from PyPI): seaborn statsmodels pandas-datareader yfinance geopandas xarray pingouin tsfresh sktime featuretools lifetimes dask plotly scikit-learn mlxtend imbalanced-learn
+Application and teaching code (default branch, shallow clone): wesm/pydata-book jakevdp/PythonDataScienceHandbook ageron/handson-ml3 ageron/handson-ml2 fastai/fastbook rasbt/python-machine-learning-book-3rd-edition rasbt/machine-learning-book

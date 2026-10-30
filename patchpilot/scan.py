@@ -1,6 +1,6 @@
 """Scan a set of functions after a library upgrade, repair the silently broken ones, write one report (standard library only).
 
-    python -m patchpilot.scan scan.json [--endpoint http://127.0.0.1:8080/v1] [--apply] [--triage-only]
+    python -m patchpilot.scan scan.json [--endpoint http://127.0.0.1:8080/v1] [--apply] [--triage-only] [--fail-on-silent]
 
 scan.json lists the functions to check (paths are relative to the manifest):
 
@@ -15,6 +15,7 @@ Every target is run on the old and on the new library with its inputs. The resul
 PatchPilot does not discover functions or inputs by itself: the manifest and the inputs come from you.
 Accepted means the patch passed the gates that were on; read the diffs. Files change only with --apply.
 Exit code: 0 all silent targets repaired, 1 at least one silent target not repaired, 2 manifest or setup problem.
+With --fail-on-silent the exit code is also 1 when a target is still silent (use it with --triage-only as a CI gate: no model, no key).
 """
 from __future__ import annotations
 
@@ -123,6 +124,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Check a list of functions after a library upgrade and repair the silent breaks.")
     ap.add_argument("manifest", help="scan.json with the targets")
     ap.add_argument("--triage-only", action="store_true", help="only classify the targets, no model call")
+    ap.add_argument("--fail-on-silent", action="store_true", help="exit 1 if any target is still silent after this run (CI gate; pair with --triage-only)")
     ap.add_argument("--model")
     ap.add_argument("--effort", default="low")
     ap.add_argument("--endpoint", help="base URL of a local OpenAI-compatible server (loopback only, no API key)")
@@ -223,6 +225,9 @@ def main(argv=None) -> int:
     emit({"event": "done", "counts": count, "tokens": report["tokens"], "seconds": report["seconds"],
           "report": str(out / "scan_report.json")})
     bad = [r for r in rows if r["status"] in ("not_repaired", "error", "case_failed")]
+    if o.fail_on_silent and any(r["status"] == "silent" for r in rows):
+        say("fail-on-silent: at least one silent break is left")
+        return 1
     return 1 if bad else 0
 
 
