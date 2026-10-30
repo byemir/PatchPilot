@@ -13,5 +13,8 @@ Each row is one run; the time and tokens are for the whole scan (Check included)
 | shop | muse-glimmer, local | 7 of 7 | 5 | 13,117 | 327 | `examples/shop_result_run3/` |
 | ledger (7 silent of 21) | muse-glimmer, local | 7 of 7 | 7 | 12,547 | 338 | `examples/ledger_result/` |
 | ledger | muse-spark-1.3, hosted | 7 of 7 | 7 | 19,376 | 167 | `examples/ledger_result_spark/` |
+| frames (3 silent of 6, DataFrame inputs) | muse-glimmer, local | 3 of 3 | 3 | 7,182 | 149 | `examples/frames_result/` |
 
 In shop run 3 the gates rejected three patches on the way (`last_seen_epoch` once, `discounted_price` twice); the retries then passed all three gates. In shop run 1 `discounted_price` was not repaired in three attempts and nothing was written.
+
+The frames run is one run on three functions, not a rate: each was repaired on the first attempt (2,364, 2,060 and 2,758 tokens; 44.0, 33.6 and 56.2 s). The functions are ones we wrote, with inputs recorded from their own tests.

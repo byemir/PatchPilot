@@ -1,0 +1,500 @@
+{
+  "manifest": "/private/tmp/pp_frames/scan.json",
+  "model": "muse-glimmer",
+  "endpoint": "http://127.0.0.1:8080/v1",
+  "effort": "low",
+  "triage_only": false,
+  "applied": false,
+  "seconds": 148.8,
+  "tokens": 7182,
+  "counts": {
+    "healthy": 3,
+    "repaired": 3
+  },
+  "targets": [
+    {
+      "file": "frames/prep.py",
+      "function": "fill_missing",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 1 of 1 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "df": {
+            "$df": {
+              "age": [
+                30.0,
+                null,
+                41.0,
+                25.0
+              ],
+              "income": [
+                5200.0,
+                4100.0,
+                null,
+                9900.0
+              ],
+              "name": [
+                " Ada ",
+                "Bob",
+                "Cy",
+                "Di"
+              ],
+              "signup": [
+                "2024-03-01 10:00:00",
+                "2024-03-02 11:30:00",
+                "2024-04-05 08:15:00",
+                "2024-05-06 09:00:00"
+              ]
+            }
+          }
+        },
+        "old": {
+          "$df": {
+            "age": [
+              30.0,
+              30.0,
+              41.0,
+              25.0
+            ],
+            "income": [
+              5200.0,
+              4100.0,
+              0.0,
+              9900.0
+            ],
+            "name": [
+              " Ada ",
+              "Bob",
+              "Cy",
+              "Di"
+            ],
+            "signup": [
+              "2024-03-01 10:00:00",
+              "2024-03-02 11:30:00",
+              "2024-04-05 08:15:00",
+              "2024-05-06 09:00:00"
+            ]
+          },
+          "index": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        "new": {
+          "$df": {
+            "age": [
+              30.0,
+              NaN,
+              41.0,
+              25.0
+            ],
+            "income": [
+              5200.0,
+              4100.0,
+              NaN,
+              9900.0
+            ],
+            "name": [
+              " Ada ",
+              "Bob",
+              "Cy",
+              "Di"
+            ],
+            "signup": [
+              "2024-03-01 10:00:00",
+              "2024-03-02 11:30:00",
+              "2024-04-05 08:15:00",
+              "2024-05-06 09:00:00"
+            ]
+          },
+          "index": [
+            0,
+            1,
+            2,
+            3
+          ]
+        }
+      },
+      "source_sha256": "ba0552ace4d7d559fae7ab8745b3d7c5976f48841b8b2a352d2ad08a8e594336",
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 44.0,
+      "tokens": 2364,
+      "run_dir": "/private/tmp/pp_frames/.patchpilot/20261030-215557/runs/20261030-215605_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "In pandas 3.0 copy-on-write makes `df['col'].fillna(..., inplace=True)` no longer reliably mutate the parent frame; the in-place fill is silently dropped, leaving NaNs. Re-assigning the result of fillna avoids the inplace semantics and works on both 2.3.3 and 3.0.6.",
+          "tokens": 2364,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 153,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "In pandas 3.0 copy-on-write makes `df['col'].fillna(..., inplace=True)` no longer reliably mutate the parent frame; the in-place fill is silently dropped, leaving NaNs. Re-assigning the result of fillna avoids the inplace semantics and works on both 2.3.3 and 3.0.6.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 153,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "prep.fill_missing.diff"
+    },
+    {
+      "file": "frames/prep.py",
+      "function": "flag_outliers",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 1 of 1 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "df": {
+            "$df": {
+              "age": [
+                30.0,
+                null,
+                41.0,
+                25.0
+              ],
+              "income": [
+                5200.0,
+                4100.0,
+                null,
+                9900.0
+              ],
+              "name": [
+                " Ada ",
+                "Bob",
+                "Cy",
+                "Di"
+              ],
+              "signup": [
+                "2024-03-01 10:00:00",
+                "2024-03-02 11:30:00",
+                "2024-04-05 08:15:00",
+                "2024-05-06 09:00:00"
+              ]
+            }
+          },
+          "limit": 9000
+        },
+        "old": {
+          "$df": {
+            "age": [
+              30.0,
+              NaN,
+              41.0,
+              25.0
+            ],
+            "income": [
+              5200.0,
+              4100.0,
+              NaN,
+              9900.0
+            ],
+            "name": [
+              " Ada ",
+              "Bob",
+              "Cy",
+              "Di"
+            ],
+            "signup": [
+              "2024-03-01 10:00:00",
+              "2024-03-02 11:30:00",
+              "2024-04-05 08:15:00",
+              "2024-05-06 09:00:00"
+            ],
+            "outlier": [
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          "index": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        "new": {
+          "$df": {
+            "age": [
+              30.0,
+              NaN,
+              41.0,
+              25.0
+            ],
+            "income": [
+              5200.0,
+              4100.0,
+              NaN,
+              9900.0
+            ],
+            "name": [
+              " Ada ",
+              "Bob",
+              "Cy",
+              "Di"
+            ],
+            "signup": [
+              "2024-03-01 10:00:00",
+              "2024-03-02 11:30:00",
+              "2024-04-05 08:15:00",
+              "2024-05-06 09:00:00"
+            ],
+            "outlier": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          "index": [
+            0,
+            1,
+            2,
+            3
+          ]
+        }
+      },
+      "source_sha256": "ba0552ace4d7d559fae7ab8745b3d7c5976f48841b8b2a352d2ad08a8e594336",
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 33.6,
+      "tokens": 2060,
+      "run_dir": "/private/tmp/pp_frames/.patchpilot/20261030-215557/runs/20261030-215653_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "The `flag_outliers` function uses chained indexing `df[\"outlier\"][mask] = 1` which is a SettingWithCopy pattern. Pandas 3.0 enforces stricter indexing semantics so the assignment silently fails, leaving all outliers as 0. Using `.loc` performs an explicit in-place assignment that works on both pandas 2.3.3 and 3.0.6.",
+          "tokens": 2060,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 129,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "The `flag_outliers` function uses chained indexing `df[\"outlier\"][mask] = 1` which is a SettingWithCopy pattern. Pandas 3.0 enforces stricter indexing semantics so the assignment silently fails, leaving all outliers as 0. Using `.loc` performs an explicit in-place assignment that works on both pandas 2.3.3 and 3.0.6.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 129,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "prep.flag_outliers.diff"
+    },
+    {
+      "file": "frames/prep.py",
+      "function": "add_signup_seconds",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 1 of 1 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "df": {
+            "$df": {
+              "age": [
+                30.0,
+                null,
+                41.0,
+                25.0
+              ],
+              "income": [
+                5200.0,
+                4100.0,
+                null,
+                9900.0
+              ],
+              "name": [
+                " Ada ",
+                "Bob",
+                "Cy",
+                "Di"
+              ],
+              "signup": [
+                "2024-03-01 10:00:00",
+                "2024-03-02 11:30:00",
+                "2024-04-05 08:15:00",
+                "2024-05-06 09:00:00"
+              ]
+            }
+          }
+        },
+        "old": {
+          "$df": {
+            "age": [
+              30.0,
+              NaN,
+              41.0,
+              25.0
+            ],
+            "income": [
+              5200.0,
+              4100.0,
+              NaN,
+              9900.0
+            ],
+            "name": [
+              " Ada ",
+              "Bob",
+              "Cy",
+              "Di"
+            ],
+            "signup": [
+              "2024-03-01 10:00:00",
+              "2024-03-02 11:30:00",
+              "2024-04-05 08:15:00",
+              "2024-05-06 09:00:00"
+            ],
+            "signup_s": [
+              1709287200,
+              1709379000,
+              1712304900,
+              1714986000
+            ]
+          },
+          "index": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        "new": {
+          "$df": {
+            "age": [
+              30.0,
+              NaN,
+              41.0,
+              25.0
+            ],
+            "income": [
+              5200.0,
+              4100.0,
+              NaN,
+              9900.0
+            ],
+            "name": [
+              " Ada ",
+              "Bob",
+              "Cy",
+              "Di"
+            ],
+            "signup": [
+              "2024-03-01 10:00:00",
+              "2024-03-02 11:30:00",
+              "2024-04-05 08:15:00",
+              "2024-05-06 09:00:00"
+            ],
+            "signup_s": [
+              1709287,
+              1709379,
+              1712304,
+              1714986
+            ]
+          },
+          "index": [
+            0,
+            1,
+            2,
+            3
+          ]
+        }
+      },
+      "source_sha256": "ba0552ace4d7d559fae7ab8745b3d7c5976f48841b8b2a352d2ad08a8e594336",
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 56.2,
+      "tokens": 2758,
+      "run_dir": "/private/tmp/pp_frames/.patchpilot/20261030-215557/runs/20261030-215730_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "In pandas 3.0 `astype('int64')` on a datetime64[ns] column no longer returns nanoseconds; it returns a different resolution so `// 10**9` yields microseconds/1000 instead of seconds. Converting explicitly to `datetime64[s]` before casting to int gives stable seconds on both pandas 2.3.3 and 3.0.6.",
+          "tokens": 2758,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 150,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "In pandas 3.0 `astype('int64')` on a datetime64[ns] column no longer returns nanoseconds; it returns a different resolution so `// 10**9` yields microseconds/1000 instead of seconds. Converting explicitly to `datetime64[s]` before casting to int gives stable seconds on both pandas 2.3.3 and 3.0.6.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 150,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "prep.add_signup_seconds.diff"
+    },
+    {
+      "file": "frames/prep.py",
+      "function": "income_per_age",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 1 inputs",
+      "example": null
+    },
+    {
+      "file": "frames/prep.py",
+      "function": "top_earners",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 1 inputs",
+      "example": null
+    },
+    {
+      "file": "frames/prep.py",
+      "function": "clean_names",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 1 inputs",
+      "example": null
+    }
+  ]
+}
