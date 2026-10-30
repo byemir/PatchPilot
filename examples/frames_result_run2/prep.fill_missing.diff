@@ -1,0 +1,13 @@
+--- a/prep.py
++++ b/prep.py
+@@ -7,8 +7,8 @@
+ def fill_missing(df):
+     """Fill missing ages with the median and missing incomes with zero."""
+     df = df.copy()
+-    df["age"].fillna(df["age"].median(), inplace=True)
+-    df["income"].fillna(0, inplace=True)
++    df["age"] = df["age"].fillna(df["age"].median())
++    df["income"] = df["income"].fillna(0)
+     return df
+ 
+ 

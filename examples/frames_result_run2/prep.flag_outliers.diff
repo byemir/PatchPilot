@@ -1,0 +1,11 @@
+--- a/prep.py
++++ b/prep.py
+@@ -16,7 +16,7 @@
+     """Mark rows whose income is above the limit."""
+     df = df.copy()
+     df["outlier"] = 0
+-    df["outlier"][df["income"] > limit] = 1
++    df.loc[df["income"] > limit, "outlier"] = 1
+     return df
+ 
+ 

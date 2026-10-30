@@ -1,0 +1,513 @@
+{
+  "manifest": "/private/tmp/pp_frames/scan.json",
+  "model": "muse-glimmer",
+  "endpoint": "http://127.0.0.1:8080/v1",
+  "effort": "low",
+  "triage_only": false,
+  "applied": false,
+  "seconds": 203.9,
+  "tokens": 10733,
+  "counts": {
+    "healthy": 3,
+    "repaired": 3
+  },
+  "targets": [
+    {
+      "file": "frames/prep.py",
+      "function": "fill_missing",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 1 of 1 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "df": {
+            "$df": {
+              "age": [
+                30.0,
+                null,
+                41.0,
+                25.0
+              ],
+              "income": [
+                5200.0,
+                4100.0,
+                null,
+                9900.0
+              ],
+              "name": [
+                " Ada ",
+                "Bob",
+                "Cy",
+                "Di"
+              ],
+              "signup": [
+                "2024-03-01 10:00:00",
+                "2024-03-02 11:30:00",
+                "2024-04-05 08:15:00",
+                "2024-05-06 09:00:00"
+              ]
+            }
+          }
+        },
+        "old": {
+          "$df": {
+            "age": [
+              30.0,
+              30.0,
+              41.0,
+              25.0
+            ],
+            "income": [
+              5200.0,
+              4100.0,
+              0.0,
+              9900.0
+            ],
+            "name": [
+              " Ada ",
+              "Bob",
+              "Cy",
+              "Di"
+            ],
+            "signup": [
+              "2024-03-01 10:00:00",
+              "2024-03-02 11:30:00",
+              "2024-04-05 08:15:00",
+              "2024-05-06 09:00:00"
+            ]
+          },
+          "index": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        "new": {
+          "$df": {
+            "age": [
+              30.0,
+              NaN,
+              41.0,
+              25.0
+            ],
+            "income": [
+              5200.0,
+              4100.0,
+              NaN,
+              9900.0
+            ],
+            "name": [
+              " Ada ",
+              "Bob",
+              "Cy",
+              "Di"
+            ],
+            "signup": [
+              "2024-03-01 10:00:00",
+              "2024-03-02 11:30:00",
+              "2024-04-05 08:15:00",
+              "2024-05-06 09:00:00"
+            ]
+          },
+          "index": [
+            0,
+            1,
+            2,
+            3
+          ]
+        }
+      },
+      "source_sha256": "ba0552ace4d7d559fae7ab8745b3d7c5976f48841b8b2a352d2ad08a8e594336",
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 33.6,
+      "tokens": 2127,
+      "run_dir": "/private/tmp/pp_frames/.patchpilot/20261030-220229/runs/20261030-220238_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "The fill_missing function uses chained inplace mutation df['age'].fillna(..., inplace=True) which became a silent no-op under pandas 3.0 due to copy-on-write / stricter inplace semantics. Returning a new assignment instead of inplace makes the fill deterministic on both pandas 2.3.3 and 3.0.6.",
+          "tokens": 2127,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 153,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "The fill_missing function uses chained inplace mutation df['age'].fillna(..., inplace=True) which became a silent no-op under pandas 3.0 due to copy-on-write / stricter inplace semantics. Returning a new assignment instead of inplace makes the fill deterministic on both pandas 2.3.3 and 3.0.6.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 153,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "prep.fill_missing.diff"
+    },
+    {
+      "file": "frames/prep.py",
+      "function": "flag_outliers",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 1 of 1 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "df": {
+            "$df": {
+              "age": [
+                30.0,
+                null,
+                41.0,
+                25.0
+              ],
+              "income": [
+                5200.0,
+                4100.0,
+                null,
+                9900.0
+              ],
+              "name": [
+                " Ada ",
+                "Bob",
+                "Cy",
+                "Di"
+              ],
+              "signup": [
+                "2024-03-01 10:00:00",
+                "2024-03-02 11:30:00",
+                "2024-04-05 08:15:00",
+                "2024-05-06 09:00:00"
+              ]
+            }
+          },
+          "limit": 9000
+        },
+        "old": {
+          "$df": {
+            "age": [
+              30.0,
+              NaN,
+              41.0,
+              25.0
+            ],
+            "income": [
+              5200.0,
+              4100.0,
+              NaN,
+              9900.0
+            ],
+            "name": [
+              " Ada ",
+              "Bob",
+              "Cy",
+              "Di"
+            ],
+            "signup": [
+              "2024-03-01 10:00:00",
+              "2024-03-02 11:30:00",
+              "2024-04-05 08:15:00",
+              "2024-05-06 09:00:00"
+            ],
+            "outlier": [
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          "index": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        "new": {
+          "$df": {
+            "age": [
+              30.0,
+              NaN,
+              41.0,
+              25.0
+            ],
+            "income": [
+              5200.0,
+              4100.0,
+              NaN,
+              9900.0
+            ],
+            "name": [
+              " Ada ",
+              "Bob",
+              "Cy",
+              "Di"
+            ],
+            "signup": [
+              "2024-03-01 10:00:00",
+              "2024-03-02 11:30:00",
+              "2024-04-05 08:15:00",
+              "2024-05-06 09:00:00"
+            ],
+            "outlier": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          "index": [
+            0,
+            1,
+            2,
+            3
+          ]
+        }
+      },
+      "source_sha256": "ba0552ace4d7d559fae7ab8745b3d7c5976f48841b8b2a352d2ad08a8e594336",
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 31.2,
+      "tokens": 2089,
+      "run_dir": "/private/tmp/pp_frames/.patchpilot/20261030-220229/runs/20261030-220316_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "The `flag_outliers` function uses chained indexing `df[\"outlier\"][df[\"income\"] > limit] = 1`, which is a SettingWithCopy operation. Pandas 3.0 enforces stricter copy-on-write semantics so the assignment no longer mutates the DataFrame, leaving `outlier` all zeros. Replacing the chained assignment with explicit `.loc` indexing makes the mutation reliable on both pandas 2.3.3 and 3.0.6.",
+          "tokens": 2089,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 129,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "The `flag_outliers` function uses chained indexing `df[\"outlier\"][df[\"income\"] > limit] = 1`, which is a SettingWithCopy operation. Pandas 3.0 enforces stricter copy-on-write semantics so the assignment no longer mutates the DataFrame, leaving `outlier` all zeros. Replacing the chained assignment with explicit `.loc` indexing makes the mutation reliable on both pandas 2.3.3 and 3.0.6.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 129,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "prep.flag_outliers.diff"
+    },
+    {
+      "file": "frames/prep.py",
+      "function": "add_signup_seconds",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 1 of 1 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "df": {
+            "$df": {
+              "age": [
+                30.0,
+                null,
+                41.0,
+                25.0
+              ],
+              "income": [
+                5200.0,
+                4100.0,
+                null,
+                9900.0
+              ],
+              "name": [
+                " Ada ",
+                "Bob",
+                "Cy",
+                "Di"
+              ],
+              "signup": [
+                "2024-03-01 10:00:00",
+                "2024-03-02 11:30:00",
+                "2024-04-05 08:15:00",
+                "2024-05-06 09:00:00"
+              ]
+            }
+          }
+        },
+        "old": {
+          "$df": {
+            "age": [
+              30.0,
+              NaN,
+              41.0,
+              25.0
+            ],
+            "income": [
+              5200.0,
+              4100.0,
+              NaN,
+              9900.0
+            ],
+            "name": [
+              " Ada ",
+              "Bob",
+              "Cy",
+              "Di"
+            ],
+            "signup": [
+              "2024-03-01 10:00:00",
+              "2024-03-02 11:30:00",
+              "2024-04-05 08:15:00",
+              "2024-05-06 09:00:00"
+            ],
+            "signup_s": [
+              1709287200,
+              1709379000,
+              1712304900,
+              1714986000
+            ]
+          },
+          "index": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        "new": {
+          "$df": {
+            "age": [
+              30.0,
+              NaN,
+              41.0,
+              25.0
+            ],
+            "income": [
+              5200.0,
+              4100.0,
+              NaN,
+              9900.0
+            ],
+            "name": [
+              " Ada ",
+              "Bob",
+              "Cy",
+              "Di"
+            ],
+            "signup": [
+              "2024-03-01 10:00:00",
+              "2024-03-02 11:30:00",
+              "2024-04-05 08:15:00",
+              "2024-05-06 09:00:00"
+            ],
+            "signup_s": [
+              1709287,
+              1709379,
+              1712304,
+              1714986
+            ]
+          },
+          "index": [
+            0,
+            1,
+            2,
+            3
+          ]
+        }
+      },
+      "source_sha256": "ba0552ace4d7d559fae7ab8745b3d7c5976f48841b8b2a352d2ad08a8e594336",
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 123.1,
+      "tokens": 6517,
+      "run_dir": "/private/tmp/pp_frames/.patchpilot/20261030-220229/runs/20261030-220351_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "fail",
+            "hidden": "skipped",
+            "differential": "skipped",
+            "outcome": "rejected at the visible tests"
+          },
+          "diagnosis": "In pandas 3.0 `Series.astype('int64')` on a datetime64 column no longer returns nanoseconds, so `//10**9` yields microseconds-derived seconds (\u22481000\u00d7 too small). Using the underlying NumPy datetime64 values gives a stable nanosecond representation on both 2.3 and 3.0.",
+          "tokens": 3340,
+          "differential": null,
+          "counterexample": null
+        },
+        {
+          "attempt": 2,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "In pandas 3.0 the default datetime unit changed, so `astype('int64')` on the result of `pd.to_datetime` no longer yields nanoseconds but a coarser unit; dividing by 10**9 therefore produces seconds/1000. Forcing the conversion to `datetime64[ns]` before casting to int64 restores nanosecond values on both pandas 2.3.3 and 3.0.6.",
+          "tokens": 3177,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 150,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 2,
+      "diagnosis": "In pandas 3.0 the default datetime unit changed, so `astype('int64')` on the result of `pd.to_datetime` no longer yields nanoseconds but a coarser unit; dividing by 10**9 therefore produces seconds/1000. Forcing the conversion to `datetime64[ns]` before casting to int64 restores nanosecond values on both pandas 2.3.3 and 3.0.6.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 150,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "prep.add_signup_seconds.diff"
+    },
+    {
+      "file": "frames/prep.py",
+      "function": "income_per_age",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 1 inputs",
+      "example": null
+    },
+    {
+      "file": "frames/prep.py",
+      "function": "top_earners",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 1 inputs",
+      "example": null
+    },
+    {
+      "file": "frames/prep.py",
+      "function": "clean_names",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 1 inputs",
+      "example": null
+    }
+  ]
+}

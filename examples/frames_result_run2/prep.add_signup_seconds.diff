@@ -1,0 +1,13 @@
+--- a/prep.py
++++ b/prep.py
+@@ -23,7 +23,9 @@
+ def add_signup_seconds(df):
+     """Seconds since 1970-01-01 for each signup time."""
+     df = df.copy()
+-    df["signup_s"] = pd.to_datetime(df["signup"]).astype("int64") // 10**9
++    # Force nanosecond resolution for compatibility across pandas versions
++    dt = pd.to_datetime(df["signup"]).astype('datetime64[ns]')
++    df["signup_s"] = dt.astype("int64") // 10**9
+     return df
+ 
+ 
