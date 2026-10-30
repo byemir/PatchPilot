@@ -20,6 +20,10 @@ Of those hits, twelve finalists were read in detail (`docs/real_cases/candidates
 
 `docs/CENSUS.md` counts three pandas-3 patterns in 16 libraries and 7 teaching repositories (list fixed before counting, all results reported, every hit read). Result: 0 real hits in the 16 libraries (3 false positives), 5 real pattern instances in the 7 teaching repositories. Interpretation: maintained libraries have already migrated; the remaining risk is in application code that this sample barely covers. It is a count of syntactic patterns, not of broken programs.
 
+## Tables as inputs
+
+Most pandas code takes a DataFrame, not a JSON object. The scan, the repair gates and `capture` now accept a table written as `{"$df": {column: [values]}}` (README, "DataFrames as input and output"). `examples/frames/` has six notebook-style functions we wrote, three with the patterns counted in `docs/CENSUS.md`; its manifest and inputs were recorded from the project's own tests. Offline, with scripted replies, the three silent breaks are repaired behind the gates. No real model run is recorded yet. Results are compared by values, column names and index, not by dtype.
+
 ## A gate for pull requests
 
 `python -m patchpilot.scan scan.json --triage-only --fail-on-silent` exits with code 1 when a listed function changes silently on the new library. No model and no API key are used. `docs/ci-example.yml` is an example GitHub Actions workflow (it is in `docs/`, so it is not active, and it was not run on GitHub).

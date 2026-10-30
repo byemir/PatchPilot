@@ -53,6 +53,76 @@ def test_runs_on_the_recorded_inputs():
         json.dumps({fn}(**probe))
 '''
 
+# Inputs that carry a table as {"$df": {"column": [values, ...]}} are rebuilt as a pandas DataFrame before the call, and a
+# DataFrame or Series result is written as its column lists (values and column names, not dtypes). The plain runner above is
+# used whenever no input contains "$df", so earlier cases and recorded runs do not change.
+RUN_DF = '''import json
+import sys
+
+from app import {fn}
+
+
+def dec(x):
+    if isinstance(x, dict) and set(x) == {{"$df"}}:
+        import pandas as pd
+        return pd.DataFrame({{k: list(v) for k, v in x["$df"].items()}})
+    if isinstance(x, dict):
+        return {{k: dec(v) for k, v in x.items()}}
+    if isinstance(x, list):
+        return [dec(v) for v in x]
+    return x
+
+
+def default(o):
+    name = type(o).__name__
+    if name == "DataFrame":
+        return {{"$df": {{str(c): o[c].tolist() for c in o.columns}}, "index": o.index.tolist()}}
+    if name == "Series":
+        return {{"$series": o.tolist(), "name": None if o.name is None else str(o.name), "index": o.index.tolist()}}
+    if hasattr(o, "isoformat"):
+        return o.isoformat()
+    if hasattr(o, "item"):
+        return o.item()
+    if hasattr(o, "tolist"):
+        return o.tolist()
+    return str(o)
+
+
+if __name__ == "__main__":
+    path = sys.argv[1] if len(sys.argv) > 1 else "inputs.json"
+    with open(path) as f:
+        probes = json.load(f)
+    out = []
+    for probe in probes:
+        try:
+            out.append(json.loads(json.dumps({fn}(**dec(probe)), default=default)))
+        except Exception as e:
+            out.append({{"error": type(e).__name__}})
+    print(json.dumps(out))
+'''
+
+TEST_DF = '''import json
+from pathlib import Path
+
+from app import {fn}
+from run_case import dec, default
+
+
+def test_runs_on_the_recorded_inputs():
+    probes = json.loads((Path(__file__).resolve().parent.parent / "inputs.json").read_text())
+    for probe in probes:
+        json.dumps({fn}(**dec(probe)), default=default)
+'''
+
+
+def uses_frames(probes) -> bool:
+    return '"$df"' in json.dumps(probes)
+
+
+def templates(fn: str, probes) -> tuple[str, str]:
+    """The runner and the visible test for these inputs."""
+    return (RUN_DF, TEST_DF) if uses_frames(probes) else (RUN, TEST)
+
 
 def fail(msg: str, code: int = 1):
     print(f"make_case: {msg}", file=sys.stderr)
@@ -146,9 +216,10 @@ def main(argv=None) -> None:
     try:
         (out / "tests").mkdir(parents=True)
         (out / "app.py").write_text(src.read_text())
-        (out / "run_case.py").write_text(RUN.format(fn=a.fn))
+        run_t, test_t = templates(a.fn, inputs)
+        (out / "run_case.py").write_text(run_t.format(fn=a.fn))
         (out / "tests" / "__init__.py").write_text("")
-        (out / "tests" / "test_app.py").write_text(TEST.format(fn=a.fn))
+        (out / "tests" / "test_app.py").write_text(test_t.format(fn=a.fn))
         (out / "case.json").write_text(json.dumps({"lib": a.lib, "old": os.path.abspath(a.old), "new": os.path.abspath(a.new), "gen": 2}) + "\n")
         (out / "inputs.json").write_text(json.dumps(inputs, indent=1) + "\n")
 

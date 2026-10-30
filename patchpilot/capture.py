@@ -6,7 +6,8 @@
 Everything after `--` is the command: `-m MODULE ARGS...` or `SCRIPT ARGS...`. It runs with OLD_PYTHON (the interpreter that
 has the old library) and your normal permissions, like any run of your own tests; it is not isolated. While it runs, every
 call of a --target function (FILE:FUNCTION, a top-level function with plain named parameters) is recorded when all its
-arguments are plain JSON values (null, bool, number, string, list, dict; a tuple or an object is skipped). Equal calls are
+arguments are plain JSON values (null, bool, number, string, list, dict; a tuple or an object is skipped) or a small pandas
+DataFrame (at most 200 rows, string column names, default index), which is stored as {"$df": {column: [values]}} (missing values as null). Equal calls are
 kept once, at most --limit per function. The result is one JSON list per function in --out (the call is fn(**probe)),
 and, with --manifest, an entry in the scan manifest. Standard library only.
 """
@@ -26,6 +27,14 @@ spec = json.loads(os.environ["PP_CAPTURE"]); LIMIT = spec["limit"]
 by_key = {}
 for t in spec["targets"]:
     by_key[(os.path.realpath(t["file"]), t["function"])] = {"probes": [], "seen": set(), "calls": 0, "skipped": 0, "unsupported": False, **t}
+def enc(v):
+    """A small pandas DataFrame with string column names and the default index becomes {"$df": {column: [values]}};
+    anything else is returned as it is (and is skipped later if it is not plain JSON)."""
+    if type(v).__name__ == "DataFrame" and type(v).__module__.startswith("pandas"):
+        if len(v) > 200 or not all(isinstance(c, str) for c in v.columns) or list(v.index) != list(range(len(v))):
+            raise ValueError
+        return {"$df": {c: [None if x != x else x for x in v[c].tolist()] for c in v.columns}}  # missing values become null
+    return v
 real = {}
 def prof(frame, event, arg):
     if event != "call":
@@ -43,7 +52,7 @@ def prof(frame, event, arg):
         return
     names = code.co_varnames[: code.co_argcount + code.co_kwonlyargcount]
     try:
-        probe = {n: frame.f_locals[n] for n in names}
+        probe = {n: enc(frame.f_locals[n]) for n in names}
         text = json.dumps(probe, sort_keys=True, allow_nan=False)
         if json.loads(text) != probe:  # a tuple or a subclass would not come back equal
             raise ValueError

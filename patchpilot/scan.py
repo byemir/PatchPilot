@@ -49,7 +49,7 @@ def triage(src: Path, fn: str, probes_file: Path, old: str, new: str) -> tuple[s
     with tempfile.TemporaryDirectory() as t:
         d = Path(t)
         (d / "app.py").write_text(src.read_text())
-        (d / "run_case.py").write_text(make_case.RUN.format(fn=fn))
+        (d / "run_case.py").write_text(make_case.templates(fn, probes)[0].format(fn=fn))
         (d / "inputs.json").write_text(json.dumps(probes))
         g1, e1 = make_case.run_probes(old, d, "inputs.json")
         if g1 is None:

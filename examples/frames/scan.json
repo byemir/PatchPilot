@@ -1,0 +1,40 @@
+{
+ "targets": [
+  {
+   "file": "frames/prep.py",
+   "function": "fill_missing",
+   "lib": "pandas",
+   "inputs": "probes/fill_missing.json"
+  },
+  {
+   "file": "frames/prep.py",
+   "function": "flag_outliers",
+   "lib": "pandas",
+   "inputs": "probes/flag_outliers.json"
+  },
+  {
+   "file": "frames/prep.py",
+   "function": "add_signup_seconds",
+   "lib": "pandas",
+   "inputs": "probes/add_signup_seconds.json"
+  },
+  {
+   "file": "frames/prep.py",
+   "function": "income_per_age",
+   "lib": "pandas",
+   "inputs": "probes/income_per_age.json"
+  },
+  {
+   "file": "frames/prep.py",
+   "function": "top_earners",
+   "lib": "pandas",
+   "inputs": "probes/top_earners.json"
+  },
+  {
+   "file": "frames/prep.py",
+   "function": "clean_names",
+   "lib": "pandas",
+   "inputs": "probes/clean_names.json"
+  }
+ ]
+}
