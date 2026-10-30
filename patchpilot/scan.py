@@ -27,7 +27,7 @@ import tempfile
 import time
 from pathlib import Path
 
-from patchpilot import agent, make_case, repair, sandbox
+from patchpilot import agent, make_case, repair, sandbox, view
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -94,6 +94,8 @@ def repair_one(src: Path, fn: str, lib: str, probes_file: Path, old: str, new: s
             return {**rec, "status": "error", "detail": f"{type(e).__name__}: {str(e)[:200]}"}
         secs = round(time.time() - t0, 1)
         rec.update({"seconds": secs, "tokens": res.get("tokens_used"), "run_dir": res.get("run_dir")})
+        if res.get("run_dir"):  # the gate outcome of every attempt travels with the report, so it can be read without runs/
+            rec["attempts_detail"] = view.run_view(Path(res["run_dir"]))["attempts"]
         if not res.get("success"):
             return {**rec, "status": "not_repaired", "detail": res.get("reason")}
         last = json.loads((Path(res["run_dir"]) / f"attempt_{res['attempts']}.json").read_text())

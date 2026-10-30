@@ -46,7 +46,27 @@
         "wide_divergences": 0
       },
       "applied": false,
-      "diff_file": "session_span.span_seconds.diff"
+      "diff_file": "session_span.span_seconds.diff",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "In pandas 3.0 `astype('int64')` on a datetime Series returns values in a different time unit than nanoseconds, so dividing by 10**9 yields seconds/1000. Using a Timedelta difference avoids the unit assumption.",
+          "tokens": 1049,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 120,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ]
     },
     {
       "file": "analytics/late_flags.py",
@@ -96,7 +116,27 @@
         "wide_divergences": 0
       },
       "applied": false,
-      "diff_file": "late_flags.late_flags.diff"
+      "diff_file": "late_flags.late_flags.diff",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "The loop uses chained indexing `table[\"late\"].iloc[position] = 1` which pandas 3.0 treats as a copy, so the assignment is lost. Using a single-step loc assignment makes the mutation reliable on both pandas 2.3.3 and 3.0.6.",
+          "tokens": 896,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 152,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ]
     },
     {
       "file": "analytics/counts_by_size.py",
@@ -141,7 +181,27 @@
         "wide_divergences": 0
       },
       "applied": false,
-      "diff_file": "counts_by_size.counts_by_size.diff"
+      "diff_file": "counts_by_size.counts_by_size.diff",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "pandas 3.0 changed groupby behavior for categorical columns so missing categories are dropped, causing the result dict to omit size classes with zero counts. The fix is to explicitly include all CLASSES with a default of 0.",
+          "tokens": 1007,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 142,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ]
     },
     {
       "file": "analytics/weekly_totals.py",
@@ -186,7 +246,27 @@
         "wide_divergences": 0
       },
       "applied": false,
-      "diff_file": "hot_readings_text.hot_readings_text.diff"
+      "diff_file": "hot_readings_text.hot_readings_text.diff",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "In NumPy 2.x, `str(np.float64(...))` renders as `np.float64(...)` instead of a plain numeric repr, so `str(list(arr[mask]))` now includes the NumPy type names. Converting the filtered array to native Python scalars with `.tolist()` makes the string representation stable across NumPy 1.26 and 2.5.",
+          "tokens": 936,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 152,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ]
     },
     {
       "file": "sensors/total_with_tax.py",
@@ -211,7 +291,48 @@
       "endpoint": "http://127.0.0.1:8080/v1",
       "seconds": 83.1,
       "tokens": 3924,
-      "run_dir": "runs/20261030-114543_case"
+      "run_dir": "runs/20261030-114543_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "fail",
+            "hidden": "skipped",
+            "differential": "skipped",
+            "outcome": "rejected at the visible tests"
+          },
+          "diagnosis": "The drift is caused by NumPy 2 changing the promotion/rounding of float32 \u00d7 Python float; forcing both operands to float32 makes the intermediate product deterministic across NumPy 1.x and 2.x, so the accumulated sum and the final round to 9 decimals stay identical to the golden values.",
+          "tokens": 1209,
+          "differential": null,
+          "counterexample": null
+        },
+        {
+          "attempt": 2,
+          "gates": {
+            "visible": "fail",
+            "hidden": "skipped",
+            "differential": "skipped",
+            "outcome": "rejected at the visible tests"
+          },
+          "diagnosis": "The output drift is caused by using np.float32 for the per-price conversion, whose scalar arithmetic changed between NumPy 1.26 and 2.5. Removing the NumPy float32 cast and using plain Python float arithmetic makes the summation deterministic and identical on both NumPy versions, restoring the golden values.",
+          "tokens": 1253,
+          "differential": null,
+          "counterexample": null
+        },
+        {
+          "attempt": 3,
+          "gates": {
+            "visible": "fail",
+            "hidden": "skipped",
+            "differential": "skipped",
+            "outcome": "rejected at the visible tests"
+          },
+          "diagnosis": "Numpy 2 changed promotion rules for float32 * Python float, causing the multiplication to be performed in float64 on the new version and producing a slightly different accumulated sum. Forcing both operands to float32 makes the arithmetic stay in 32-bit precision on both versions, restoring the original deterministic result.",
+          "tokens": 1462,
+          "differential": null,
+          "counterexample": null
+        }
+      ]
     },
     {
       "file": "sensors/normalize.py",

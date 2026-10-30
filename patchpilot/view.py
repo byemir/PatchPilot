@@ -78,7 +78,9 @@ def build(args) -> dict:
         row = {k: t.get(k) for k in ("file", "function", "lib", "status", "detail", "example", "attempts", "tokens",
                                      "seconds", "diagnosis", "differential", "applied")}
         rd = t.get("run_dir")
-        if rd and (allowed_root is None or Path(rd).resolve().is_relative_to(allowed_root)) and Path(rd).is_dir():
+        if t.get("attempts_detail"):
+            row["attempts"] = t["attempts_detail"]
+        elif rd and (allowed_root is None or Path(rd).resolve().is_relative_to(allowed_root)) and Path(rd).is_dir():
             row.update(run_view(Path(rd)))
         df = t.get("diff_file")
         if df and (Path(args.report).parent / df).is_file():

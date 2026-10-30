@@ -85,6 +85,8 @@ try:
         check("healthy and loud files are untouched", after["weekly_totals.py"] == before["weekly_totals.py"]
               and after["normalize.py"] == before["normalize.py"] and after["total_volume.py"] == before["total_volume.py"])
         check("a diff is written per repaired function", len(list((tmp / "o1").glob("*.diff"))) == 5)
+        check("the report carries the gate outcome of every attempt", all(
+            r["attempts_detail"][-1]["gates"]["outcome"] == "accepted" for r in rep["targets"] if r["status"] == "repaired"))
 
         shutil.rmtree(repo)
         shutil.copytree(SRC, repo)

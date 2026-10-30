@@ -5,180 +5,274 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PatchPilot scan</title>
 <style>
-:root{--bg:#0f1318;--panel:#171d25;--line:#273140;--text:#e6ebf2;--dim:#8d9bb0;--ok:#3ecf8e;--bad:#ff6b6b;--warn:#f5b84a;--blue:#6aa8ff;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+:root{
+  --bg:#ffffff; --surface:#f5f6f8; --raised:#ffffff; --line:#dadde1; --ink:#1c2b33; --dim:#5d6c7b;
+  --blue:#0866ff; --blue-soft:#e7f0ff; --ok:#1a8f4c; --ok-soft:#e3f5ea; --bad:#d4243a; --bad-soft:#fde8eb;
+  --warn:#a56a00; --warn-soft:#fff1d6; --code:#f5f6f8;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+:root[data-theme="dark"]{
+  --bg:#0e1318; --surface:#151b22; --raised:#1a222b; --line:#2a3541; --ink:#e8edf2; --dim:#93a1b0;
+  --blue:#4c9aff; --blue-soft:#12274a; --ok:#3ccf80; --ok-soft:#10301f; --bad:#ff6b7a; --bad-soft:#3a1a20;
+  --warn:#f2b84b; --warn-soft:#3a2d10; --code:#10161c;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1318; --surface:#151b22; --raised:#1a222b; --line:#2a3541; --ink:#e8edf2; --dim:#93a1b0;
+    --blue:#4c9aff; --blue-soft:#12274a; --ok:#3ccf80; --ok-soft:#10301f; --bad:#ff6b7a; --bad-soft:#3a1a20;
+    --warn:#f2b84b; --warn-soft:#3a2d10; --code:#10161c;
+  }
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:17px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
-header{padding:18px 28px;border-bottom:1px solid var(--line);display:flex;gap:24px;align-items:center;flex-wrap:wrap}
-h1{margin:0;font-size:24px;letter-spacing:.2px}
-.chips{display:flex;gap:10px;flex-wrap:wrap}
-.chip{padding:4px 12px;border-radius:999px;background:var(--panel);border:1px solid var(--line);font-size:15px;color:var(--dim)}
-.chip b{color:var(--text)}
-.spacer{flex:1}
-button{background:var(--blue);color:#06101f;border:0;border-radius:8px;padding:9px 16px;font:600 15px inherit;cursor:pointer}
-button.ghost{background:var(--panel);color:var(--text);border:1px solid var(--line)}
-main{display:grid;grid-template-columns:340px 1fr;min-height:calc(100vh - 70px)}
-@media(max-width:900px){main{grid-template-columns:1fr}}
-nav{border-right:1px solid var(--line);padding:12px;overflow:auto}
-.item{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:10px;cursor:pointer;border:1px solid transparent}
-.item:hover{background:var(--panel)}
-.item.sel{background:var(--panel);border-color:var(--line)}
-.dot{width:12px;height:12px;border-radius:50%;flex:none;background:var(--dim)}
-.s-repaired .dot{background:var(--ok)}.s-silent .dot,.s-not_repaired .dot,.s-error .dot,.s-case_failed .dot{background:var(--bad)}
-.s-loud .dot{background:var(--warn)}.s-healthy .dot{background:var(--blue)}
-.item .n{font-family:var(--mono);font-size:15px}.item .f{color:var(--dim);font-size:13px}
-section{padding:22px 30px;overflow:auto}
-h2{margin:0 0 4px;font-size:24px;font-family:var(--mono)}
-.sub{color:var(--dim);margin-bottom:18px}
-.tag{display:inline-block;padding:2px 10px;border-radius:6px;font-size:14px;font-weight:600;margin-left:8px}
-.t-repaired{background:#12372a;color:var(--ok)}.t-healthy{background:#15294a;color:var(--blue)}
-.t-loud{background:#3d2e0e;color:var(--warn)}.t-not_repaired,.t-error,.t-case_failed,.t-silent,.t-invalid{background:#44181a;color:var(--bad)}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:16px}
-.card h3{margin:0 0 10px;font-size:15px;text-transform:uppercase;letter-spacing:1px;color:var(--dim)}
-.cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:700px){.cmp{grid-template-columns:1fr}}
-pre{margin:0;white-space:pre-wrap;word-break:break-word;font:14px/1.5 var(--mono)}
-.box{background:#0b0f14;border:1px solid var(--line);border-radius:8px;padding:10px 12px}
-.box .l{color:var(--dim);font-size:13px;margin-bottom:4px}
-.attempt{border-top:1px solid var(--line);padding:14px 0}
-.attempt:first-of-type{border-top:0;padding-top:0}
-.ahead{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
-.ahead b{font-size:18px}
-.gates{display:flex;gap:8px;align-items:center}
-.gate{min-width:150px;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:#0b0f14;color:var(--dim);font-size:15px;transition:all .35s}
-.gate .st{font-size:13px;display:block}
-.gate.ok{border-color:var(--ok);color:var(--ok);background:#0f2a21}
-.gate.fail{border-color:var(--bad);color:var(--bad);background:#33161a}
-.gate.skipped,.gate.off,.gate.na{opacity:.5}
-.arrow{color:var(--dim)}
-.diag{color:var(--dim);margin:8px 0 0}
-.counter{margin-top:8px;border-left:3px solid var(--bad);padding:6px 12px;background:#2a1417;border-radius:0 8px 8px 0}
-.diff .a{color:var(--ok);background:#0f2a21}.diff .r{color:var(--bad);background:#33161a}.diff .h{color:var(--blue)}
-.hidden{visibility:hidden}
-.empty{color:var(--dim);padding:40px}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:6px}
+header{display:flex;align-items:center;gap:14px;padding:14px 32px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:19px;letter-spacing:-.01em;margin-right:auto}
+.mark{width:28px;height:28px;border-radius:8px;background:var(--blue);display:grid;place-items:center}
+.mark svg{width:16px;height:16px}
+.btn{border:1px solid var(--line);background:var(--raised);padding:8px 16px;border-radius:999px;cursor:pointer;font-weight:600;font-size:14px}
+.btn:hover{background:var(--surface)}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.primary:hover{filter:brightness(1.08)}
+main{max-width:1180px;margin:0 auto;padding:36px 32px 80px}
+
+.hero h1{margin:0;font-size:34px;line-height:1.2;letter-spacing:-.02em;font-weight:700;max-width:26ch}
+.hero p{margin:12px 0 0;color:var(--dim);font-size:18px;max-width:62ch}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:30px 0 8px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--raised)}
+.stat{padding:20px 24px;border-left:1px solid var(--line)}
+.stat:first-child{border-left:0}
+.stat .v{font-size:46px;line-height:1;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.stat .l{margin-top:8px;font-weight:600;font-size:16px}
+.stat .d{color:var(--dim);font-size:14px;margin-top:2px}
+.stat.ok .v{color:var(--ok)}.stat.bad .v{color:var(--bad)}.stat.blue .v{color:var(--blue)}
+.foot{color:var(--dim);font-size:14px;margin:10px 2px 34px}
+
+h2{font-size:20px;margin:0 0 12px;letter-spacing:-.01em}
+table{width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--raised)}
+th{font-weight:600;font-size:14px;color:var(--dim);text-align:left;padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--line)}
+td{padding:14px 16px;border-top:1px solid var(--line);vertical-align:top}
+tr.row{cursor:pointer}
+tr.row:hover td{background:var(--surface)}
+tr.row[aria-expanded="true"] td{background:var(--surface)}
+.fn{font:700 15px var(--mono);word-break:break-all}
+.file{color:var(--dim);font-size:13px}
+.out{font:13.5px/1.45 var(--mono);word-break:break-word;max-width:30ch}
+.out.bad{color:var(--bad)}
+.pill{display:inline-block;padding:2px 12px;border-radius:999px;font-size:14px;font-weight:600;white-space:nowrap}
+.att{font-size:14px;color:var(--dim)}
+.att b{color:var(--ink)}
+tr.detail>td{padding:6px 24px 28px;background:var(--bg)}
+tr.detail[hidden]{display:none}
+.chev{display:inline-block;transition:transform .2s;color:var(--dim);margin-right:8px}
+tr.row[aria-expanded="true"] .chev{transform:rotate(90deg)}
+
+/* detail */
+.attempt{padding:18px 0 14px;border-top:1px solid var(--line)}
+.attempt:first-child{border-top:0}
+.ahead{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
+.ahead b{font-size:16px}
+.ahead span{color:var(--dim);font-size:14px}
+.rail{display:flex;align-items:flex-start;max-width:820px}
+.station{display:flex;flex-direction:column;align-items:center;width:128px;flex:none;text-align:center}
+.node{width:36px;height:36px;border-radius:50%;border:2px solid var(--line);background:var(--bg);display:grid;place-items:center;font-weight:800;font-size:17px;color:var(--dim);transition:background .35s,border-color .35s,color .35s,transform .35s}
+.station .nm{margin-top:8px;font-weight:600;font-size:14px}
+.station .st{font-size:13px;color:var(--dim);min-height:40px}
+.link{flex:1;height:2px;background:var(--line);margin-top:18px;position:relative;min-width:24px}
+.link::after{content:"";position:absolute;left:0;top:0;height:100%;width:0;background:var(--ok);transition:width .55s ease}
+.link.on::after{width:100%}
+.station.ok .node{background:var(--ok);border-color:var(--ok);color:#fff}
+.station.ok .st{color:var(--ok)}
+.station.fail .node{background:var(--bad);border-color:var(--bad);color:#fff;transform:scale(1.12)}
+.station.fail .st{color:var(--bad);font-weight:600}
+.station.skipped .node,.station.off .node,.station.na .node{border-style:dashed;opacity:.55}
+.station.end.ok .node{border-radius:11px}
+.say{color:var(--dim);max-width:76ch;margin:6px 0 0;font-size:15px}
+.say b{color:var(--ink)}
+.panel{border:1px solid var(--line);border-radius:12px;background:var(--raised);overflow:hidden}
+.panel .cap{padding:8px 14px;font-size:13px;font-weight:600;color:var(--dim);border-bottom:1px solid var(--line);background:var(--surface)}
+pre{margin:0;padding:12px 14px;white-space:pre-wrap;word-break:break-word;font:14px/1.55 var(--mono)}
+.counter{margin-top:12px;max-width:820px;border-color:var(--bad);background:var(--bad-soft)}
+.counter .cap{color:var(--bad);background:transparent;border-bottom:0;padding-bottom:0}
+.counter pre{background:transparent}
+.diff{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--code);margin-top:14px}
+.diff .cap{padding:8px 14px;font-size:13px;font-weight:600;color:var(--dim);border-bottom:1px solid var(--line);background:var(--surface)}
+.ln{display:grid;grid-template-columns:44px 44px 1fr;font:14px/1.6 var(--mono)}
+.ln span{padding:0 10px;white-space:pre-wrap;word-break:break-word}
+.ln .g{color:var(--dim);text-align:right;user-select:none;opacity:.8}
+.ln.a{background:var(--ok-soft)}.ln.a .t{color:var(--ok)}
+.ln.r{background:var(--bad-soft)}.ln.r .t{color:var(--bad)}
+.ln.h .t{color:var(--blue)}
+.gone{visibility:hidden}
+.stat2{color:var(--dim);font-size:14px;margin-top:10px}
+@media(max-width:900px){
+  main{padding:24px 16px 60px}.stats{grid-template-columns:1fr 1fr}.stat:nth-child(3){border-left:0}.stat:nth-child(n+3){border-top:1px solid var(--line)}
+  .hero h1{font-size:26px}.out{max-width:18ch}.station{width:84px}header{padding:12px 16px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 <header>
-  <h1>PatchPilot scan</h1>
-  <div class="chips" id="chips"></div>
-  <div class="spacer"></div>
-  <button class="ghost" id="replay">Replay this</button>
-  <button id="playall">Play all</button>
+  <div class="brand"><span class="mark"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>PatchPilot</div>
+  <button class="btn" id="theme" title="Switch between light and dark">Theme</button>
+  <button class="btn primary" id="playall">Play all</button>
 </header>
-<main>
-  <nav id="nav"></nav>
-  <section id="detail"><div class="empty">Loading…</div></section>
-</main>
+<main id="main"><div>Loading…</div></main>
 <script>
 "use strict";
-let DATA = null, cur = 0, timers = [], auto = false;
+let DATA = null, open = -1, timers = [], auto = false;
+const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const $ = (id) => document.getElementById(id);
 function el(tag, cls, text){const e = document.createElement(tag); if(cls) e.className = cls; if(text !== undefined && text !== null) e.textContent = text; return e;}
 function fmt(x){if(typeof x === "string") return x; const c = JSON.stringify(x); return c.length <= 110 ? c : JSON.stringify(x, null, 1);}
-const GATE_NAMES = {visible: "1  Visible tests", hidden: "2  Hidden tests", differential: "3  Differential"};
-const STATUS_TEXT = {repaired: "repaired", healthy: "healthy", loud: "fails loudly", silent: "silent break", not_repaired: "not repaired", error: "error", case_failed: "case failed", invalid: "invalid"};
-
+function short(x, n){const s = typeof x === "string" ? x : JSON.stringify(x); return s.length <= n ? s : s.slice(0, n - 1) + "…";}
+const STATUS = {
+  repaired: ["Repaired", "var(--ok)", "var(--ok-soft)"], healthy: ["Unaffected", "var(--blue)", "var(--blue-soft)"],
+  loud: ["Fails loudly", "var(--warn)", "var(--warn-soft)"], not_repaired: ["Not repaired", "var(--bad)", "var(--bad-soft)"],
+  silent: ["Silent break", "var(--bad)", "var(--bad-soft)"], error: ["Error", "var(--bad)", "var(--bad-soft)"],
+  case_failed: ["Case failed", "var(--bad)", "var(--bad-soft)"], invalid: ["Invalid", "var(--dim)", "var(--surface)"]};
+const sty = (s) => STATUS[s] || [s, "var(--dim)", "var(--surface)"];
+const GATES = [["visible", "Visible tests"], ["hidden", "Hidden tests"], ["differential", "Differential check"]];
+const WORD = {ok: "Passed", fail: "Rejected", skipped: "Not reached", off: "Switched off", "n/a": "No hidden tests"};
+const ICON = {ok: "✓", fail: "✕", skipped: "–", off: "–", "n/a": "–"};
+const passed = (v) => v === "ok" || v === "n/a" || v === "off";
 function clearTimers(){timers.forEach(clearTimeout); timers = [];}
-function later(ms, fn){timers.push(setTimeout(fn, ms));}
+function later(ms, fn){if(reduce) fn(); else timers.push(setTimeout(fn, ms));}
+const nAtt = (t) => Array.isArray(t.attempts) ? t.attempts : [];
+const isSilent = (t) => ["repaired", "not_repaired", "silent", "error", "case_failed"].includes(t.status);
 
-function renderNav(){
-  const nav = $("nav"); nav.textContent = "";
+function summary(){
+  const T = DATA.targets, S = DATA.summary || {};
+  const silent = T.filter(isSilent).length, repaired = T.filter((t) => t.status === "repaired").length;
+  const hasAtt = T.some((t) => nAtt(t).length);
+  const blocked = T.reduce((n, t) => n + nAtt(t).filter((a) => a.gates.outcome !== "accepted").length, 0);
+  const changed = T.filter((t) => t.applied).length;
+  return {total: T.length, silent, repaired, blocked, hasAtt, changed, S};
+}
+
+function renderMain(){
+  const m = $("main"); m.textContent = ""; const s = summary();
+  const hero = el("div", "hero");
+  hero.appendChild(el("h1", null, s.silent + " of " + s.total + " functions returned different results after the library upgrade."));
+  hero.appendChild(el("p", null, "Nothing raised an error. PatchPilot found the changes and wrote a fix only when three independent checks agreed. A patch that fails any check never reaches your files."));
+  m.appendChild(hero);
+  const st = el("div", "stats");
+  const tile = (cls, v, l, d) => {const t = el("div", "stat " + cls); t.appendChild(el("div", "v", String(v))); t.appendChild(el("div", "l", l)); t.appendChild(el("div", "d", d)); st.appendChild(t);};
+  tile("", s.total, "functions checked", "on the old and the new library version");
+  tile("bad", s.silent, "silently wrong", "different output, no exception");
+  tile("ok", s.repaired, "repaired and verified", "passed all three checks");
+  if(s.hasAtt) tile("blue", s.blocked, "wrong patches blocked", "rejected before they could be applied");
+  else tile("blue", s.total - s.silent, "unaffected or loud", "left untouched");
+  m.appendChild(st);
+  const bits = [];
+  if(s.S.tokens) bits.push(s.S.tokens.toLocaleString("en-US") + " tokens"); if(s.S.seconds) bits.push(Math.round(s.S.seconds) + " seconds");
+  if(s.S.model) bits.push(s.S.model + (s.S.endpoint ? " on a local server, no network" : ""));
+  bits.push(s.changed + " files changed");
+  const foot = el("div", "foot"); bits.forEach((b, k) => {const sp = el("span", null, b); if(k) sp.style.marginLeft = "22px"; foot.appendChild(sp);}); m.appendChild(foot);
+
+  m.appendChild(el("h2", null, "Functions"));
+  const tb = el("table"); const th = el("thead"); const hr = el("tr");
+  ["Function", "Old library returns", "New library returns", "Result", "Attempts"].forEach((x) => hr.appendChild(el("th", null, x))); th.appendChild(hr); tb.appendChild(th);
+  const body = el("tbody");
   DATA.targets.forEach((t, i) => {
-    const it = el("div", "item s-" + t.status + (i === cur ? " sel" : ""));
-    it.appendChild(el("span", "dot"));
-    const w = el("div");
-    w.appendChild(el("div", "n", t.function || t.file));
-    w.appendChild(el("div", "f", (t.function ? t.file + " · " : "") + (STATUS_TEXT[t.status] || t.status)));
-    it.appendChild(w);
-    it.onclick = () => {auto = false; show(i, true);};
-    nav.appendChild(it);
+    const r = el("tr", "row"); r.tabIndex = 0; r.setAttribute("role", "button"); r.setAttribute("aria-expanded", "false"); r.id = "row" + i;
+    const c1 = el("td"); const f = el("div", "fn"); f.appendChild(el("span", "chev", "▸")); f.appendChild(document.createTextNode(t.function || t.file)); c1.appendChild(f); c1.appendChild(el("div", "file", t.file || "")); r.appendChild(c1);
+    if(t.example){
+      r.appendChild(el("td", "out", short(t.example.old, 70))); r.appendChild(el("td", "out bad", short(t.example.new, 70)));
+    } else { const c = el("td", "file", t.detail || ""); c.colSpan = 2; r.appendChild(c); }
+    const [lab, fg, bg] = sty(t.status); const c4 = el("td"); const p = el("span", "pill", lab); p.style.color = fg; p.style.background = bg; c4.appendChild(p); r.appendChild(c4);
+    const a = nAtt(t), c5 = el("td", "att");
+    if(a.length){const rej = a.filter((x) => x.gates.outcome !== "accepted").length; c5.appendChild(el("b", null, String(a.length))); c5.appendChild(document.createTextNode(rej ? "  (" + rej + " rejected)" : ""));}
+    else if(typeof t.attempts === "number") c5.appendChild(el("b", null, String(t.attempts)));
+    else c5.textContent = "–";
+    r.appendChild(c5);
+    const d = el("tr", "detail"); d.hidden = true; d.id = "detail" + i; const dc = el("td"); dc.colSpan = 5; d.appendChild(dc);
+    r.onclick = () => {auto = false; toggle(i, false);};
+    r.onkeydown = (e) => {if(e.key === "Enter" || e.key === " "){e.preventDefault(); auto = false; toggle(i, false);}};
+    body.appendChild(r); body.appendChild(d);
   });
+  tb.appendChild(body); m.appendChild(tb);
 }
 
-function renderChips(){
-  const c = $("chips"); c.textContent = ""; const s = DATA.summary || {};
-  const add = (k, v) => {if(v === null || v === undefined || v === "") return; const d = el("span", "chip"); d.appendChild(document.createTextNode(k + " ")); d.appendChild(el("b", null, String(v))); c.appendChild(d);};
-  if(s.counts) Object.entries(s.counts).forEach(([k, v]) => add(STATUS_TEXT[k] || k, v));
-  add("model", s.model); add("tokens", s.tokens); add("seconds", s.seconds);
-}
-
-function diffBox(text){
-  const box = el("div", "box diff"); const pre = el("pre");
+function diffView(text, applied){
+  const box = el("div", "diff"); box.appendChild(el("div", "cap", applied ? "Patch applied to the file" : "Patch (the file was not changed)"));
+  let a = 0, b = 0;
   text.split("\n").forEach((ln) => {
-    const cls = ln.startsWith("+++") || ln.startsWith("---") || ln.startsWith("@@") ? "h" : ln.startsWith("+") ? "a" : ln.startsWith("-") ? "r" : "";
-    const s = el("div", cls, ln === "" ? " " : ln); pre.appendChild(s);
+    if(ln === "") return;
+    let cls = "", ga = "", gb = ""; const m = /^@@ -(\d+)(?:,\d+)? \+(\d+)/.exec(ln);
+    if(ln.startsWith("---") || ln.startsWith("+++")) cls = "h";
+    else if(m){cls = "h"; a = +m[1]; b = +m[2];}
+    else if(ln.startsWith("+")){cls = "a"; gb = String(b++);}
+    else if(ln.startsWith("-")){cls = "r"; ga = String(a++);}
+    else {ga = String(a++); gb = String(b++);}
+    const row = el("div", "ln " + cls); row.appendChild(el("span", "g", ga)); row.appendChild(el("span", "g", gb)); row.appendChild(el("span", "t", ln)); box.appendChild(row);
   });
-  box.appendChild(pre); return box;
+  return box;
 }
 
-function show(i, animate){
-  clearTimers(); cur = i; renderNav();
-  const t = DATA.targets[i], d = $("detail"); d.textContent = "";
-  const h = el("h2", null, t.function || t.file); h.appendChild(el("span", "tag t-" + t.status, STATUS_TEXT[t.status] || t.status)); d.appendChild(h);
-  d.appendChild(el("div", "sub", [t.file, t.lib, t.detail].filter(Boolean).join(" · ")));
-
-  if(t.example){
-    const c = el("div", "card"); c.appendChild(el("h3", null, "What changed with the upgrade (first input that differs)"));
-    c.appendChild(box1("input", fmt(t.example.input)));
-    const g = el("div", "cmp"); g.appendChild(box1("old library", fmt(t.example.old))); g.appendChild(box1("new library", fmt(t.example.new)));
-    c.appendChild(g); d.appendChild(c);
-  }
-  const atts = Array.isArray(t.attempts) ? t.attempts : null;
-  const list = atts || [];
-  if(list.length){
-    const c = el("div", "card"); c.appendChild(el("h3", null, "Repair attempts and the three gates"));
-    list.forEach((a, k) => {
-      const wrap = el("div", "attempt");
-      const head = el("div", "ahead"); head.appendChild(el("b", null, "Attempt " + (a.attempt || k + 1)));
-      if(a.tokens) head.appendChild(el("span", "chip", a.tokens + " tokens"));
-      const out = el("span", "tag " + (a.gates.outcome === "accepted" ? "t-repaired" : "t-not_repaired"), a.gates.outcome); out.classList.add("hidden");
-      head.appendChild(out); wrap.appendChild(head);
-      const gs = el("div", "gates"); const boxes = [];
-      ["visible", "hidden", "differential"].forEach((g, gi) => {
-        if(gi) gs.appendChild(el("span", "arrow", "→"));
-        const b = el("div", "gate"); b.appendChild(document.createTextNode(GATE_NAMES[g])); const st = el("span", "st", animate ? "…" : label(a.gates[g])); b.appendChild(st);
-        gs.appendChild(b); boxes.push([b, st, a.gates[g]]);
-      });
-      wrap.appendChild(gs);
-      if(a.diagnosis) wrap.appendChild(el("div", "diag", "Model: " + a.diagnosis));
-      let ce = null;
-      if(a.counterexample){
-        ce = el("div", "counter"); ce.appendChild(el("div", null, "Counterexample returned to the model"));
-        ce.appendChild(el("pre", null, "input    " + fmt(a.counterexample.input) + "\nexpected " + fmt(a.counterexample.expected) + "\ngot      " + fmt(a.counterexample.got) + (a.counterexample.where ? "  (" + a.counterexample.where + ")" : "")));
-        if(animate) ce.classList.add("hidden"); wrap.appendChild(ce);
-      }
-      c.appendChild(wrap);
-      const reveal = () => {boxes.forEach(([b, st, v]) => {b.className = "gate " + v; st.textContent = label(v);}); out.classList.remove("hidden"); if(ce) ce.classList.remove("hidden");};
-      if(animate){
-        const base = 500 + k * 2600;
-        boxes.forEach(([b, st, v], gi) => later(base + gi * 650, () => {b.className = "gate " + v; st.textContent = label(v);}));
-        later(base + 2000, () => {out.classList.remove("hidden"); if(ce) ce.classList.remove("hidden");});
-      } else reveal();
-    });
-    d.appendChild(c);
-  }
-  if(t.diagnosis && !list.length){const c = el("div", "card"); c.appendChild(el("h3", null, "Diagnosis")); c.appendChild(el("div", null, t.diagnosis)); d.appendChild(c);}
-  if(t.diff){const c = el("div", "card"); c.appendChild(el("h3", null, "Accepted patch" + (t.applied ? " (applied)" : " (not applied)"))); c.appendChild(diffBox(t.diff)); if(animate) c.classList.add("hidden"); d.appendChild(c);
-    if(animate) later(500 + list.length * 2600, () => c.classList.remove("hidden"));}
-  if(t.differential && t.differential.valid !== undefined){const c = el("div", "sub", "Differential check: " + t.differential.verdict + " · " + t.differential.valid + " valid of " + t.differential.generated + " generated inputs · " + t.differential.core_divergences + " divergences"); d.appendChild(c);}
-  if(!t.example && !list.length && !t.diff) d.appendChild(el("div", "empty", "Nothing to repair here."));
-  if(auto){const total = 600 + list.length * 2600 + 2800; later(total, () => {if(cur + 1 < DATA.targets.length) show(cur + 1, true); else auto = false;});}
+function rail(a, animate, base){
+  const wrap = el("div", "rail"); const st = [], links = [];
+  GATES.forEach(([g, name]) => {
+    const s = el("div", "station"); const n = el("div", "node", animate ? "" : ICON[a.gates[g]]);
+    s.appendChild(n); s.appendChild(el("div", "nm", name)); const w = el("div", "st", animate ? "" : WORD[a.gates[g]]); s.appendChild(w);
+    st.push([s, n, w, a.gates[g]]); wrap.appendChild(s); const l = el("div", "link"); links.push(l); wrap.appendChild(l);
+  });
+  const acc = a.gates.outcome === "accepted";
+  const end = el("div", "station end"); const en = el("div", "node", animate ? "" : (acc ? "✓" : "✕")); end.appendChild(en);
+  end.appendChild(el("div", "nm", acc ? "Accepted" : "Rejected")); const ew = el("div", "st", ""); end.appendChild(ew); wrap.appendChild(end);
+  const settle = (s, n, w, v) => {s.classList.add(v); n.textContent = ICON[v]; w.textContent = WORD[v];};
+  const finish = () => {end.classList.add(acc ? "ok" : "fail"); en.textContent = acc ? "✓" : "✕"; ew.textContent = acc ? "Patch ready" : a.gates.outcome.replace("rejected at the ", "Stopped at ");};
+  if(!animate){st.forEach(([s, n, w, v], i) => {settle(s, n, w, v); if(passed(v)) links[i].classList.add("on");}); finish();}
+  else {st.forEach(([s, n, w, v], gi) => later(base + 300 + gi * 750, () => {settle(s, n, w, v); if(passed(v)) links[gi].classList.add("on");})); later(base + 300 + 3 * 750, finish);}
+  return wrap;
 }
-function label(v){return {ok: "passed", fail: "rejected", skipped: "not reached", off: "off", "n/a": "none"}[v] || v;}
-function box1(l, text){const b = el("div", "box"); b.appendChild(el("div", "l", l)); b.appendChild(el("pre", null, text)); return b;}
 
-$("replay").onclick = () => {auto = false; show(cur, true);};
-$("playall").onclick = () => {auto = true; show(0, true);};
+function fill(i, animate){
+  const t = DATA.targets[i], cell = $("detail" + i).firstChild; cell.textContent = "";
+  const list = nAtt(t);
+  if(t.example && list.length === 0){
+    cell.appendChild(el("p", "say", t.detail || ""));
+  }
+  list.forEach((a, k) => {
+    const wrap = el("div", "attempt"); const head = el("div", "ahead"); head.appendChild(el("b", null, "Attempt " + (a.attempt || k + 1)));
+    if(a.tokens) head.appendChild(el("span", null, a.tokens + " tokens")); wrap.appendChild(head);
+    const base = k * 3600; wrap.appendChild(rail(a, animate, base));
+    if(a.diagnosis){const p = el("p", "say"); p.appendChild(el("b", null, "The model said: ")); p.appendChild(document.createTextNode(a.diagnosis)); wrap.appendChild(p);}
+    if(a.counterexample){
+      const ce = el("div", "panel counter"); ce.appendChild(el("div", "cap", "Counterexample sent back to the model"));
+      ce.appendChild(el("pre", null, "input     " + fmt(a.counterexample.input) + "\nexpected  " + fmt(a.counterexample.expected) + "\ngot       " + fmt(a.counterexample.got) + (a.counterexample.where ? "   (" + a.counterexample.where + ")" : "")));
+      if(animate) ce.classList.add("gone"); wrap.appendChild(ce); later(base + 300 + 3 * 750, () => ce.classList.remove("gone"));
+    }
+    cell.appendChild(wrap);
+  });
+  if(t.diff){const v = diffView(t.diff, t.applied); if(animate) v.classList.add("gone"); cell.appendChild(v); later(list.length * 3600 + 300, () => v.classList.remove("gone"));}
+  if(t.differential && t.differential.valid !== undefined)
+    cell.appendChild(el("div", "stat2", "Differential check " + String(t.differential.verdict).toLowerCase() + ": " + t.differential.valid + " of " + t.differential.generated + " generated inputs were usable, " + t.differential.core_divergences + " diverged."));
+  if(!list.length && !t.diff && !t.example) cell.appendChild(el("p", "say", t.detail || "Nothing to repair here."));
+  if(t.example && t.status === "loud") cell.appendChild(el("p", "say", "The new library raises an exception here, so this is not a silent break. PatchPilot reports it and does not change the file."));
+}
+
+function toggle(i, animate){
+  clearTimers();
+  if(open >= 0){$("detail" + open).hidden = true; $("row" + open).setAttribute("aria-expanded", "false");}
+  if(open === i && !animate){open = -1; return;}
+  open = i; fill(i, animate); $("detail" + i).hidden = false; $("row" + i).setAttribute("aria-expanded", "true");
+  $("row" + i).scrollIntoView({block: "start", behavior: reduce ? "auto" : "smooth"});
+  if(auto){const n = nAtt(DATA.targets[i]).length; later(n * 3600 + 3600, () => {if(auto && i + 1 < DATA.targets.length) toggle(i + 1, true); else auto = false;});}
+}
+
+$("playall").onclick = () => {auto = true; const first = Math.max(0, DATA.targets.findIndex((t) => nAtt(t).length)); toggle(first, true);};
+let theme = "auto";
+$("theme").onclick = () => {theme = theme === "auto" ? "dark" : theme === "dark" ? "light" : "auto"; if(theme === "auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", theme);};
 document.addEventListener("keydown", (e) => {
-  if(e.key === "ArrowDown" || e.key === "j"){auto = false; show(Math.min(cur + 1, DATA.targets.length - 1), false);}
-  else if(e.key === "ArrowUp" || e.key === "k"){auto = false; show(Math.max(cur - 1, 0), false);}
-  else if(e.key === " "){e.preventDefault(); auto = false; show(cur, true);}
+  if(e.target.tagName === "BUTTON") return;
+  if(e.key === "ArrowDown" || e.key === "j"){e.preventDefault(); const n = Math.min(open + 1, DATA.targets.length - 1); auto = false; toggle(n, false);}
+  else if(e.key === "ArrowUp" || e.key === "k"){e.preventDefault(); const n = Math.max(open - 1, 0); auto = false; toggle(n, false);}
 });
-fetch("/api/data").then((r) => r.json()).then((j) => {
-  DATA = j; document.title = j.title; renderChips();
-  const first = Math.max(0, j.targets.findIndex((t) => t.status === "repaired" || t.status === "not_repaired"));
-  show(first, false);
-}).catch(() => {$("detail").textContent = "Could not load /api/data";});
+fetch("/api/data").then((r) => r.json()).then((j) => {DATA = j; document.title = j.title; renderMain();})
+  .catch(() => {$("main").textContent = "Could not load /api/data";});
 </script>
 </body>
 </html>
