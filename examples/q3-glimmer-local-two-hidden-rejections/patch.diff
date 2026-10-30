@@ -1,0 +1,13 @@
+--- a/app.py
++++ b/app.py
+@@ -6,5 +6,9 @@
+     lines = []
+     for name in sorted(columns):
+         values = np.array(columns[name])
+-        lines.append(f"{name}={values.max()!r}")
++        max_val = values.max()
++        # Convert NumPy scalar to native Python scalar for stable string formatting
++        # .item() works on both NumPy 1.x and 2.x and avoids np.float64(...) repr
++        py_val = max_val.item() if hasattr(max_val, "item") else float(max_val)
++        lines.append(f"{name}={py_val}")
+     return lines

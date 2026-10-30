@@ -1,0 +1,21 @@
+{
+  "folder": "q3-glimmer-local-two-hidden-rejections",
+  "result_file": "bench_20261029-210614_muse-glimmer_local.json",
+  "run_number": 10,
+  "case": "q3_scalar_repr",
+  "model": "muse-glimmer",
+  "effort": "low",
+  "mode": "one-shot (local endpoint)",
+  "layer": "isolation layer on, counted",
+  "gate": "differential gate on",
+  "attempts": 3,
+  "tokens_used": 3305,
+  "gate_per_attempt": [
+    "rejected at hidden check",
+    "rejected at hidden check",
+    "accepted"
+  ],
+  "rescored_verdict": "PASS",
+  "rescored_seed": 1,
+  "submitted_from": null
+}
