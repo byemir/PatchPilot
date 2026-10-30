@@ -101,7 +101,7 @@ def make_diff(original: dict, files: dict) -> str:
 
 def repair(case_dir, old_py, new_py, *, lib="pandas", model="muse-spark-1.3", effort="low",
            max_attempts=3, token_budget=60000, runs_root="runs", diff_check=True, diff_n=200,
-           diff_seed=0, tools=False, endpoint=None) -> dict:
+           diff_seed=0, tools=False, endpoint=None, progress=None) -> dict:
     case_dir = Path(case_dir)
     if tools and endpoint:
         raise ValueError("tools mode is not supported with a local endpoint")
@@ -159,6 +159,8 @@ def repair(case_dir, old_py, new_py, *, lib="pandas", model="muse-spark-1.3", ef
             record["error"] = str(e)
             feedback = f"Your reply was invalid: {e}"
             (run_dir / f"attempt_{attempt}.json").write_text(json.dumps(record, indent=2))
+            if progress:
+                progress(attempt, record)
             continue
 
         old_r = check.check(case_dir, old_py, files=files)
@@ -182,6 +184,8 @@ def repair(case_dir, old_py, new_py, *, lib="pandas", model="muse-spark-1.3", ef
                        "hidden_new": hid_new and hid_new["verdict"],
                        "hidden_new_actual": hid_new and hid_new["actual"], "differential": diff, "success": ok})
         (run_dir / f"attempt_{attempt}.json").write_text(json.dumps(record, indent=2))
+        if progress:
+            progress(attempt, record)
 
         if ok:
             patch = make_diff(editable, files)

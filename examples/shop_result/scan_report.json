@@ -1,0 +1,584 @@
+{
+  "manifest": "examples/shop/scan.json",
+  "model": "muse-glimmer",
+  "endpoint": "http://127.0.0.1:8080/v1",
+  "effort": "low",
+  "triage_only": false,
+  "applied": false,
+  "seconds": 334.1,
+  "tokens": 13097,
+  "counts": {
+    "healthy": 5,
+    "loud": 3,
+    "not_repaired": 1,
+    "repaired": 6
+  },
+  "targets": [
+    {
+      "file": "orders/daily_revenue.py",
+      "function": "daily_revenue",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 3 inputs",
+      "example": null
+    },
+    {
+      "file": "orders/flag_big_orders.py",
+      "function": "flag_big_orders",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 2 of 3 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "rows": [
+            {
+              "amount": 10
+            },
+            {
+              "amount": 120
+            },
+            {
+              "amount": 75
+            }
+          ],
+          "limit": 50
+        },
+        "old": [
+          false,
+          true,
+          true
+        ],
+        "new": [
+          false,
+          false,
+          false
+        ]
+      },
+      "source_sha256": "661e22658c9581d34c67ad0f257163de693f85c33fe4c52928ecf200c7c19c06",
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 18.1,
+      "tokens": 850,
+      "run_dir": "runs/20261030-151200_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "Chained indexing `df[\"big\"][mask] = True` triggers pandas Copy-on-Write semantics in 3.0 and silently fails to write, so the `big` column stays all False. Using explicit `.loc` indexing writes reliably on both pandas 2.3.3 and 3.0.6.",
+          "tokens": 850,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 145,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "Chained indexing `df[\"big\"][mask] = True` triggers pandas Copy-on-Write semantics in 3.0 and silently fails to write, so the `big` column stays all False. Using explicit `.loc` indexing writes reliably on both pandas 2.3.3 and 3.0.6.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 145,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "flag_big_orders.flag_big_orders.diff"
+    },
+    {
+      "file": "orders/fill_missing_region.py",
+      "function": "fill_missing_region",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 2 of 3 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "rows": [
+            {
+              "region": "EU"
+            },
+            {
+              "region": null
+            },
+            {
+              "region": "US"
+            }
+          ]
+        },
+        "old": [
+          "EU",
+          "unknown",
+          "US"
+        ],
+        "new": [
+          "EU",
+          NaN,
+          "US"
+        ]
+      },
+      "source_sha256": "00053a3ede7585f72f25d05c370a3ebec321bdab26ee9f2834bbe25b1616bc62",
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 21.4,
+      "tokens": 955,
+      "run_dir": "runs/20261030-151222_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "pandas 3.0 changed `inplace=True` semantics for `fillna`, so `df[\"region\"].fillna(\"unknown\", inplace=True)` no longer mutates the column on the new version, leaving NaN values which become NaN/null in JSON. Using assignment instead of inplace works on both 2.3.3 and 3.0.6.",
+          "tokens": 955,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 149,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "pandas 3.0 changed `inplace=True` semantics for `fillna`, so `df[\"region\"].fillna(\"unknown\", inplace=True)` no longer mutates the column on the new version, leaving NaN values which become NaN/null in JSON. Using assignment instead of inplace works on both 2.3.3 and 3.0.6.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 149,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "fill_missing_region.fill_missing_region.diff"
+    },
+    {
+      "file": "orders/monthly_average.py",
+      "function": "monthly_average",
+      "lib": "pandas",
+      "status": "loud",
+      "detail": "raises ValueError on the new library for 2 of 2 inputs",
+      "example": {
+        "input": {
+          "rows": [
+            {
+              "ts": "2025-01-05",
+              "amount": 10
+            },
+            {
+              "ts": "2025-01-20",
+              "amount": 30
+            },
+            {
+              "ts": "2025-02-03",
+              "amount": 50
+            }
+          ]
+        },
+        "old": {
+          "2025-01": 20.0,
+          "2025-02": 50.0
+        },
+        "new": {
+          "error": "ValueError"
+        }
+      }
+    },
+    {
+      "file": "orders/last_seen_epoch.py",
+      "function": "last_seen_epoch",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 3 of 3 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "stamps": [
+            "2025-03-01 10:00:00",
+            "2025-03-01 12:30:15"
+          ]
+        },
+        "old": 1740832215,
+        "new": 1740832
+      },
+      "source_sha256": "7180053de4a38d5e93e5200c2be1b04a60be4a225d2be2169efa14f2d8407c7d",
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 28.7,
+      "tokens": 1168,
+      "run_dir": "runs/20261030-151247_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "pandas 3.0 changed the integer representation returned by astype('int64') on a DatetimeArray from nanoseconds to a smaller unit, so dividing by 1e9 yields seconds/1000. Using Timestamp.timestamp() gives epoch seconds independent of the internal integer unit.",
+          "tokens": 1168,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 121,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "pandas 3.0 changed the integer representation returned by astype('int64') on a DatetimeArray from nanoseconds to a smaller unit, so dividing by 1e9 yields seconds/1000. Using Timestamp.timestamp() gives epoch seconds independent of the internal integer unit.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 121,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "last_seen_epoch.last_seen_epoch.diff"
+    },
+    {
+      "file": "orders/size_buckets.py",
+      "function": "size_buckets",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 3 inputs",
+      "example": null
+    },
+    {
+      "file": "people/top_customers.py",
+      "function": "top_customers",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 3 inputs",
+      "example": null
+    },
+    {
+      "file": "people/clean_names.py",
+      "function": "clean_names",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 3 of 3 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "names": [
+            "  ana lovelace",
+            "BO PEEP ",
+            "cy  young"
+          ]
+        },
+        "old": [
+          "Ana Lovelace",
+          "Bo Peep",
+          "Cy  Young"
+        ],
+        "new": [
+          "  ana lovelace",
+          "BO PEEP ",
+          "cy  young"
+        ]
+      },
+      "source_sha256": "1d02116269dcd1498c11582827e64dc11ac99164dfa255bbf18c268764867cd6",
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 28.5,
+      "tokens": 1191,
+      "run_dir": "runs/20261030-151320_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "In pandas 3.0 string columns use a dedicated StringDtype instead of object, so `s.dtype == object` is False and the strip/title chain is skipped. Applying the string accessor unconditionally works on both the old object dtype and the new string dtype.",
+          "tokens": 1191,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 148,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "In pandas 3.0 string columns use a dedicated StringDtype instead of object, so `s.dtype == object` is False and the strip/title chain is skipped. Applying the string accessor unconditionally works on both the old object dtype and the new string dtype.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 148,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "clean_names.clean_names.diff"
+    },
+    {
+      "file": "people/rank_scores.py",
+      "function": "rank_scores",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 3 inputs",
+      "example": null
+    },
+    {
+      "file": "metrics/summary_line.py",
+      "function": "summary_line",
+      "lib": "numpy",
+      "status": "repaired",
+      "detail": "the new library differs on 3 of 3 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "values": [
+            21.5,
+            19.0,
+            23.25
+          ]
+        },
+        "old": "max=23.25 values=[21.5, 19.0, 23.25]",
+        "new": "max=23.25 values=[np.float64(21.5), np.float64(19.0), np.float64(23.25)]"
+      },
+      "source_sha256": "e1486d879e849071f826e5e9124c05c345ea08a9aa758ad9f279640de1985ff2",
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 13.2,
+      "tokens": 917,
+      "run_dir": "runs/20261030-151349_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "In NumPy 2.x, iterating / converting an ndarray to list yields NumPy scalar objects whose `str()` includes the type prefix `np.float64(...)`. Using `ndarray.tolist()` converts the data to native Python floats so `str(list(...))` matches the golden output on both NumPy 1.26.4 and 2.5.4.",
+          "tokens": 917,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 140,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "In NumPy 2.x, iterating / converting an ndarray to list yields NumPy scalar objects whose `str()` includes the type prefix `np.float64(...)`. Using `ndarray.tolist()` converts the data to native Python floats so `str(list(...))` matches the golden output on both NumPy 1.26.4 and 2.5.4.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 140,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "summary_line.summary_line.diff"
+    },
+    {
+      "file": "metrics/scores_text.py",
+      "function": "scores_text",
+      "lib": "numpy",
+      "status": "repaired",
+      "detail": "the new library differs on 3 of 3 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "teams": [
+            "red",
+            "blue",
+            "green"
+          ],
+          "raw": [
+            3.14159,
+            2.71828,
+            1.41421
+          ]
+        },
+        "old": "{'red': 3.1, 'blue': 2.7, 'green': 1.4}",
+        "new": "{'red': np.float64(3.1), 'blue': np.float64(2.7), 'green': np.float64(1.4)}"
+      },
+      "source_sha256": "69816ce56ecbc3845c54f4afe0324b6ee74e29744a582768c7370d2568400307",
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 17.5,
+      "tokens": 1003,
+      "run_dir": "runs/20261030-151404_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "In NumPy 2.x the string representation of numpy scalar types changed so `str(dict(zip(teams, rounded)))` renders values as `np.float64(...)` instead of plain Python floats. Converting the rounded NumPy array to native Python floats before building the dict restores the golden string representation on both NumPy 1.26.4 and 2.5.4.",
+          "tokens": 1003,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 148,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "In NumPy 2.x the string representation of numpy scalar types changed so `str(dict(zip(teams, rounded)))` renders values as `np.float64(...)` instead of plain Python floats. Converting the rounded NumPy array to native Python floats before building the dict restores the golden string representation on both NumPy 1.26.4 and 2.5.4.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 148,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "scores_text.scores_text.diff"
+    },
+    {
+      "file": "metrics/p90_latency.py",
+      "function": "p90_latency",
+      "lib": "numpy",
+      "status": "loud",
+      "detail": "raises TypeError on the new library for 3 of 3 inputs",
+      "example": {
+        "input": {
+          "ms": [
+            12,
+            15,
+            11,
+            40,
+            13,
+            18,
+            22,
+            90,
+            14,
+            16
+          ]
+        },
+        "old": 40.0,
+        "new": {
+          "error": "TypeError"
+        }
+      }
+    },
+    {
+      "file": "metrics/area_under.py",
+      "function": "area_under",
+      "lib": "numpy",
+      "status": "loud",
+      "detail": "raises AttributeError on the new library for 3 of 3 inputs",
+      "example": {
+        "input": {
+          "xs": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "ys": [
+            0,
+            1,
+            4,
+            9
+          ]
+        },
+        "old": 9.5,
+        "new": {
+          "error": "AttributeError"
+        }
+      }
+    },
+    {
+      "file": "metrics/discounted_price.py",
+      "function": "discounted_price",
+      "lib": "numpy",
+      "status": "not_repaired",
+      "detail": "max attempts reached",
+      "example": {
+        "input": {
+          "price": 19.99,
+          "rate": 0.15
+        },
+        "old": 16.991499805450438,
+        "new": 16.991500854492188
+      },
+      "source_sha256": "55b9767829a64e433e99cc57777a9a3cc9e6719e2d401e075cd87f974ceddee9",
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 179.1,
+      "tokens": 7013,
+      "run_dir": "runs/20261030-151423_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "fail",
+            "hidden": "skipped",
+            "differential": "skipped",
+            "outcome": "rejected at the visible tests"
+          },
+          "diagnosis": "Numpy 2 changed the promotion rules for mixed float32/float64 scalar operations, so `np.float32(price) * (1.0 - rate)` is now performed with a different rounding path than in 1.26. Forcing both operands to float32 makes the multiplication stay in single precision and the final Python float conversion becomes stable across versions.",
+          "tokens": 2895,
+          "differential": null,
+          "counterexample": null
+        },
+        {
+          "attempt": 2,
+          "gates": {
+            "visible": "fail",
+            "hidden": "skipped",
+            "differential": "skipped",
+            "outcome": "rejected at the visible tests"
+          },
+          "diagnosis": "The multiplication mixes a float32 price with a Python float rate, and NumPy 2 changed the ufunc promotion/rounding for float32\u00d7float64. Forcing both operands of the arithmetic into float32 makes the computation stay in the same 32-bit domain on both NumPy 1.26.4 and 2.5.4, restoring the original deterministic result.",
+          "tokens": 1881,
+          "differential": null,
+          "counterexample": null
+        },
+        {
+          "attempt": 3,
+          "gates": {
+            "visible": "fail",
+            "hidden": "skipped",
+            "differential": "skipped",
+            "outcome": "rejected at the visible tests"
+          },
+          "diagnosis": "NumPy 2.x changed the implementation of float32 arithmetic so that `np.float32(price) * (1.0 - rate)` is performed in higher precision on NumPy 2.5.4, producing a different rounding than the float32-only evaluation that NumPy 1.26.4 performed. Keeping the whole computation in strict float32 domain restores the 1.26.4 rounding and makes the result identical on both versions.",
+          "tokens": 2237,
+          "differential": null,
+          "counterexample": null
+        }
+      ]
+    },
+    {
+      "file": "metrics/row_shares.py",
+      "function": "row_shares",
+      "lib": "numpy",
+      "status": "healthy",
+      "detail": "same output on all 3 inputs",
+      "example": null
+    }
+  ]
+}

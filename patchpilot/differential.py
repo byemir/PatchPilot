@@ -22,6 +22,7 @@ from __future__ import annotations
 import argparse
 import datetime as _dt
 import json
+import math
 import random
 import re
 import sys
@@ -178,7 +179,8 @@ class Gen:
         if isinstance(v, float):
             return r.choice([lo, hi, round(r.uniform(lo, hi), 6)])
         zero = [0] if lo > 0 else []
-        cands = [lo, hi, r.randint(lo, hi), min(hi, v + 1), max(lo, v - 1)] + zero
+        ilo, ihi = math.ceil(lo), math.floor(hi)  # a field seen as int and as float has float bounds
+        cands = [lo, hi, r.randint(ilo, ihi) if ilo <= ihi else v, min(hi, v + 1), max(lo, v - 1)] + zero
         return r.choice(cands) if pick < 0.9 else v
 
     def mut_str(self, v: str, path: str):

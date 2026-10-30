@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import hashlib
 import io
 import json
 import sys
@@ -69,7 +70,7 @@ def triage(src: Path, fn: str, probes_file: Path, old: str, new: str) -> tuple[s
         return "silent", f"the new library differs on {len(diff)} of {len(probes)} inputs and nothing is raised", ex
 
 
-def repair_one(src: Path, fn: str, lib: str, probes_file: Path, old: str, new: str, o: argparse.Namespace) -> dict:
+def repair_one(src: Path, fn: str, lib: str, probes_file: Path, old: str, new: str, o: argparse.Namespace, on_attempt=None) -> dict:
     """Build a case, let the model repair it behind the gates; returns the record for the report."""
     original = src.read_text()
     model = o.model or ("muse-glimmer" if o.endpoint else "muse-spark-1.3")
@@ -85,11 +86,14 @@ def repair_one(src: Path, fn: str, lib: str, probes_file: Path, old: str, new: s
         except SystemExit as e:
             if e.code not in (0, None):
                 return {**rec, "status": "case_failed", "detail": buf.getvalue().strip().splitlines()[-1][:300]}
+        except Exception as e:  # one function must not stop the whole scan
+            return {**rec, "status": "case_failed", "detail": f"{type(e).__name__}: {str(e)[:200]}"}
         sandbox.set_fs_deny(True)  # model code always runs isolated
         t0 = time.time()
         try:
             res = agent.repair(case, old, new, lib=lib, model=model, effort=o.effort, max_attempts=o.max_attempts,
-                               token_budget=o.token_budget, runs_root=o.runs_dir, endpoint=o.endpoint)
+                               token_budget=o.token_budget, runs_root=o.runs_dir, endpoint=o.endpoint,
+                               progress=on_attempt)
         except Exception as e:  # network or server problem: report it, go on with the next target
             return {**rec, "status": "error", "detail": f"{type(e).__name__}: {str(e)[:200]}"}
         secs = round(time.time() - t0, 1)
@@ -127,6 +131,7 @@ def main(argv=None) -> int:
     ap.add_argument("--out-dir", default="scan_out", help="where the report and the diffs are written")
     ap.add_argument("--runs-dir", default=str(ROOT / "runs"))
     ap.add_argument("--apply", action="store_true", help="overwrite each repaired file with its accepted patch")
+    ap.add_argument("--events", action="store_true", help="print one JSON object per line (progress events) instead of text")
     o = ap.parse_args(argv)
 
     mp = Path(o.manifest)
@@ -145,43 +150,68 @@ def main(argv=None) -> int:
     out = Path(o.out_dir)
     out.mkdir(parents=True, exist_ok=True)
 
+    def emit(obj: dict) -> None:
+        if o.events:
+            print(json.dumps(obj), flush=True)
+
+    def say(text: str) -> None:
+        if not o.events:
+            print(text, flush=True)
+
     rows = []
     t_start = time.time()
-    for k, t in enumerate(targets, 1):
+    emit({"event": "start", "total": len(targets), "model": o.model or ("muse-glimmer" if o.endpoint else "muse-spark-1.3"),
+          "endpoint": o.endpoint, "triage_only": o.triage_only})
+    jobs = []  # (index, src, probes, old, new)
+    for k, t in enumerate(targets):  # pass 1: classify every function on both libraries (no model)
         src, probes = base / t["file"], base / t["inputs"]
         old, new = repair.default_python(t["lib"], 0), repair.default_python(t["lib"], 1)
-        row = {"file": t["file"], "function": t["function"], "lib": t["lib"]}
+        row = {"file": t["file"], "function": t["function"], "lib": t["lib"], "path": str(src.resolve())}
         if not src.is_file() or not probes.is_file():
-            row.update({"status": "invalid", "detail": "file or inputs not found"})
+            row.update({"status": "invalid", "detail": "file or inputs not found", "example": None})
         elif not old or not new or not Path(old).exists() or not Path(new).exists():
             print(f"scan: no interpreters for {t['lib']} (build them with scripts/setup_envs.sh)", file=sys.stderr)
             return 2
         else:
             status, detail, example = triage(src, t["function"], probes, old, new)
             row.update({"status": status, "detail": detail, "example": example})
-            print(f"[{k}/{len(targets)}] {t['file']}:{t['function']}  {status}: {detail}", flush=True)
-            if status == "silent" and not o.triage_only:
-                r = repair_one(src, t["function"], t["lib"], probes, old, new, o)
-                diff = r.pop("diff", None)
-                row.update(r)
-                row["status"] = r["status"]
-                if diff:
-                    dp = out / f"{Path(t['file']).stem}.{t['function']}.diff"
-                    dp.write_text(diff)
-                    row["diff_file"] = dp.name
-                tail = (f"{r.get('attempts')} attempt(s), {r.get('tokens')} tokens, {r.get('seconds')} s"
-                        if r["status"] == "repaired" else r.get("detail"))
-                print(f"        -> {r['status']}: {tail}", flush=True)
+            if status == "silent":
+                row["source_sha256"] = hashlib.sha256(src.read_bytes()).hexdigest()
+                jobs.append((k, src, probes, old, new))
+            say(f"[{k + 1}/{len(targets)}] {t['file']}:{t['function']}  {status}: {detail}")
         rows.append(row)
+        emit({"event": "triage", "index": k, "row": row})
+    if not o.triage_only:
+        for k, src, probes, old, new in jobs:  # pass 2: repair the silent ones
+            t = targets[k]
+            emit({"event": "repairing", "index": k})
+
+            def on_attempt(n, rec, k=k):
+                emit({"event": "attempt", "index": k, "attempt": view.attempt_view(rec)})
+            r = repair_one(src, t["function"], t["lib"], probes, old, new, o, on_attempt)
+            diff = r.pop("diff", None)
+            rows[k].update(r)
+            rows[k]["status"] = r["status"]
+            if diff:
+                dp = out / f"{Path(t['file']).stem}.{t['function']}.diff"
+                dp.write_text(diff)
+                rows[k]["diff_file"] = dp.name
+            tail = (f"{r.get('attempts')} attempt(s), {r.get('tokens')} tokens, {r.get('seconds')} s"
+                    if r["status"] == "repaired" else r.get("detail"))
+            say(f"        -> {t['function']}: {r['status']}: {tail}")
+            emit({"event": "result", "index": k, "row": {**rows[k], "diff": diff}})
 
     count = {s: sum(r["status"] == s for r in rows) for s in sorted({r["status"] for r in rows})}
     report = {"manifest": str(mp), "model": o.model or ("muse-glimmer" if o.endpoint else "muse-spark-1.3"),
               "endpoint": o.endpoint, "effort": o.effort, "triage_only": o.triage_only, "applied": o.apply,
               "seconds": round(time.time() - t_start, 1),
-              "tokens": sum(r.get("tokens") or 0 for r in rows), "counts": count, "targets": rows}
+              "tokens": sum(r.get("tokens") or 0 for r in rows), "counts": count,
+              "targets": [{k: v for k, v in r.items() if k != "path"} for r in rows]}  # no absolute paths in the report
     (out / "scan_report.json").write_text(json.dumps(report, indent=2) + "\n")
-    print("\n" + "  ".join(f"{s}: {n}" for s, n in count.items()))
-    print(f"report: {out / 'scan_report.json'}")
+    say("\n" + "  ".join(f"{s}: {n}" for s, n in count.items()))
+    say(f"report: {out / 'scan_report.json'}")
+    emit({"event": "done", "counts": count, "tokens": report["tokens"], "seconds": report["seconds"],
+          "report": str(out / "scan_report.json")})
     bad = [r for r in rows if r["status"] in ("not_repaired", "error", "case_failed")]
     return 1 if bad else 0
 

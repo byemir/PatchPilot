@@ -1,0 +1,9 @@
+--- a/summary_line.py
++++ b/summary_line.py
+@@ -3,4 +3,5 @@
+ 
+ def summary_line(values):
+     a = np.asarray(values, dtype=np.float64)
+-    return "max=" + str(np.max(a)) + " values=" + str(list(a))
++    vals = a.tolist()
++    return "max=" + str(np.max(a)) + " values=" + str(vals)

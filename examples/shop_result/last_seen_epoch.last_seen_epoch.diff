@@ -1,0 +1,8 @@
+--- a/last_seen_epoch.py
++++ b/last_seen_epoch.py
+@@ -3,4 +3,4 @@
+ 
+ def last_seen_epoch(stamps):
+     ts = pd.to_datetime(pd.Series(stamps))
+-    return int(ts.astype("int64").max() // 10**9)
++    return int(ts.max().timestamp())

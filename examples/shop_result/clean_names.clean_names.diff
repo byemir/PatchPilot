@@ -1,0 +1,11 @@
+--- a/clean_names.py
++++ b/clean_names.py
+@@ -3,6 +3,6 @@
+ 
+ def clean_names(names):
+     s = pd.Series(names)
+-    if s.dtype == object:
+-        s = s.str.strip().str.title()
++    # Apply strip and title case regardless of pandas dtype version
++    s = s.str.strip().str.title()
+     return s.tolist()

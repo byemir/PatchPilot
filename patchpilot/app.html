@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PatchPilot</title>
+<style>
+:root{
+  --bg:#ffffff; --surface:#f5f6f8; --raised:#ffffff; --line:#dadde1; --ink:#1c2b33; --dim:#5d6c7b;
+  --blue:#0866ff; --blue-soft:#e7f0ff; --ok:#1a8f4c; --ok-soft:#e3f5ea; --bad:#d4243a; --bad-soft:#fde8eb;
+  --warn:#a56a00; --warn-soft:#fff1d6; --code:#f5f6f8;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+:root[data-theme="dark"]{
+  --bg:#0e1318; --surface:#151b22; --raised:#1a222b; --line:#2a3541; --ink:#e8edf2; --dim:#93a1b0;
+  --blue:#4c9aff; --blue-soft:#12274a; --ok:#3ccf80; --ok-soft:#10301f; --bad:#ff6b7a; --bad-soft:#3a1a20;
+  --warn:#f2b84b; --warn-soft:#3a2d10; --code:#10161c;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1318; --surface:#151b22; --raised:#1a222b; --line:#2a3541; --ink:#e8edf2; --dim:#93a1b0;
+    --blue:#4c9aff; --blue-soft:#12274a; --ok:#3ccf80; --ok-soft:#10301f; --bad:#ff6b7a; --bad-soft:#3a1a20;
+    --warn:#f2b84b; --warn-soft:#3a2d10; --code:#10161c;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:6px}
+header{display:flex;align-items:center;gap:14px;padding:14px 32px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:19px;letter-spacing:-.01em;margin-right:auto}
+.mark{width:28px;height:28px;border-radius:8px;background:var(--blue);display:grid;place-items:center}
+.mark svg{width:16px;height:16px}
+.btn{border:1px solid var(--line);background:var(--raised);padding:8px 16px;border-radius:999px;cursor:pointer;font-weight:600;font-size:14px}
+.btn:hover{background:var(--surface)}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.primary:hover{filter:brightness(1.08)}
+main{max-width:1180px;margin:0 auto;padding:36px 32px 80px}
+
+.hero h1{margin:0;font-size:34px;line-height:1.2;letter-spacing:-.02em;font-weight:700;max-width:26ch}
+.hero p{margin:12px 0 0;color:var(--dim);font-size:18px;max-width:62ch}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:30px 0 8px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--raised)}
+.stat{padding:20px 24px;border-left:1px solid var(--line)}
+.stat:first-child{border-left:0}
+.stat .v{font-size:46px;line-height:1;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.stat .l{margin-top:8px;font-weight:600;font-size:16px}
+.stat .d{color:var(--dim);font-size:14px;margin-top:2px}
+.stat.ok .v{color:var(--ok)}.stat.bad .v{color:var(--bad)}.stat.blue .v{color:var(--blue)}
+.foot{color:var(--dim);font-size:14px;margin:10px 2px 34px}
+
+h2{font-size:20px;margin:0 0 12px;letter-spacing:-.01em}
+table{width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--raised)}
+th{font-weight:600;font-size:14px;color:var(--dim);text-align:left;padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--line)}
+td{padding:14px 16px;border-top:1px solid var(--line);vertical-align:top}
+tr.row{cursor:pointer}
+tr.row:hover td{background:var(--surface)}
+tr.row[aria-expanded="true"] td{background:var(--surface)}
+.fn{font:700 15px var(--mono);word-break:break-all}
+.file{color:var(--dim);font-size:13px}
+.out{font:13.5px/1.45 var(--mono);word-break:break-word;max-width:30ch}
+.out.bad{color:var(--bad)}
+.pill{display:inline-block;padding:2px 12px;border-radius:999px;font-size:14px;font-weight:600;white-space:nowrap}
+.att{font-size:14px;color:var(--dim)}
+.att b{color:var(--ink)}
+tr.detail>td{padding:6px 24px 28px;background:var(--bg)}
+tr.detail[hidden]{display:none}
+.chev{display:inline-block;transition:transform .2s;color:var(--dim);margin-right:8px}
+tr.row[aria-expanded="true"] .chev{transform:rotate(90deg)}
+
+/* detail */
+.attempt{padding:18px 0 14px;border-top:1px solid var(--line)}
+.attempt:first-child{border-top:0}
+.ahead{display:flex;align-items:baseline;gap:12px;margin-bottom:12px}
+.ahead b{font-size:16px}
+.ahead span{color:var(--dim);font-size:14px}
+.rail{display:flex;align-items:flex-start;max-width:820px}
+.station{display:flex;flex-direction:column;align-items:center;width:128px;flex:none;text-align:center}
+.node{width:36px;height:36px;border-radius:50%;border:2px solid var(--line);background:var(--bg);display:grid;place-items:center;font-weight:800;font-size:17px;color:var(--dim);transition:background .35s,border-color .35s,color .35s,transform .35s}
+.station .nm{margin-top:8px;font-weight:600;font-size:14px}
+.station .st{font-size:13px;color:var(--dim);min-height:40px}
+.link{flex:1;height:2px;background:var(--line);margin-top:18px;position:relative;min-width:24px}
+.link::after{content:"";position:absolute;left:0;top:0;height:100%;width:0;background:var(--ok);transition:width .55s ease}
+.link.on::after{width:100%}
+.station.ok .node{background:var(--ok);border-color:var(--ok);color:#fff}
+.station.ok .st{color:var(--ok)}
+.station.fail .node{background:var(--bad);border-color:var(--bad);color:#fff;transform:scale(1.12)}
+.station.fail .st{color:var(--bad);font-weight:600}
+.station.skipped .node,.station.off .node,.station.na .node{border-style:dashed;opacity:.55}
+.station.end.ok .node{border-radius:11px}
+.say{color:var(--dim);max-width:76ch;margin:6px 0 0;font-size:15px}
+.say b{color:var(--ink)}
+.panel{border:1px solid var(--line);border-radius:12px;background:var(--raised);overflow:hidden}
+.panel .cap{padding:8px 14px;font-size:13px;font-weight:600;color:var(--dim);border-bottom:1px solid var(--line);background:var(--surface)}
+pre{margin:0;padding:12px 14px;white-space:pre-wrap;word-break:break-word;font:14px/1.55 var(--mono)}
+.counter{margin-top:12px;max-width:820px;border-color:var(--bad);background:var(--bad-soft)}
+.counter .cap{color:var(--bad);background:transparent;border-bottom:0;padding-bottom:0}
+.counter pre{background:transparent}
+.diff{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--code);margin-top:14px}
+.diff .cap{padding:8px 14px;font-size:13px;font-weight:600;color:var(--dim);border-bottom:1px solid var(--line);background:var(--surface)}
+.ln{display:grid;grid-template-columns:44px 44px 1fr;font:14px/1.6 var(--mono)}
+.ln span{padding:0 10px;white-space:pre-wrap;word-break:break-word}
+.ln .g{color:var(--dim);text-align:right;user-select:none;opacity:.8}
+.ln.a{background:var(--ok-soft)}.ln.a .t{color:var(--ok)}
+.ln.r{background:var(--bad-soft)}.ln.r .t{color:var(--bad)}
+.ln.h .t{color:var(--blue)}
+.gone{visibility:hidden}
+.stat2{color:var(--dim);font-size:14px;margin-top:10px}
+@media(max-width:900px){
+  main{padding:24px 16px 60px}.stats{grid-template-columns:1fr 1fr}.stat:nth-child(3){border-left:0}.stat:nth-child(n+3){border-top:1px solid var(--line)}
+  .hero h1{font-size:26px}.out{max-width:18ch}.station{width:84px}header{padding:12px 16px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.bar{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center;border:1px solid var(--line);border-radius:14px;background:var(--raised);padding:14px 16px}
+select,input[type=text]{font:inherit;font-size:14px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+select{max-width:340px}
+input[type=text]{width:210px;font-family:var(--mono);font-size:13px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.seg button{border:0;background:transparent;padding:8px 16px;font-weight:600;font-size:14px;cursor:pointer;color:var(--dim)}
+.seg button[aria-pressed="true"]{background:var(--blue);color:#fff}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--dim);margin-right:6px;vertical-align:baseline}
+.dot.ok{background:var(--ok)}.dot.bad{background:var(--bad)}
+.hint{font-size:13px;color:var(--dim)}
+.sp{flex:1}
+.btn.go{padding:10px 26px;font-size:15px}
+.btn.stop{border-color:var(--bad);color:var(--bad)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+input.num{width:52px;text-align:center}
+[hidden]{display:none!important}
+#theme{font-size:18px;padding:4px 12px}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0 10px}
+.tile{border:1px solid var(--line);border-radius:14px;background:var(--raised);padding:14px 18px}
+.tile .v{font-size:40px;line-height:1;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.tile .l{margin-top:6px;font-size:14px;color:var(--dim);font-weight:600}
+.tile.bad .v{color:var(--bad)}.tile.ok .v{color:var(--ok)}.tile.blue .v{color:var(--blue)}
+.meter{display:flex;height:10px;border-radius:999px;overflow:hidden;background:var(--surface);margin:0 0 22px;border:1px solid var(--line)}
+.meter i{display:block;height:100%;transition:width .4s}
+.m-ok{background:var(--ok)}.m-bad{background:var(--bad)}.m-warn{background:var(--warn)}.m-blue{background:var(--blue)}
+.gdots{display:inline-flex;gap:3px;margin-right:10px;vertical-align:middle}
+.gdots i{width:11px;height:11px;border-radius:50%;background:var(--line)}
+.gdots i.ok{background:var(--ok)}.gdots i.fail{background:var(--bad)}
+.gdots.acc{outline:2px solid var(--ok);outline-offset:3px;border-radius:99px}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid var(--line);border-top-color:var(--blue);border-radius:50%;animation:sp 0.8s linear infinite;vertical-align:-2px;margin-right:6px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.empty{border:1px dashed var(--line);border-radius:14px;padding:46px 20px;text-align:center;color:var(--dim);font-size:16px}
+.empty b{display:block;font-size:34px;margin-bottom:6px}
+.err{margin:12px 0;padding:10px 14px;border:1px solid var(--bad);background:var(--bad-soft);color:var(--bad);border-radius:10px;font-size:14px}
+.wrote{color:var(--ok);font-weight:700;font-size:14px}
+.btn.small{padding:5px 14px;font-size:13px}
+.btn.warn{background:var(--warn);border-color:var(--warn);color:#fff}
+th.r,td.r{text-align:right;white-space:nowrap}
+@media(max-width:900px){.tiles{grid-template-columns:1fr 1fr}input[type=text]{width:150px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="mark"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>PatchPilot</div>
+  <span class="hint" id="rootname"></span>
+  <button class="btn" id="theme" title="Light / dark">◐</button>
+</header>
+<main>
+  <div class="bar" id="bar">
+    <select id="manifest" aria-label="Scan file"></select>
+    <span class="seg" id="mode"><button data-v="check" aria-pressed="true" title="Compare old and new library. No model.">Check</button><button data-v="repair" aria-pressed="false" title="Check, then repair with a model">Repair</button></span>
+    <span class="seg" id="model" hidden></span>
+    <input type="text" id="endpoint" aria-label="Local model address" hidden>
+    <span class="hint" id="health" hidden><i class="dot" id="hdot"></i><span id="htxt"></span></span>
+    <label class="hint" id="attwrap" hidden>tries <input type="text" class="num" id="attempts" value="3" inputmode="numeric"></label>
+    <span class="sp"></span>
+    <select id="history" aria-label="Past runs"></select>
+    <button class="btn primary go" id="run">▶ Run</button>
+    <button class="btn stop go" id="stop" hidden>■ Stop</button>
+  </div>
+  <div id="err" class="err" hidden></div>
+  <div id="board"></div>
+</main>
+<script>
+"use strict";
+const TOKEN = (document.querySelector('meta[name="pp-token"]') || {}).content || "";
+const $ = (id) => document.getElementById(id);
+const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function el(tag, cls, text){const e = document.createElement(tag); if(cls) e.className = cls; if(text !== undefined && text !== null) e.textContent = text; return e;}
+function short(x, n){const s = typeof x === "string" ? x : JSON.stringify(x); return s.length <= n ? s : s.slice(0, n - 1) + "…";}
+function fmt(x){if(typeof x === "string") return x; const c = JSON.stringify(x); return c.length <= 110 ? c : JSON.stringify(x, null, 1);}
+async function api(path, body){
+  const r = await fetch(path, {method: body === undefined ? "GET" : "POST", headers: {"X-PatchPilot-Token": TOKEN, "Content-Type": "application/json"}, body: body === undefined ? undefined : JSON.stringify(body)});
+  let j = null; try{j = await r.json();}catch(e){}
+  if(!r.ok) throw new Error((j && j.error) || ("HTTP " + r.status));
+  if(j === null) throw new Error("unreadable answer from the server");
+  return j;
+}
+let S = null, jobRepair = false, rows = [], running = false, readonly = false, since = 0, poll = null, open = -1, fin = null, pick = {mode: "check", model: "local"}, sumb = {};
+const STATUS = {
+  healthy: ["Same", "var(--blue)", "var(--blue-soft)"], loud: ["Raises", "var(--warn)", "var(--warn-soft)"], silent: ["Differs", "var(--bad)", "var(--bad-soft)"],
+  repaired: ["Fixed", "var(--ok)", "var(--ok-soft)"], not_repaired: ["Not fixed", "var(--bad)", "var(--bad-soft)"], error: ["Error", "var(--bad)", "var(--bad-soft)"],
+  case_failed: ["Error", "var(--bad)", "var(--bad-soft)"], invalid: ["Invalid", "var(--dim)", "var(--surface)"]};
+const GATES = [["visible", "Visible"], ["hidden", "Hidden"], ["differential", "Differential"]];
+const WORD = {ok: "Pass", fail: "Reject", skipped: "–", off: "off", "n/a": "none"};
+const ICON = {ok: "✓", fail: "✕", skipped: "–", off: "–", "n/a": "–"};
+const att = (r) => r.att || [];
+
+function showErr(m){const e = $("err"); e.textContent = m || ""; e.hidden = !m;}
+
+/* ---------- controls ---------- */
+function seg(id, items, key){
+  const s = $(id); s.textContent = "";
+  items.forEach(([v, label, tip]) => {const b = el("button", null, label); b.dataset.v = v; if(tip) b.title = tip; b.setAttribute("aria-pressed", String(pick[key] === v));
+    b.onclick = () => {pick[key] = v; sync();}; s.appendChild(b);});
+}
+function sync(){
+  const repair = pick.mode === "repair";
+  seg("mode", [["check", "Check", "Old vs new library. No model."], ["repair", "Repair", "Check, then fix with a model"]], "mode");
+  const hosted = S ? S.hosted : [];
+  const items = [["local", "Local", "Model on this computer"]].concat(hosted.map((m) => [m, m.replace("muse-", ""), "Hosted Meta model"]));
+  if(!items.some((i) => i[0] === pick.model)) pick.model = "local";
+  seg("model", items, "model");
+  $("model").hidden = !repair || items.length < 2; $("attwrap").hidden = !repair;
+  const loc = repair && pick.model === "local"; $("endpoint").hidden = !loc; $("health").hidden = !loc;
+  $("run").textContent = repair ? "▶ Repair" : "▶ Check";
+  $("run").disabled = running || readonly && false || !(S && S.manifests.length);
+  $("manifest").disabled = running; $("history").disabled = running;
+  $("stop").hidden = !running; $("run").hidden = running;
+  if(loc) checkHealth();
+}
+let hTimer = null;
+async function checkHealth(){
+  clearTimeout(hTimer); if($("health").hidden) return;
+  try{const r = await api("/api/health?endpoint=" + encodeURIComponent($("endpoint").value)); $("hdot").className = "dot " + (r.ok ? "ok" : "bad"); $("htxt").textContent = r.ok ? "model ready" : (r.reason || "no model");}
+  catch(e){$("hdot").className = "dot bad"; $("htxt").textContent = "no model";}
+  hTimer = setTimeout(checkHealth, 4000);
+}
+
+/* ---------- board ---------- */
+function counts(){
+  const n = rows.length, g = (s) => rows.filter((r) => r.status === s).length;
+  const differs = rows.filter((r) => ["silent", "repaired", "not_repaired", "error", "case_failed"].includes(r.status)).length;
+  const blocked = rows.reduce((a, r) => a + att(r).filter((x) => x.gates.outcome !== "accepted").length, 0);
+  return {n, differs, fixed: g("repaired"), blocked, same: g("healthy"), loud: g("loud"), pending: rows.filter((r) => !r.status).length};
+}
+function render(){
+  const b = $("board"); b.textContent = "";
+  if(!S || !S.manifests.length){const e = el("div", "empty"); e.appendChild(el("b", null, "∅")); e.appendChild(document.createTextNode("No scan.json in this folder")); b.appendChild(e); return;}
+  if(!rows.length){const e = el("div", "empty"); e.appendChild(el("b", null, "▶")); e.appendChild(document.createTextNode("Pick a file, press Run")); b.appendChild(e); return;}
+  const c = counts();
+  const tiles = el("div", "tiles");
+  [["", c.n, "functions"], ["bad", c.differs, "differ"], ["ok", c.fixed, "fixed"], ["blue", c.blocked, "bad patches blocked"]].forEach(([cls, v, l]) => {
+    const t = el("div", "tile " + cls); t.appendChild(el("div", "v", String(v))); t.appendChild(el("div", "l", l)); tiles.appendChild(t);});
+  b.appendChild(tiles);
+  const m = el("div", "meter"); const seg1 = (cls, k) => {const i = el("i", cls); i.style.width = (c.n ? 100 * k / c.n : 0) + "%"; m.appendChild(i);};
+  seg1("m-ok", c.fixed); seg1("m-bad", c.differs - c.fixed); seg1("m-warn", c.loud); seg1("m-blue", c.same); b.appendChild(m);
+  if(sumb.line) b.appendChild(el("div", "hint", sumb.line));
+  const tb = el("table"), th = el("thead"), hr = el("tr");
+  [["Function"], ["Old lib"], ["New lib"], ["Result"], ["Tries"], [""]].forEach(([x], i) => hr.appendChild(el("th", i === 5 ? "r" : null, x))); th.appendChild(hr); tb.appendChild(th);
+  const body = el("tbody");
+  rows.forEach((r, i) => {
+    const tr = el("tr", "row"); tr.tabIndex = 0; tr.setAttribute("aria-expanded", String(open === i));
+    const c1 = el("td"); const f = el("div", "fn"); f.appendChild(el("span", "chev", "▸")); f.appendChild(document.createTextNode(r.function || "")); c1.appendChild(f); c1.appendChild(el("div", "file", r.file || "")); tr.appendChild(c1);
+    if(r.example){tr.appendChild(el("td", "out", short(r.example.old, 60))); tr.appendChild(el("td", "out bad", short(r.example.new, 60)));}
+    else {const x = el("td", "file", r.status ? (r.detail || "") : ""); x.colSpan = 2; tr.appendChild(x);}
+    const c4 = el("td");
+    if(r.working){const p = el("span", "pill"); p.appendChild(el("i", "spin")); p.appendChild(document.createTextNode("Working")); c4.appendChild(p);}
+    else if(r.status === "silent" && running && jobRepair){const p = el("span", "pill", "Queued"); p.style.color = "var(--dim)"; p.style.background = "var(--surface)"; c4.appendChild(p);}
+    else if(r.status){const [lab, fg, bg] = STATUS[r.status] || [r.status, "var(--dim)", "var(--surface)"]; const p = el("span", "pill", lab); p.style.color = fg; p.style.background = bg; c4.appendChild(p);}
+    else c4.appendChild(el("span", "hint", "…"));
+    tr.appendChild(c4);
+    const c5 = el("td", "att");
+    att(r).forEach((a) => {const d = el("span", "gdots" + (a.gates.outcome === "accepted" ? " acc" : "")); GATES.forEach(([g]) => d.appendChild(el("i", a.gates[g] === "ok" ? "ok" : a.gates[g] === "fail" ? "fail" : ""))); c5.appendChild(d);});
+    if(!att(r).length) c5.textContent = typeof r.attempts === "number" ? String(r.attempts) : "";
+    tr.appendChild(c5);
+    const c6 = el("td", "r");
+    if(r.applied) c6.appendChild(el("span", "wrote", "✓ written"));
+    else if(r.status === "repaired" && !readonly && r.diff) {
+      const bt = el("button", "btn small " + (r.armed ? "warn" : "primary"), r.armed ? "Write file?" : "Apply");
+      bt.onclick = async (e) => {e.stopPropagation();
+        if(!r.armed){r.armed = true; setTimeout(() => {r.armed = false; render();}, 4000); render(); return;}
+        r.armed = false; bt.disabled = true;
+        try{await api("/api/apply", {index: i}); r.applied = true; showErr("");}catch(er){showErr(er.message);} render();};
+      c6.appendChild(bt);
+    }
+    tr.appendChild(c6);
+    tr.onclick = () => {open = open === i ? -1 : i; render();}; tr.onkeydown = (e) => {if(e.key === "Enter" || e.key === " "){e.preventDefault(); tr.onclick();}};
+    body.appendChild(tr);
+    if(open === i){const d = el("tr", "detail"), dc = el("td"); dc.colSpan = 6; fill(dc, r); d.appendChild(dc); body.appendChild(d);}
+  });
+  tb.appendChild(body); b.appendChild(tb);
+}
+function diffView(text, applied){
+  const box = el("div", "diff"); box.appendChild(el("div", "cap", applied ? "Written to the file" : "Patch"));
+  let a = 0, b = 0;
+  text.split("\n").forEach((ln) => {
+    if(ln === "") return;
+    let cls = "", ga = "", gb = ""; const m = /^@@ -(\d+)(?:,\d+)? \+(\d+)/.exec(ln);
+    if(ln.startsWith("---") || ln.startsWith("+++")) cls = "h";
+    else if(m){cls = "h"; a = +m[1]; b = +m[2];}
+    else if(ln.startsWith("+")){cls = "a"; gb = String(b++);}
+    else if(ln.startsWith("-")){cls = "r"; ga = String(a++);}
+    else {ga = String(a++); gb = String(b++);}
+    const row = el("div", "ln " + cls); row.appendChild(el("span", "g", ga)); row.appendChild(el("span", "g", gb)); row.appendChild(el("span", "t", ln)); box.appendChild(row);
+  });
+  return box;
+}
+function rail(a){
+  const wrap = el("div", "rail");
+  GATES.forEach(([g, name]) => {
+    const v = a.gates[g], s = el("div", "station " + v); s.appendChild(el("div", "node", ICON[v])); s.appendChild(el("div", "nm", name)); s.appendChild(el("div", "st", WORD[v])); wrap.appendChild(s);
+    const l = el("div", "link" + (v === "ok" || v === "n/a" || v === "off" ? " on" : "")); wrap.appendChild(l);
+  });
+  const acc = a.gates.outcome === "accepted", e = el("div", "station end " + (acc ? "ok" : "fail")); e.appendChild(el("div", "node", acc ? "✓" : "✕")); e.appendChild(el("div", "nm", acc ? "Accepted" : "Rejected")); wrap.appendChild(e);
+  return wrap;
+}
+function fill(cell, r){
+  att(r).forEach((a, k) => {
+    const w = el("div", "attempt"), h = el("div", "ahead"); h.appendChild(el("b", null, "Try " + (a.attempt || k + 1))); if(a.tokens) h.appendChild(el("span", null, a.tokens + " tokens")); w.appendChild(h);
+    w.appendChild(rail(a));
+    if(a.counterexample){const ce = el("div", "panel counter"); ce.appendChild(el("div", "cap", "Counterexample"));
+      ce.appendChild(el("pre", null, "input     " + fmt(a.counterexample.input) + "\nexpected  " + fmt(a.counterexample.expected) + "\ngot       " + fmt(a.counterexample.got))); w.appendChild(ce);}
+    cell.appendChild(w);
+  });
+  if(r.diff) cell.appendChild(diffView(r.diff, r.applied));
+  if(!att(r).length && !r.diff && r.example){const p = el("div", "panel"); p.appendChild(el("div", "cap", "Example input")); p.appendChild(el("pre", null, fmt(r.example.input))); cell.appendChild(p);}
+}
+
+/* ---------- job events ---------- */
+function onEvent(ev){
+  const k = ev.index;
+  if(ev.event === "start"){rows = Array.from({length: ev.total}, () => ({})); sumb = {};}
+  else if(ev.event === "triage" || ev.event === "result"){Object.assign(rows[k], ev.row); rows[k].working = false; if(ev.event === "result" && ev.row.diff) open = open < 0 ? k : open;}
+  else if(ev.event === "repairing"){rows[k].working = true;}
+  else if(ev.event === "attempt"){rows[k].att = (rows[k].att || []).concat([ev.attempt]);}
+  else if(ev.event === "applied"){rows[k].applied = true;}
+  else if(ev.event === "done"){sumb.line = (ev.tokens ? ev.tokens.toLocaleString("en-US") + " tokens · " : "") + Math.round(ev.seconds) + " s";}
+  else if(ev.event === "error"){showErr(ev.message);}
+  else if(ev.event === "stopped"){rows.forEach((r) => r.working = false); showErr("Stopped");}
+}
+async function tick(){
+  try{
+    const j = await api("/api/job?since=" + since);
+    (j.events || []).forEach(onEvent); since = j.n; render();
+    if(j.status && j.status !== "running" && j.status !== "stopping"){running = false; clearInterval(poll); poll = null; rows.forEach((r) => r.working = false); sync(); render(); loadState(true);}
+  }catch(e){showErr(e.message);}
+}
+function follow(){running = true; sync(); clearInterval(poll); poll = setInterval(tick, 400); tick();}
+
+$("run").onclick = async () => {
+  showErr(""); readonly = false; $("history").value = ""; since = 0; rows = []; open = -1;
+  jobRepair = pick.mode === "repair";
+  const body = {manifest: $("manifest").value, mode: pick.mode, model: pick.model, endpoint: $("endpoint").value, effort: "low", max_attempts: parseInt($("attempts").value, 10) || 3};
+  try{await api("/api/run", body); follow();}catch(e){showErr(e.message);}
+};
+$("stop").onclick = async () => {try{await api("/api/stop", {});}catch(e){showErr(e.message);}};
+$("history").onchange = async () => {
+  const id = $("history").value; showErr("");
+  if(!id){readonly = false; rows = []; render(); return;}
+  try{const d = await api("/api/report?id=" + id); readonly = true; open = -1; rows = d.targets.map((t) => Object.assign({}, t, {att: Array.isArray(t.attempts) ? t.attempts : []}));
+    sumb = {line: d.summary && d.summary.seconds ? Math.round(d.summary.seconds) + " s" + (d.summary.tokens ? " · " + d.summary.tokens.toLocaleString("en-US") + " tokens" : "") : ""}; render();}
+  catch(e){showErr(e.message);}
+};
+async function loadState(keep){
+  S = await api("/api/state");
+  $("rootname").textContent = S.root;
+  if(!keep || !$("manifest").options.length){
+    const m = $("manifest"); m.textContent = ""; S.manifests.forEach((p) => m.appendChild(new Option(p, p)));
+    $("endpoint").value = S.endpoint;
+  }
+  const h = $("history"), cur = h.value; h.textContent = ""; h.appendChild(new Option("Past runs", "")); S.previous.forEach((p) => h.appendChild(new Option(p.id, p.id))); h.value = cur;
+  sync(); render();
+}
+$("endpoint").oninput = () => {clearTimeout(hTimer); hTimer = setTimeout(checkHealth, 400);};
+let theme = "auto";
+$("theme").onclick = () => {theme = theme === "auto" ? "dark" : theme === "dark" ? "light" : "auto"; if(theme === "auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", theme);};
+loadState(false).then(async () => {const j = await api("/api/job?since=0"); if(j.status === "running"){jobRepair = !!(j.params && j.params.mode === "repair"); running = true; follow();}}).catch((e) => showErr(e.message));
+</script>
+</body>
+</html>

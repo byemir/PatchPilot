@@ -33,6 +33,14 @@ check("v2: fractional seconds of 3, 6 and 9 digits all occur",
       {len(s.split(".")[1]) for s in dates if "." in s} >= {3, 6, 9})
 check("v2: deterministic for a seed", generate(seeds, n=50, seed=3, v2=True) == generate(seeds, n=50, seed=3, v2=True))
 
+mixed = [{"rows": [{"amount": 10}, {"amount": 19.99}], "limit": 50}, {"rows": [{"amount": 120}, {"amount": 5.5}], "limit": 7}]
+try:
+    gm = generate(mixed, n=300, seed=0, v2=True) + generate(mixed, n=300, seed=1)
+    ok_mixed = len(gm) > 0
+except TypeError as e:
+    ok_mixed, gm = False, str(e)
+check("a field that is an int in one input and a float in another does not crash the generator", ok_mixed, str(gm)[:100])
+
 repo = Path(__file__).resolve().parents[1]
 case = repo / "benchmarks" / "o2_bars_epoch_seconds"
 cfg = json.loads((case / "case.json").read_text())

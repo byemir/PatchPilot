@@ -1,0 +1,44 @@
+[
+ {
+  "rows": [
+   {
+    "amount": 10
+   },
+   {
+    "amount": 120
+   },
+   {
+    "amount": 75
+   }
+  ],
+  "limit": 50
+ },
+ {
+  "rows": [
+   {
+    "amount": 5
+   },
+   {
+    "amount": 6
+   }
+  ],
+  "limit": 50
+ },
+ {
+  "rows": [
+   {
+    "amount": 500
+   },
+   {
+    "amount": 30
+   },
+   {
+    "amount": 99.5
+   },
+   {
+    "amount": 100
+   }
+  ],
+  "limit": 99.5
+ }
+]
