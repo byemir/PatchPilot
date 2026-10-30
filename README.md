@@ -28,7 +28,7 @@ The repository was created on 2026-10-27 (first commit 12:26, UTC+3, after the k
 
 ## For judges: three ways to check it
 
-1. **No model, no key:** build the pinned environments once (`PYTHON312=/path/to/python3.12 ./scripts/setup_envs.sh`), then `bash scripts/run_offline_tests.sh` (fourteen tests, two to three minutes; 124 to 163 s on the Mac in three runs). Or read `docs/RESULTS.md` and `examples/` (recorded patches with the gate outcome per attempt) without running anything.
+1. **No model, no key:** build the pinned environments once (`PYTHON312=/path/to/python3.12 ./scripts/setup_envs.sh`), then `bash scripts/run_offline_tests.sh` (fourteen tests; about four minutes: the test times add up to 221 s in the latest run on the Mac, twelve tests in 124 to 163 s in three earlier runs). Or read `docs/RESULTS.md` and `examples/` (recorded patches with the gate outcome per attempt) without running anything.
 2. **Hosted Meta models:** put a Meta Model API key in the key file described under "Run the agent" and run the agent on a case.
 3. **Open weights on your own machine:** serve Muse Glimmer with llama.cpp as described under "How the local model is run" and run `bash scripts/demo_repair.sh`.
 
