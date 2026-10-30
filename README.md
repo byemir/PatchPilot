@@ -6,8 +6,18 @@ Agent that proposes and verifies patches for Python code that broke silently aft
 - A patch is accepted only if it passes three gates: the visible tests, hidden tests the model never sees, and a differential check against the old library.
 - Seventeen cases (pandas 2.3 to 3.0, NumPy 1.26 to 2.x), all written for this project: the code under repair is ours, derived from documented library changes. No third-party code is in the repository. Not tried on whole real repositories. What real projects show about the problem is in `docs/IMPACT.md`.
 - Hosted Muse Spark and Muse Wonder solved 125 of 125 runs on five cases; on the hardest one (p4), Spark 0 of 5 and Wonder 3 of 5. Muse Glimmer running locally solved 19 of 30 runs on six cases (low reasoning).
-- All runs were made on one Apple M2 Ultra Mac; no other platform was tested.
+- All model runs were made on one Apple M2 Ultra Mac. The Linux isolation layer was tested on one cloud VM without a model run (see "Isolation on Linux").
 - Why it matters and what it does not show: [`docs/IMPACT.md`](docs/IMPACT.md). One command from a function to a gated patch: `python -m patchpilot.repair` (see "Try it on your own function").
+
+## What was built during the hackathon
+
+The repository was created on 2026-10-27 (first commit 12:26, UTC+3, after the kickoff) and contains only work from the event: the repair loop and the three gates, the differential input generator, the isolation of model code (macOS profile and a Linux Landlock launcher written with `ctypes`), the case builder and the one-command repair tool, the benchmark runner, seventeen benchmark cases with their known-good and known-bad patches, and the documentation, logs and technical notes. Not ours and not in the repository: pandas, NumPy and pytest (installed from PyPI into pinned environments; they are the libraries being repaired), llama.cpp (runs the local model), and the Meta models. No code from other projects is included. Track: Indie Developer; problem statement: Push the Frontier (software).
+
+## For judges: three ways to check it
+
+1. **No model, no key:** build the pinned environments once (`PYTHON312=/path/to/python3.12 ./scripts/setup_envs.sh`), then `bash scripts/run_offline_tests.sh` (eight tests, about a minute). Or read `docs/RESULTS.md` and `examples/` (recorded patches with the gate outcome per attempt) without running anything.
+2. **Hosted Meta models:** put a Meta Model API key in the key file described under "Run the agent" and run the agent on a case.
+3. **Open weights on your own machine:** serve Muse Glimmer with llama.cpp as described under "How the local model is run" and run `bash scripts/demo_repair.sh`.
 
 ## Models and where they run
 
