@@ -13,6 +13,7 @@ and, with --manifest, an entry in the scan manifest. Standard library only.
 from __future__ import annotations
 
 import argparse
+import ast
 import json
 import os
 import subprocess
@@ -75,9 +76,10 @@ else:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Record call arguments of functions while your own tests or script run on the old library.",
-                                 usage="python -m patchpilot.capture --python PY --target FILE:FUNC --out DIR [--manifest scan.json --lib LIB] -- COMMAND")
+                                 usage="python -m patchpilot.capture --python PY (--target FILE:FUNC | --discover FILE_OR_DIR) --out DIR [--manifest scan.json --lib LIB] -- COMMAND")
     ap.add_argument("--python", required=True, help="interpreter with the OLD library")
-    ap.add_argument("--target", action="append", required=True, help="FILE:FUNCTION (repeatable)")
+    ap.add_argument("--target", action="append", default=[], help="FILE:FUNCTION (repeatable)")
+    ap.add_argument("--discover", action="append", default=[], help="a .py file or a folder: every public top-level function in it is a target (repeatable)")
     ap.add_argument("--out", required=True, help="folder for the probe files")
     ap.add_argument("--limit", type=int, default=10, help="most distinct calls kept per function (default 10)")
     ap.add_argument("--manifest", help="scan manifest to create or update")
@@ -92,6 +94,24 @@ def main(argv=None) -> int:
         return 2
     if a.manifest and not a.lib:
         print("capture: --manifest needs --lib", file=sys.stderr)
+        return 2
+    for d in a.discover:
+        pd_ = Path(d)
+        files = sorted(pd_.rglob("*.py")) if pd_.is_dir() else [pd_]
+        if not files or not all(f.is_file() for f in files):
+            print(f"capture: bad --discover {d!r} (a .py file or a folder)", file=sys.stderr)
+            return 2
+        for f in files:
+            if f.name.startswith("test") or f.name.endswith("_test.py") or f.name == "__init__.py":
+                continue
+            try:
+                tree = ast.parse(f.read_text())
+            except (OSError, SyntaxError, ValueError) as e:
+                print(f"capture: cannot read {f}: {e}", file=sys.stderr)
+                return 2
+            a.target += [f"{f}:{n.name}" for n in tree.body if isinstance(n, ast.FunctionDef) and not n.name.startswith("_")]
+    if not a.target:
+        print("capture: give --target FILE:FUNCTION or --discover FILE_OR_FOLDER", file=sys.stderr)
         return 2
     targets = []
     for t in a.target:

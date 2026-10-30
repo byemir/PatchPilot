@@ -1,0 +1,20 @@
+--- a/report.py
++++ b/report.py
+@@ -1,4 +1,5 @@
+ import pandas as pd
++from packaging.version import Version
+ 
+ 
+ def totals_by_month(rows):
+@@ -27,4 +28,10 @@
+ 
+ def epoch_seconds(dates):
+     s = pd.to_datetime(pd.Series(dates))
+-    return (s.astype("int64") // 10**9).tolist()
++    vals = s.astype("int64")
++    # pandas >=3.0 uses microsecond resolution for datetime64, <3.0 uses nanosecond
++    if Version(pd.__version__) >= Version("3.0.0"):
++        divisor = 10 ** 6
++    else:
++        divisor = 10 ** 9
++    return (vals // divisor).tolist()

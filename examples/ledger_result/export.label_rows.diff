@@ -1,0 +1,11 @@
+--- a/export.py
++++ b/export.py
+@@ -23,5 +23,7 @@
+ 
+ def label_rows(rows):
+     df = pd.DataFrame(rows)
+-    df["label"] = df["who"].str.upper() + ":" + df["category"].astype(str)
++    # Normalise missing categories to the literal string "None" for stable output across pandas versions
++    cat = df["category"].fillna("None")
++    df["label"] = df["who"].str.upper() + ":" + cat.astype(str)
+     return df["label"].tolist()

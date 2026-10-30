@@ -1,0 +1,130 @@
+{
+ "targets": [
+  {
+   "file": "ledger/clean.py",
+   "function": "normalize_names",
+   "lib": "pandas",
+   "inputs": "probes/normalize_names.json"
+  },
+  {
+   "file": "ledger/clean.py",
+   "function": "fill_categories",
+   "lib": "pandas",
+   "inputs": "probes/fill_categories.json"
+  },
+  {
+   "file": "ledger/clean.py",
+   "function": "parse_amounts",
+   "lib": "pandas",
+   "inputs": "probes/parse_amounts.json"
+  },
+  {
+   "file": "ledger/clean.py",
+   "function": "drop_dupes",
+   "lib": "pandas",
+   "inputs": "probes/drop_dupes.json"
+  },
+  {
+   "file": "ledger/report.py",
+   "function": "totals_by_month",
+   "lib": "pandas",
+   "inputs": "probes/totals_by_month.json"
+  },
+  {
+   "file": "ledger/report.py",
+   "function": "top_spenders",
+   "lib": "pandas",
+   "inputs": "probes/top_spenders.json"
+  },
+  {
+   "file": "ledger/report.py",
+   "function": "flag_large",
+   "lib": "pandas",
+   "inputs": "probes/flag_large.json"
+  },
+  {
+   "file": "ledger/report.py",
+   "function": "days_since",
+   "lib": "pandas",
+   "inputs": "probes/days_since.json"
+  },
+  {
+   "file": "ledger/report.py",
+   "function": "epoch_seconds",
+   "lib": "pandas",
+   "inputs": "probes/epoch_seconds.json"
+  },
+  {
+   "file": "ledger/export.py",
+   "function": "to_csv_lines",
+   "lib": "pandas",
+   "inputs": "probes/to_csv_lines.json"
+  },
+  {
+   "file": "ledger/export.py",
+   "function": "category_share",
+   "lib": "pandas",
+   "inputs": "probes/category_share.json"
+  },
+  {
+   "file": "ledger/export.py",
+   "function": "spend_table",
+   "lib": "pandas",
+   "inputs": "probes/spend_table.json"
+  },
+  {
+   "file": "ledger/export.py",
+   "function": "biggest_per_person",
+   "lib": "pandas",
+   "inputs": "probes/biggest_per_person.json"
+  },
+  {
+   "file": "ledger/export.py",
+   "function": "label_rows",
+   "lib": "pandas",
+   "inputs": "probes/label_rows.json"
+  },
+  {
+   "file": "ledger/stats.py",
+   "function": "range_text",
+   "lib": "numpy",
+   "inputs": "probes/range_text.json"
+  },
+  {
+   "file": "ledger/stats.py",
+   "function": "running_balance",
+   "lib": "numpy",
+   "inputs": "probes/running_balance.json"
+  },
+  {
+   "file": "ledger/stats.py",
+   "function": "add_bonus",
+   "lib": "numpy",
+   "inputs": "probes/add_bonus.json"
+  },
+  {
+   "file": "ledger/stats.py",
+   "function": "nearest_percentile",
+   "lib": "numpy",
+   "inputs": "probes/nearest_percentile.json"
+  },
+  {
+   "file": "ledger/stats.py",
+   "function": "zscores",
+   "lib": "numpy",
+   "inputs": "probes/zscores.json"
+  },
+  {
+   "file": "ledger/stats.py",
+   "function": "bucket_counts",
+   "lib": "numpy",
+   "inputs": "probes/bucket_counts.json"
+  },
+  {
+   "file": "ledger/stats.py",
+   "function": "mean_of_means",
+   "lib": "numpy",
+   "inputs": "probes/mean_of_means.json"
+  }
+ ]
+}

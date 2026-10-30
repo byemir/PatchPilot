@@ -1,0 +1,12 @@
+--- a/report.py
++++ b/report.py
+@@ -16,7 +16,8 @@
+ def flag_large(rows, limit):
+     df = pd.DataFrame(rows)
+     df["large"] = False
+-    df["large"][df["amount"] > limit] = True
++    mask = df["amount"] > limit
++    df.loc[mask, "large"] = True
+     return df["large"].tolist()
+ 
+ 

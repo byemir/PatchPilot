@@ -1,0 +1,14 @@
+--- a/stats.py
++++ b/stats.py
+@@ -11,7 +11,10 @@
+ 
+ 
+ def add_bonus(score, bonus):
+-    return int(np.uint8(score) + bonus)
++    # NumPy 2 changed uint8 casting semantics for out-of-range values.
++    # The intended behaviour for the golden outputs is plain integer addition.
++    # Using plain Python ints preserves the old correct result on both NumPy 1 and 2.
++    return int(score) + int(bonus)
+ 
+ 
+ def nearest_percentile(values, q):

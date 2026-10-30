@@ -142,3 +142,11 @@ Apply now keeps the original (`backup/N.orig` in the job folder) and the sha-256
 ## 2026-10-30: Auto-apply, Auto-write, Reset
 
 Two toggles in the app: Auto-apply presses Apply for each fixed function (the button pulses, then shows "Write file?"), Auto-write also confirms after a short pause and shows "Writing…" and a "written" pop. Both are off at page load. Reset: before the first write to a file the app saves its content in `.patchpilot/baseline/` (with sha-256 of the original and of what the app last wrote); Reset restores a file only if it still has what the app last wrote, otherwise it reports it as left alone; it is refused during a run. A Check after a write shows the function as unchanged, which is the point of the demo; Reset brings the folder back without copying `examples/shop` again. app_test covers write, reset, second reset, apply again, hand edit, run in progress and the token; a browser run with a scripted runner covered both toggles and Reset.
+
+## 2026-10-30: ledger, a project with its own tests; capture --discover
+
+No real third-party project was available, and none is to be copied in, so `examples/ledger/` was written: four modules, 22 functions in ordinary pandas and NumPy style, a 21-test unittest suite (green on pandas 2.3 and 3.0). `capture` got `--discover` (every public top-level function of a file or folder, found with `ast`; test files are skipped) so the manifest comes from the tests. First version of one test used two date strings of different formats; pandas 2 rejected it, so the test was fixed (a test mistake, not a library change). Check on the Linux VM: 14 same, 7 silent (see README). `round_half` has no inputs because our tests never call it. capture_test now has 14 checks including the whole-project flow (9 same, 5 silent on the three pandas modules).
+
+## 2026-10-30: ledger on the Mac
+
+Check from the app took 13 s (21 functions: 14 same, 7 differ, the same as on the Linux VM). Repair with the local Glimmer, effort low: 7 of 7 repaired on the first attempt, all gates passed, differential verdict PASS for each; 338 s and 12,547 tokens in total. Report and diffs: `examples/ledger_result/`. One run.

@@ -1,0 +1,719 @@
+{
+  "manifest": "/private/tmp/pp_led/scan.json",
+  "model": "muse-glimmer",
+  "endpoint": "http://127.0.0.1:8080/v1",
+  "effort": "low",
+  "triage_only": false,
+  "applied": false,
+  "seconds": 338.2,
+  "tokens": 12547,
+  "counts": {
+    "healthy": 14,
+    "repaired": 7
+  },
+  "targets": [
+    {
+      "file": "ledger/clean.py",
+      "function": "normalize_names",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/clean.py",
+      "function": "fill_categories",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 2 of 2 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "default": "misc",
+          "rows": [
+            {
+              "amount": 12.5,
+              "category": "food",
+              "date": "2026-01-03",
+              "who": "ana"
+            },
+            {
+              "amount": 80.0,
+              "category": null,
+              "date": "2026-01-19",
+              "who": "bo"
+            },
+            {
+              "amount": 700.0,
+              "category": "rent",
+              "date": "2026-02-02",
+              "who": "ana"
+            },
+            {
+              "amount": 33.25,
+              "category": "food",
+              "date": "2026-02-14",
+              "who": "cy"
+            },
+            {
+              "amount": 33.25,
+              "category": "food",
+              "date": "2026-02-14",
+              "who": "cy"
+            }
+          ]
+        },
+        "old": [
+          "food",
+          "misc",
+          "rent",
+          "food",
+          "food"
+        ],
+        "new": [
+          "food",
+          NaN,
+          "rent",
+          "food",
+          "food"
+        ]
+      },
+      "source_sha256": "3bcafddedb48deb22b32f002fc257902d4800c4775144f6c7b8e1566000915d9",
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 24.0,
+      "tokens": 1037,
+      "run_dir": "/private/tmp/pp_led/.patchpilot/20261030-185915/runs/20261030-185933_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "In pandas 3.0 `Series.fillna(..., inplace=True)` on a column accessed via `df['category']` no longer reliably mutates the DataFrame, so the NaNs remain. Assigning the result back works on both pandas 2.3.3 and 3.0.6.",
+          "tokens": 1037,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 148,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "In pandas 3.0 `Series.fillna(..., inplace=True)` on a column accessed via `df['category']` no longer reliably mutates the DataFrame, so the NaNs remain. Assigning the result back works on both pandas 2.3.3 and 3.0.6.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 148,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "clean.fill_categories.diff"
+    },
+    {
+      "file": "ledger/clean.py",
+      "function": "parse_amounts",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/clean.py",
+      "function": "drop_dupes",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 2 of 2 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "key": "date",
+          "rows": [
+            {
+              "amount": 12.5,
+              "category": "food",
+              "date": "2026-01-03",
+              "who": "ana"
+            },
+            {
+              "amount": 80.0,
+              "category": null,
+              "date": "2026-01-19",
+              "who": "bo"
+            },
+            {
+              "amount": 700.0,
+              "category": "rent",
+              "date": "2026-02-02",
+              "who": "ana"
+            },
+            {
+              "amount": 33.25,
+              "category": "food",
+              "date": "2026-02-14",
+              "who": "cy"
+            },
+            {
+              "amount": 33.25,
+              "category": "food",
+              "date": "2026-02-14",
+              "who": "cy"
+            }
+          ]
+        },
+        "old": [
+          {
+            "amount": 12.5,
+            "category": "food",
+            "date": "2026-01-03",
+            "who": "ana"
+          },
+          {
+            "amount": 80.0,
+            "category": null,
+            "date": "2026-01-19",
+            "who": "bo"
+          },
+          {
+            "amount": 700.0,
+            "category": "rent",
+            "date": "2026-02-02",
+            "who": "ana"
+          },
+          {
+            "amount": 33.25,
+            "category": "food",
+            "date": "2026-02-14",
+            "who": "cy"
+          }
+        ],
+        "new": [
+          {
+            "amount": 12.5,
+            "category": "food",
+            "date": "2026-01-03",
+            "who": "ana"
+          },
+          {
+            "amount": 80.0,
+            "category": NaN,
+            "date": "2026-01-19",
+            "who": "bo"
+          },
+          {
+            "amount": 700.0,
+            "category": "rent",
+            "date": "2026-02-02",
+            "who": "ana"
+          },
+          {
+            "amount": 33.25,
+            "category": "food",
+            "date": "2026-02-14",
+            "who": "cy"
+          }
+        ]
+      },
+      "source_sha256": "3bcafddedb48deb22b32f002fc257902d4800c4775144f6c7b8e1566000915d9",
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 35.9,
+      "tokens": 1792,
+      "run_dir": "/private/tmp/pp_led/.patchpilot/20261030-185915/runs/20261030-190001_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "Pandas 3.0 serialises missing values as NaN which json.dumps emits as the literal NaN instead of null. Converting np.nan to None in the records returned by drop_dupes makes the JSON output contain null on both pandas 2.3.3 and 3.0.6.",
+          "tokens": 1792,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 151,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "Pandas 3.0 serialises missing values as NaN which json.dumps emits as the literal NaN instead of null. Converting np.nan to None in the records returned by drop_dupes makes the JSON output contain null on both pandas 2.3.3 and 3.0.6.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 151,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "clean.drop_dupes.diff"
+    },
+    {
+      "file": "ledger/report.py",
+      "function": "totals_by_month",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/report.py",
+      "function": "top_spenders",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/report.py",
+      "function": "flag_large",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 2 of 2 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "limit": 50,
+          "rows": [
+            {
+              "amount": 12.5,
+              "category": "food",
+              "date": "2026-01-03",
+              "who": "ana"
+            },
+            {
+              "amount": 80.0,
+              "category": null,
+              "date": "2026-01-19",
+              "who": "bo"
+            },
+            {
+              "amount": 700.0,
+              "category": "rent",
+              "date": "2026-02-02",
+              "who": "ana"
+            },
+            {
+              "amount": 33.25,
+              "category": "food",
+              "date": "2026-02-14",
+              "who": "cy"
+            },
+            {
+              "amount": 33.25,
+              "category": "food",
+              "date": "2026-02-14",
+              "who": "cy"
+            }
+          ]
+        },
+        "old": [
+          false,
+          true,
+          true,
+          false,
+          false
+        ],
+        "new": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      "source_sha256": "a18ca0e124d43a7fc8d4bfb18a547f6e64412ad9f165ec94303d90ce2a97cb02",
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 24.5,
+      "tokens": 1151,
+      "run_dir": "/private/tmp/pp_led/.patchpilot/20261030-185915/runs/20261030-190041_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "The `flag_large` function uses chained indexing `df[\"large\"][mask] = True` which is unreliable and became a no-op in pandas 3.0. Using `.loc` for direct assignment makes the operation work consistently across pandas 2.3.3 and 3.0.6.",
+          "tokens": 1151,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 136,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "The `flag_large` function uses chained indexing `df[\"large\"][mask] = True` which is unreliable and became a no-op in pandas 3.0. Using `.loc` for direct assignment makes the operation work consistently across pandas 2.3.3 and 3.0.6.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 136,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "report.flag_large.diff"
+    },
+    {
+      "file": "ledger/report.py",
+      "function": "days_since",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/report.py",
+      "function": "epoch_seconds",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 2 of 2 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "dates": [
+            "2026-01-01 00:00:00",
+            "2026-06-30 12:00:00"
+          ]
+        },
+        "old": [
+          1767225600,
+          1782820800
+        ],
+        "new": [
+          1767225,
+          1782820
+        ]
+      },
+      "source_sha256": "a18ca0e124d43a7fc8d4bfb18a547f6e64412ad9f165ec94303d90ce2a97cb02",
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 80.5,
+      "tokens": 2917,
+      "run_dir": "/private/tmp/pp_led/.patchpilot/20261030-185915/runs/20261030-190109_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "In pandas 3.0 the default datetime resolution changed to microseconds, so `Series.astype('int64')` now returns microseconds instead of nanoseconds. Dividing by 1e9 therefore yields values 1000\u00d7 too small. Adjust the divisor based on the pandas version so seconds are computed correctly on both 2.3.3 and 3.0.6.",
+          "tokens": 2917,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 144,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "In pandas 3.0 the default datetime resolution changed to microseconds, so `Series.astype('int64')` now returns microseconds instead of nanoseconds. Dividing by 1e9 therefore yields values 1000\u00d7 too small. Adjust the divisor based on the pandas version so seconds are computed correctly on both 2.3.3 and 3.0.6.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 144,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "report.epoch_seconds.diff"
+    },
+    {
+      "file": "ledger/export.py",
+      "function": "to_csv_lines",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/export.py",
+      "function": "category_share",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/export.py",
+      "function": "spend_table",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/export.py",
+      "function": "biggest_per_person",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/export.py",
+      "function": "label_rows",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 1 of 2 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "rows": [
+            {
+              "amount": 12.5,
+              "category": "food",
+              "date": "2026-01-03",
+              "who": "ana"
+            },
+            {
+              "amount": 80.0,
+              "category": null,
+              "date": "2026-01-19",
+              "who": "bo"
+            },
+            {
+              "amount": 700.0,
+              "category": "rent",
+              "date": "2026-02-02",
+              "who": "ana"
+            },
+            {
+              "amount": 33.25,
+              "category": "food",
+              "date": "2026-02-14",
+              "who": "cy"
+            },
+            {
+              "amount": 33.25,
+              "category": "food",
+              "date": "2026-02-14",
+              "who": "cy"
+            }
+          ]
+        },
+        "old": [
+          "ANA:food",
+          "BO:None",
+          "ANA:rent",
+          "CY:food",
+          "CY:food"
+        ],
+        "new": [
+          "ANA:food",
+          NaN,
+          "ANA:rent",
+          "CY:food",
+          "CY:food"
+        ]
+      },
+      "source_sha256": "94cb15fa0f80671359c499e12fbfab584b2395fb5f01551f0ed299f75812b431",
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 32.1,
+      "tokens": 1396,
+      "run_dir": "/private/tmp/pp_led/.patchpilot/20261030-185915/runs/20261030-190233_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "In pandas 3.0, a missing `category` value becomes a true NaN in the DataFrame and `astype(str)` renders it as the string \"nan\"/NaN instead of \"None\" as observed in pandas 2.3.3, so the label for rows with a missing category changes. Normalising missing categories to the literal string \"None\" before building the label makes the output stable across versions.",
+          "tokens": 1396,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 154,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "In pandas 3.0, a missing `category` value becomes a true NaN in the DataFrame and `astype(str)` renders it as the string \"nan\"/NaN instead of \"None\" as observed in pandas 2.3.3, so the label for rows with a missing category changes. Normalising missing categories to the literal string \"None\" before building the label makes the output stable across versions.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 154,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "export.label_rows.diff"
+    },
+    {
+      "file": "ledger/stats.py",
+      "function": "range_text",
+      "lib": "numpy",
+      "status": "repaired",
+      "detail": "the new library differs on 2 of 2 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "values": [
+            3.5,
+            1.25,
+            9.0
+          ]
+        },
+        "old": "range: [1.25, 9.0]",
+        "new": "range: [np.float64(1.25), np.float64(9.0)]"
+      },
+      "source_sha256": "950b00ff9a4737ce48b4000617e710ab05c89aa8715fcb4fe12e39cc47565845",
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 26.9,
+      "tokens": 1328,
+      "run_dir": "/private/tmp/pp_led/.patchpilot/20261030-185915/runs/20261030-190306_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "range_text interpolates NumPy scalar objects directly, so f-string uses their repr which changed in NumPy 2 to include the type name like np.float64(1.25). Converting the scalars to native Python values with .item() makes the formatting stable across NumPy 1 and 2.",
+          "tokens": 1328,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 134,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "range_text interpolates NumPy scalar objects directly, so f-string uses their repr which changed in NumPy 2 to include the type name like np.float64(1.25). Converting the scalars to native Python values with .item() makes the formatting stable across NumPy 1 and 2.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 134,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "stats.range_text.diff"
+    },
+    {
+      "file": "ledger/stats.py",
+      "function": "running_balance",
+      "lib": "numpy",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/stats.py",
+      "function": "add_bonus",
+      "lib": "numpy",
+      "status": "repaired",
+      "detail": "the new library differs on 1 of 2 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "bonus": 100,
+          "score": 200
+        },
+        "old": 300,
+        "new": 44
+      },
+      "source_sha256": "950b00ff9a4737ce48b4000617e710ab05c89aa8715fcb4fe12e39cc47565845",
+      "model": "muse-glimmer",
+      "effort": "low",
+      "endpoint": "http://127.0.0.1:8080/v1",
+      "seconds": 78.9,
+      "tokens": 2926,
+      "run_dir": "/private/tmp/pp_led/.patchpilot/20261030-185915/runs/20261030-190335_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "In NumPy 2 the casting of a Python int larger than the uint8 range to np.uint8 became a true modulo/wrap, while the code relied on the previous NumPy 1 behaviour that effectively kept the original value for the test inputs. Removing the uint8 cast and using a plain Python int addition reproduces the old golden result on both NumPy 1.26.4 and NumPy 2.5.4.",
+          "tokens": 2926,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 136,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "In NumPy 2 the casting of a Python int larger than the uint8 range to np.uint8 became a true modulo/wrap, while the code relied on the previous NumPy 1 behaviour that effectively kept the original value for the test inputs. Removing the uint8 cast and using a plain Python int addition reproduces the old golden result on both NumPy 1.26.4 and NumPy 2.5.4.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 136,
+        "core_divergences": 0,
+        "wide_divergences": 50
+      },
+      "applied": false,
+      "diff_file": "stats.add_bonus.diff"
+    },
+    {
+      "file": "ledger/stats.py",
+      "function": "nearest_percentile",
+      "lib": "numpy",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/stats.py",
+      "function": "zscores",
+      "lib": "numpy",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/stats.py",
+      "function": "bucket_counts",
+      "lib": "numpy",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    },
+    {
+      "file": "ledger/stats.py",
+      "function": "mean_of_means",
+      "lib": "numpy",
+      "status": "healthy",
+      "detail": "same output on all 2 inputs",
+      "example": null
+    }
+  ]
+}

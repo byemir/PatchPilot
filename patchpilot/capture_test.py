@@ -87,6 +87,19 @@ with tempfile.TemporaryDirectory() as t:
             rc2 = scan.main([str(shop / "mine.json"), "--triage-only", "--out-dir", str(tmp / "rep")])
         rep = json.loads((tmp / "rep" / "scan_report.json").read_text())
         check("the recorded inputs go straight into a scan and the silent break is found", rc2 == 0 and rep["counts"] == {"silent": 1}, str(rep["counts"]))
+        # a whole small project: --discover finds the functions, its own unittest suite supplies the inputs, nobody writes a manifest
+        led = tmp / "ledger"
+        shutil.copytree(REPO / "examples" / "ledger", led, ignore=shutil.ignore_patterns("probes", "scan.json", "__pycache__"))
+        rc, out = run(["--python", old, "--discover", str(led / "ledger" / "clean.py"), "--discover", str(led / "ledger" / "report.py"),
+                       "--discover", str(led / "ledger" / "export.py"), "--out", str(led / "probes"), "--manifest", str(led / "scan.json"),
+                       "--lib", "pandas", "--cwd", str(led), "--", "-m", "unittest", "discover", "-s", "tests"])
+        check("--discover records every public function of three modules from the project's own tests", rc == 0 and out.count("distinct call") == 14, out)
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf), contextlib.redirect_stderr(buf):
+            rc3 = scan.main([str(led / "scan.json"), "--triage-only", "--out-dir", str(tmp / "rep2")])
+        rep2 = json.loads((tmp / "rep2" / "scan_report.json").read_text())
+        check("the project is checked without a hand-written manifest: 9 same, 5 silent", rc3 == 0 and rep2["counts"] == {"healthy": 9, "silent": 5}, str(rep2["counts"]))
+        check("a test file is never a target", all("test_" not in t["file"] for t in rep2["targets"]))
     else:
         print("skip  end-to-end check (no pinned pandas interpreters; build them with scripts/setup_envs.sh)")
 print(f"capture_test: {passed} checks passed")

@@ -1,0 +1,58 @@
+[
+ {
+  "rows": [
+   {
+    "amount": 12.5,
+    "category": "food",
+    "date": "2026-01-03",
+    "who": "ana"
+   },
+   {
+    "amount": 80.0,
+    "category": null,
+    "date": "2026-01-19",
+    "who": "bo"
+   },
+   {
+    "amount": 700.0,
+    "category": "rent",
+    "date": "2026-02-02",
+    "who": "ana"
+   },
+   {
+    "amount": 33.25,
+    "category": "food",
+    "date": "2026-02-14",
+    "who": "cy"
+   },
+   {
+    "amount": 33.25,
+    "category": "food",
+    "date": "2026-02-14",
+    "who": "cy"
+   }
+  ]
+ },
+ {
+  "rows": [
+   {
+    "amount": 700.0,
+    "category": "rent",
+    "date": "2026-02-02",
+    "who": "ana"
+   },
+   {
+    "amount": 33.25,
+    "category": "food",
+    "date": "2026-02-14",
+    "who": "cy"
+   },
+   {
+    "amount": 33.25,
+    "category": "food",
+    "date": "2026-02-14",
+    "who": "cy"
+   }
+  ]
+ }
+]
