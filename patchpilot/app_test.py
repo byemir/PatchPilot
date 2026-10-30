@@ -105,6 +105,7 @@ def main() -> int:
         check("a foreign Origin is refused", call(app, "/api/run", {"manifest": "proj/scan.json", "mode": "check"}, origin="http://evil.example")[0] == 403)
         code, st = call(app, "/api/state")
         check("only real scan manifests are listed", code == 200 and st["manifests"] == ["proj/scan.json"])
+        check("the state says whether the pinned environments exist", isinstance(st["envs"], bool))
         check("no hosted model is offered without a key", st["hosted"] == [] or appmod.meta_client.KEY_PATH.exists())
 
         bad = [{"manifest": "../x.json", "mode": "check"}, {"manifest": "proj/other.json", "mode": "check"}, {"manifest": "proj/scan.json", "mode": "rm"},

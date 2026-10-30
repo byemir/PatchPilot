@@ -133,7 +133,7 @@ class App:
     def state(self) -> dict:
         return {"root": self.root.name, "manifests": self.manifests(), "hosted": list(HOSTED) if meta_client.KEY_PATH.exists() else [],
                 "endpoint": "http://127.0.0.1:8080/v1", "previous": self.previous(),
-                "changed": self.changed(), "job": self.job.since(0)["status"] if self.job else None}
+                "changed": self.changed(), "envs": all(Path(repair.default_python(l, k)).exists() for l in repair.ENVS for k in (0, 1)), "job": self.job.since(0)["status"] if self.job else None}
 
     def health(self, endpoint: str) -> dict:
         if not ENDPOINT_RE.match(endpoint):
