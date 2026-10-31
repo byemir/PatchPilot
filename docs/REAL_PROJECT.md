@@ -42,7 +42,7 @@ Unlike indsl, this function was not chosen because someone had reported it. The 
 ## What it does not show
 - One function in one project, one run. The static count found 10 sites in 7 non-vendored repositories; this is the only one we ran. It is not an estimate of how many projects have such breaks.
 - The inputs are ours and numeric only. The function also fills text columns (`dtype == "object"`); pandas 3 stores text as a new string type, so that branch may behave differently, and we did not test it.
-- Whether the maintainers consider this a defect, or support pandas 3 yet, was not checked.
+- Whether the maintainers consider this a defect, or support pandas 3 yet, was not checked. We reported the finding to the project as an issue on 2026-10-31 (https://github.com/polyaxon/traceml/issues/33); no reply had arrived when this was written.
 
 
 # The projects' own tests, with and without the patches (2026-10-31)
