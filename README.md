@@ -47,6 +47,9 @@ The same gates and the same benchmark runner are used for all three models. The 
     llama-server -m ~/models/muse-glimmer/Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf -a muse-glimmer -ngl 99 -c 65536 -np 1 --host 127.0.0.1 --port 8080 --chat-template-kwargs '{"reasoning_strength":"low"}'
     python -m patchpilot.bench --endpoint http://127.0.0.1:8080/v1 --cases n6_uint8_scaling --effort low --repeats 5 --score-seed 1
 
+## License
+PatchPilot is source-available under the PolyForm Strict License 1.0.0 (see `LICENSE`), in a public repository. The hackathon organizers confirmed that a source-available license on a public repository meets the rules; no OSI license is required. Setup and run instructions are in this README.
+
 ## Third-party software and models
 PatchPilot's own code (`patchpilot/`, `scripts/`) imports only the Python standard library, with one optional exception: `patchpilot/ui_smoke.py`, a browser check of the app page, imports Playwright if it is installed and skips itself if not. What it uses from others, all unmodified and under their own licenses:
 
