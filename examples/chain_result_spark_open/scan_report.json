@@ -1,0 +1,293 @@
+{
+  "manifest": "/tmp/pp_chain/scan.json",
+  "model": "meta-models/muse-spark-open-1026",
+  "endpoint": null,
+  "effort": "low",
+  "triage_only": false,
+  "applied": false,
+  "seconds": 74.0,
+  "tokens": 17694,
+  "counts": {
+    "not_repaired": 1,
+    "repaired": 3
+  },
+  "targets": [
+    {
+      "file": "../../../Users/user/dev/PatchPilot/examples/shop/orders/fill_missing_region.py",
+      "function": "fill_missing_region",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 4 of 4 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "rows": [
+            {
+              "region": "north"
+            },
+            {
+              "region": null
+            },
+            {
+              "region": "south"
+            }
+          ]
+        },
+        "old": [
+          "north",
+          "unknown",
+          "south"
+        ],
+        "new": [
+          "north",
+          NaN,
+          "south"
+        ]
+      },
+      "source_sha256": "00053a3ede7585f72f25d05c370a3ebec321bdab26ee9f2834bbe25b1616bc62",
+      "model": "meta-models/muse-spark-open-1026",
+      "effort": "low",
+      "endpoint": null,
+      "seconds": 10.5,
+      "tokens": 3088,
+      "run_dir": "/Users/user/dev/PatchPilot/runs/20261031-151056_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "pandas 3.0 enables Copy-on-Write by default, so df[\"region\"].fillna(..., inplace=True) operates on a copy and no longer mutates the parent DataFrame, leaving NaN/None unfilled.",
+          "tokens": 3088,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 149,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "pandas 3.0 enables Copy-on-Write by default, so df[\"region\"].fillna(..., inplace=True) operates on a copy and no longer mutates the parent DataFrame, leaving NaN/None unfilled.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 149,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "fill_missing_region.fill_missing_region.diff"
+    },
+    {
+      "file": "../../../Users/user/dev/PatchPilot/examples/shop/orders/flag_big_orders.py",
+      "function": "flag_big_orders",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 4 of 4 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "rows": [
+            {
+              "amount": 50,
+              "customer": "alice",
+              "order_time": "2024-03-10 08:30:00"
+            },
+            {
+              "amount": 100,
+              "customer": "bob",
+              "order_time": "2024-03-10 09:00:00"
+            },
+            {
+              "amount": 150,
+              "customer": "carol",
+              "order_time": "2024-03-10 09:30:00"
+            }
+          ],
+          "limit": 100
+        },
+        "old": [
+          false,
+          false,
+          true
+        ],
+        "new": [
+          false,
+          false,
+          false
+        ]
+      },
+      "source_sha256": "661e22658c9581d34c67ad0f257163de693f85c33fe4c52928ecf200c7c19c06",
+      "model": "meta-models/muse-spark-open-1026",
+      "effort": "low",
+      "endpoint": null,
+      "seconds": 6.6,
+      "tokens": 1922,
+      "run_dir": "/Users/user/dev/PatchPilot/runs/20261031-151110_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "Pandas 3.0 enables Copy-on-Write by default, so chained assignment `df[\"big\"][mask] = True` writes to a temporary copy and is silently ignored; must use `df.loc[mask, \"big\"] = True`.",
+          "tokens": 1922,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 135,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "Pandas 3.0 enables Copy-on-Write by default, so chained assignment `df[\"big\"][mask] = True` writes to a temporary copy and is silently ignored; must use `df.loc[mask, \"big\"] = True`.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 135,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "flag_big_orders.flag_big_orders.diff"
+    },
+    {
+      "file": "../../../Users/user/dev/PatchPilot/examples/shop/orders/last_seen_epoch.py",
+      "function": "last_seen_epoch",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 3 of 4 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "stamps": [
+            "2024-03-10 08:30:00",
+            "2023-01-15 12:00:00",
+            "2024-12-01 00:00:00"
+          ]
+        },
+        "old": 1733011200,
+        "new": 1733011
+      },
+      "source_sha256": "7180053de4a38d5e93e5200c2be1b04a60be4a225d2be2169efa14f2d8407c7d",
+      "model": "meta-models/muse-spark-open-1026",
+      "effort": "low",
+      "endpoint": null,
+      "seconds": 14.1,
+      "tokens": 3920,
+      "run_dir": "/Users/user/dev/PatchPilot/runs/20261031-151119_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "pandas 3 now uses variable resolution datetime64 (s/ms/us) instead of always ns; astype('int64') therefore returns seconds/microseconds etc. and //1e9 truncates. Normalizing to datetime64[ns] before viewing as int64 restores nanosecond semantics on both versions.",
+          "tokens": 3920,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 140,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "pandas 3 now uses variable resolution datetime64 (s/ms/us) instead of always ns; astype('int64') therefore returns seconds/microseconds etc. and //1e9 truncates. Normalizing to datetime64[ns] before viewing as int64 restores nanosecond semantics on both versions.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 140,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "last_seen_epoch.last_seen_epoch.diff"
+    },
+    {
+      "file": "../../../Users/user/dev/PatchPilot/examples/shop/people/clean_names.py",
+      "function": "clean_names",
+      "lib": "pandas",
+      "status": "not_repaired",
+      "detail": "max attempts reached",
+      "example": {
+        "input": {
+          "names": [
+            " alice ",
+            "BOB",
+            " charlie  "
+          ]
+        },
+        "old": [
+          "Alice",
+          "Bob",
+          "Charlie"
+        ],
+        "new": [
+          " alice ",
+          "BOB",
+          " charlie  "
+        ]
+      },
+      "source_sha256": "1d02116269dcd1498c11582827e64dc11ac99164dfa255bbf18c268764867cd6",
+      "model": "meta-models/muse-spark-open-1026",
+      "effort": "low",
+      "endpoint": null,
+      "seconds": 26.7,
+      "tokens": 8764,
+      "run_dir": "/Users/user/dev/PatchPilot/runs/20261031-151137_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "fail",
+            "differential": "skipped",
+            "outcome": "rejected at the hidden tests"
+          },
+          "diagnosis": "pandas 3.0 changed Series(names) dtype from object to string/numpy-string, so `s.dtype == object` is False and the strip/title branch is skipped. Forcing object dtype (or handling strings directly) and normalizing NaN/NA to None restores the old behavior on both versions.",
+          "tokens": 3435,
+          "differential": null,
+          "counterexample": null
+        },
+        {
+          "attempt": 2,
+          "gates": {
+            "visible": "fail",
+            "hidden": "skipped",
+            "differential": "skipped",
+            "outcome": "rejected at the visible tests"
+          },
+          "diagnosis": "pandas 3.x no longer infers dtype==object for string Series (uses StringDtype/string), so the `if s.dtype == object` guard skips .str.strip().str.title() and missing values stay as NaN instead of being preserved as None/null.",
+          "tokens": 2671,
+          "differential": null,
+          "counterexample": null
+        },
+        {
+          "attempt": 3,
+          "gates": {
+            "visible": "ok",
+            "hidden": "fail",
+            "differential": "skipped",
+            "outcome": "rejected at the hidden tests"
+          },
+          "diagnosis": "pandas 3.0 now infers StringDtype for string Series so `s.dtype==object` is False and cleaning is skipped, and NaN/NA are no longer auto-converted to None/omitted. Fix forces object handling and normalises all missing values to None.",
+          "tokens": 2658,
+          "differential": null,
+          "counterexample": null
+        }
+      ]
+    }
+  ]
+}

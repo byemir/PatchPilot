@@ -1,0 +1,107 @@
+[
+ {
+  "rows": [
+   {
+    "amount": 50,
+    "customer": "alice",
+    "order_time": "2024-03-10 08:30:00"
+   },
+   {
+    "amount": 100,
+    "customer": "bob",
+    "order_time": "2024-03-10 09:00:00"
+   },
+   {
+    "amount": 150,
+    "customer": "carol",
+    "order_time": "2024-03-10 09:30:00"
+   }
+  ],
+  "limit": 100
+ },
+ {
+  "rows": [
+   {
+    "amount": null,
+    "customer": "dave",
+    "order_time": "2024-03-11 10:00:00"
+   },
+   {
+    "amount": 25,
+    "customer": "eve",
+    "order_time": "2024-03-11 11:00:00"
+   },
+   {
+    "amount": 75,
+    "customer": null,
+    "order_time": "2024-03-11 12:00:00"
+   },
+   {
+    "amount": 50,
+    "customer": "frank",
+    "order_time": null
+   }
+  ],
+  "limit": 50
+ },
+ {
+  "rows": [
+   {
+    "amount": -10,
+    "customer": "gift card",
+    "order_time": "2024-01-01 00:00:00"
+   },
+   {
+    "amount": 0,
+    "customer": "free sample",
+    "order_time": "2024-01-02 08:00:00"
+   },
+   {
+    "amount": 0.01,
+    "customer": "tiny order",
+    "order_time": "2024-01-03 14:15:00"
+   },
+   {
+    "amount": 5,
+    "customer": "small order",
+    "order_time": "2024-01-04 16:45:00"
+   }
+  ],
+  "limit": 0
+ },
+ {
+  "rows": [
+   {
+    "amount": 199.99,
+    "customer": "heidi",
+    "order_time": "2024-06-15 18:30:00",
+    "product": "book"
+   },
+   {
+    "amount": 200,
+    "customer": "ivan",
+    "order_time": "2024-06-15 19:00:00",
+    "product": "headphones"
+   },
+   {
+    "amount": 250,
+    "customer": "judy",
+    "order_time": "2024-06-16 08:30:00",
+    "product": "laptop"
+   },
+   {
+    "amount": null,
+    "customer": "karl",
+    "order_time": "2024-06-16 09:00:00",
+    "product": "monitor"
+   },
+   {
+    "amount": 1000,
+    "customer": "leo",
+    "order_time": "2024-06-16 10:00:00",
+    "product": null
+   }
+  ],
+  "limit": 200
+ }
+]

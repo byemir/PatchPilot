@@ -175,6 +175,7 @@ with tempfile.TemporaryDirectory() as t:
           and "placeholder" in man["note"])
     ok_paths = all((out / x["file"]).resolve().is_file() and (out / x["inputs"]).resolve().is_file() and (out / x["root"]).resolve().is_dir() for x in man["targets"])
     check("every path in the manifest exists, relative to the manifest", ok_paths)
+    check("every target is marked as a placeholder", all(x.get("placeholder") is True for x in man["targets"]))
     t_kinds = next(x for x in man["targets"] if x["function"] == "kinds")
     probe = json.loads((out / t_kinds["inputs"]).read_text())
     check("the placeholder input holds the defaults, null where there is none", probe == [{"s": None, "flag": True, "tags": None, "other": None}], str(probe))

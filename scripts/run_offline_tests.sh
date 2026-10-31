@@ -23,6 +23,7 @@ tests=(
   "patchpilot.capture_test"
   "patchpilot.census_test"
   "patchpilot.discover_test"
+  "patchpilot.propose_test"
   "patchpilot.frames_test"
   "patchpilot.project_test"
   "patchpilot.isolation_test"

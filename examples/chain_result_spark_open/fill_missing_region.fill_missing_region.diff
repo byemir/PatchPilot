@@ -1,0 +1,13 @@
+--- a/fill_missing_region.py
++++ b/fill_missing_region.py
+@@ -3,5 +3,9 @@
+ 
+ def fill_missing_region(rows):
+     df = pd.DataFrame(rows)
+-    df["region"].fillna("unknown", inplace=True)
++    # CoW-safe: do not use inplace on a Series slice; handle all null sentinels
++    df["region"] = ["unknown" if pd.isna(x) else x for x in df["region"]]
++    # also cover object-None that pd.isna may miss in some dtypes/versions
++    df["region"] = df["region"].replace({None: "unknown"})
++    df["region"] = df["region"].fillna("unknown")
+     return df["region"].tolist()

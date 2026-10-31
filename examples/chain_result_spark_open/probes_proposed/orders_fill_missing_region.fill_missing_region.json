@@ -1,0 +1,70 @@
+[
+ {
+  "rows": [
+   {
+    "region": "north"
+   },
+   {
+    "region": null
+   },
+   {
+    "region": "south"
+   }
+  ]
+ },
+ {
+  "rows": [
+   {
+    "region": "east",
+    "id": 1
+   },
+   {
+    "region": null,
+    "id": 2
+   },
+   {
+    "region": "west",
+    "id": 3
+   },
+   {
+    "region": null,
+    "id": 4
+   }
+  ]
+ },
+ {
+  "rows": [
+   {
+    "region": "2024-03-10 08:30:00"
+   },
+   {
+    "region": null
+   },
+   {
+    "region": "2024-03-11 09:00:00"
+   },
+   {
+    "region": "central"
+   }
+  ]
+ },
+ {
+  "rows": [
+   {
+    "region": 101
+   },
+   {
+    "region": null
+   },
+   {
+    "region": 202
+   },
+   {
+    "region": "unknown"
+   },
+   {
+    "region": null
+   }
+  ]
+ }
+]

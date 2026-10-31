@@ -59,7 +59,7 @@
       "endpoint": null,
       "seconds": 14.2,
       "tokens": 868,
-      "run_dir": "/Users/gt.poseidon/dev/PatchPilot/runs/20261031-140609_case",
+      "run_dir": "/Users/user/dev/PatchPilot/runs/20261031-140609_case",
       "attempts_detail": [
         {
           "attempt": 1,
@@ -129,7 +129,7 @@
       "endpoint": null,
       "seconds": 43.0,
       "tokens": 1689,
-      "run_dir": "/Users/gt.poseidon/dev/PatchPilot/runs/20261031-140626_case",
+      "run_dir": "/Users/user/dev/PatchPilot/runs/20261031-140626_case",
       "attempts_detail": [
         {
           "attempt": 1,
@@ -216,7 +216,7 @@
       "endpoint": null,
       "seconds": 45.7,
       "tokens": 1921,
-      "run_dir": "/Users/gt.poseidon/dev/PatchPilot/runs/20261031-140713_case",
+      "run_dir": "/Users/user/dev/PatchPilot/runs/20261031-140713_case",
       "attempts_detail": [
         {
           "attempt": 1,
@@ -296,7 +296,7 @@
       "endpoint": null,
       "seconds": 19.1,
       "tokens": 1063,
-      "run_dir": "/Users/gt.poseidon/dev/PatchPilot/runs/20261031-140802_case",
+      "run_dir": "/Users/user/dev/PatchPilot/runs/20261031-140802_case",
       "attempts_detail": [
         {
           "attempt": 1,
@@ -360,7 +360,7 @@
       "endpoint": null,
       "seconds": 21.4,
       "tokens": 1271,
-      "run_dir": "/Users/gt.poseidon/dev/PatchPilot/runs/20261031-140822_case",
+      "run_dir": "/Users/user/dev/PatchPilot/runs/20261031-140822_case",
       "attempts_detail": [
         {
           "attempt": 1,
@@ -421,7 +421,7 @@
       "endpoint": null,
       "seconds": 23.1,
       "tokens": 1268,
-      "run_dir": "/Users/gt.poseidon/dev/PatchPilot/runs/20261031-140844_case",
+      "run_dir": "/Users/user/dev/PatchPilot/runs/20261031-140844_case",
       "attempts_detail": [
         {
           "attempt": 1,
@@ -528,7 +528,7 @@
       "endpoint": null,
       "seconds": 36.6,
       "tokens": 1681,
-      "run_dir": "/Users/gt.poseidon/dev/PatchPilot/runs/20261031-140909_case",
+      "run_dir": "/Users/user/dev/PatchPilot/runs/20261031-140909_case",
       "attempts_detail": [
         {
           "attempt": 1,

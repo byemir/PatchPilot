@@ -13,8 +13,9 @@ is not listed has not been shown to be safe.
 
 --json writes the candidates with their parameter names, annotations and literal defaults (what a later step needs to propose
 inputs). --manifest writes a scan manifest with one target per candidate and, in --probes-dir, one placeholder input file per
-candidate (parameter name -> its literal default, or null). The placeholders are NOT real inputs: fill them (for example with
-`python -m patchpilot.capture`, which records them from your own tests) before running `scan`. Existing files are never
+candidate (parameter name -> its literal default, or null), and each target is marked `"placeholder": true`. The placeholders are
+NOT real inputs: fill them (with `python -m patchpilot.capture`, which records them from your own tests, or let a model propose
+inputs with `python -m patchpilot.propose`) before running `scan`. Existing files are never
 overwritten. Standard library only.
 """
 from __future__ import annotations
@@ -300,7 +301,7 @@ def write_manifest(result: dict, top: Path, manifest: Path, probes_dir: Path) ->
     for c, pf in planned:
         pf.write_text(json.dumps(placeholder(c), indent=1) + "\n")
         targets.append({"file": os.path.relpath((top / c["file"]).resolve(), base).replace(os.sep, "/"), "function": c["function"], "lib": "pandas",
-                        "inputs": os.path.relpath(pf.resolve(), base).replace(os.sep, "/"),
+                        "inputs": os.path.relpath(pf.resolve(), base).replace(os.sep, "/"), "placeholder": True,
                         "root": os.path.relpath((top / c["root"]).resolve(), base).replace(os.sep, "/")})
     note = ("DRAFT written by `patchpilot.discover`. The input files are placeholders (defaults or null), not real inputs: fill them, "
             "for example with `python -m patchpilot.capture`, before running `scan`. Add \"old\" and \"new\" interpreters to a target "

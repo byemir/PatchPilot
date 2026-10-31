@@ -1,0 +1,18 @@
+--- a/last_seen_epoch.py
++++ b/last_seen_epoch.py
+@@ -3,4 +3,14 @@
+ 
+ def last_seen_epoch(stamps):
+     ts = pd.to_datetime(pd.Series(stamps))
+-    return int(ts.astype("int64").max() // 10**9)
++    # pandas 3 may store datetime64[s]/[ms]/[us] not only [ns];
++    # astype("int64") then yields values in that unit and //1e9 is wrong.
++    # Normalize to ns first so the int64 view is always nanoseconds on both
++    # pandas 2 (always ns) and pandas 3 (variable resolution).
++    try:
++        vals = ts.astype("datetime64[ns]").astype("int64")
++        return int(vals.max() // 10**9)
++    except Exception:
++        # fallback for tz-aware or other cases: Timestamp.value is always ns
++        mx = ts.max()
++        return int(mx.value // 10**9)

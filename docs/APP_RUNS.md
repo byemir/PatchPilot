@@ -41,3 +41,16 @@ Five cases, 5 runs each, effort low, one batch, token count taken from the servi
 In all: 21 of 25 solved, 19 on the first attempt, 84,581 tokens. n7 is the weak case for this model; we did not look into why. One batch per case, so these numbers show what happened in this batch, not a success rate.
 
 Shop run with the same open model on Fireworks: tokens per function 868, 1,689, 1,921, 1,063, 1,271, 1,268 and 1,681; one run, seconds are for the whole scan.
+
+## Folder to patches, Muse Spark Open (Baseten), 2026-10-31
+
+The whole chain on the shop example, one run, Apple M2 Ultra, effort low: `patchpilot.discover` on `examples/shop` (draft manifest with placeholder inputs), `patchpilot.propose` (the model writes the inputs; each reply is checked on the old library), `patchpilot.scan` (classify on both libraries, repair the silent ones). Files: `examples/chain_result_spark_open/` (scan report, the accepted diffs, and the inputs the model proposed in `probes_proposed/`). The manifest is not included because its paths are specific to the machine.
+
+| step | result |
+|---|---|
+| `discover` | 4 candidates (`fill_missing_region`, `flag_big_orders`, `last_seen_epoch`, `clean_names`): 4 of the 7 silent functions of the set, none of its 5 healthy ones; the other 3 (NumPy printing, float32 scalar) are not found by these patterns |
+| `propose` | first run: inputs for 3 of 4 (1,039, 1,559 and 1,252 tokens, one reply each); `last_seen_epoch` got none in two replies (2,599 tokens; the model mixed timestamp formats and the old library raised); a second run for it: valid inputs in the first reply (1,526 tokens). 7,975 tokens in all |
+| classify | all four silent with the model's inputs (4 of 4, 4 of 4, 3 of 4 and 3 of 4 inputs differ) |
+| `scan` repair | 3 of 4 repaired on the first attempt (`fill_missing_region` 3,088 tokens, 10.5 s; `flag_big_orders` 1,922, 6.6 s; `last_seen_epoch` 3,920, 14.1 s). `clean_names`: not repaired in three attempts (8,764 tokens): the diagnosis was correct (text columns are no longer the object dtype on pandas 3), attempts 1 and 3 passed the visible tests and failed the hidden tests, attempt 2 failed the visible tests; nothing was written. The whole scan took 74 s and 17,694 tokens |
+
+What it shows: the steps connect without hand-written inputs, and the gates stopped three wrong patches. What it does not show: a rate (one run, one model, code we wrote, a set the patterns were tuned on after a first pass that found only 2 of 7), or that a function the model finds no difference for is safe. On the same set with hand-written inputs the same model repaired `clean_names` on its first attempt (`examples/shop_result_spark_open/`): the inputs change the outcome.
