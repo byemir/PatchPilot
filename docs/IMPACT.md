@@ -26,7 +26,7 @@ Most pandas code takes a DataFrame, not a JSON object. The scan, the repair gate
 
 ## Functions that import their siblings
 
-Most of the real candidates we rejected depended on other modules of their project. A manifest target can now carry `"root"` (README, "project mode"): the function is run and repaired inside a copy of its project folder, the model may edit only the target file. `examples/project` shows it with scripted replies. It was run once on a third-party project, indsl at the commit before its maintainers' fix: Check found the silent break, the local Glimmer repaired it on the first attempt and all three gates passed (`docs/REAL_PROJECT.md`; one function, chosen because the break was known, not a rate). A project whose package imports libraries outside the interpreters you name is reported as `invalid`.
+Most of the real candidates we rejected depended on other modules of their project. A manifest target can now carry `"root"` (README, "project mode"): the function is run and repaired inside a copy of its project folder, the model may edit only the target file. `examples/project` shows it with scripted replies. It was run once on a third-party project, indsl at the commit before its maintainers' fix: Check found the silent break, the local Glimmer repaired it (first attempt in one run; in a second run the visible tests rejected the first patch and the second passed all three gates) (`docs/REAL_PROJECT.md`; one function, chosen because the break was known, not a rate). A project whose package imports libraries outside the interpreters you name is reported as `invalid`.
 
 ## A gate for pull requests
 

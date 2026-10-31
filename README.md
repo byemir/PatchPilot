@@ -71,7 +71,7 @@ All runs are small samples on code we wrote (17 benchmark cases, the shop set, t
 | DataFrame module (6 functions) | local Glimmer: 3 of 3 repaired in both runs, one wrong patch blocked in run 2 |
 | Benchmark, hosted Spark and Wonder, five cases | 125 of 125 runs solved; on the hardest case (p4): Spark 0 of 5, Wonder 3 of 5 |
 | Benchmark, local Glimmer, six cases (low reasoning) | 19 of 30 solved; on cases where a half-fix passes the visible tests (q1 to q3): 42 of 45 (the count of 27 attempts rejected by the hidden check comes from local run files that are not in the repository) |
-| One real third-party project (indsl, before its maintainers' fix) | Check: silent break; local Glimmer repaired it on the first attempt (13,501 tokens, 194 s), all three gates passed. One function, chosen because the break was known, not a rate: `docs/REAL_PROJECT.md` |
+| One real third-party project (indsl, before its maintainers' fix) | Check: silent break; local Glimmer repaired it in two runs: on the first attempt (13,501 tokens, 194 s) and, in a second run, on the second attempt after the visible tests rejected the first patch (27,052 tokens, 363 s); all three gates passed on the accepted patch. One function, chosen because the break was known, two runs, not a rate: `docs/REAL_PROJECT.md` |
 
 Impact: `docs/IMPACT.md`; a static count of three pandas-3 patterns in 16 libraries and 7 teaching repositories (0 real hits in the libraries, 5 in teaching notebooks; patterns, not broken programs): `docs/CENSUS.md`. CI gate without a model: `python -m patchpilot.scan scan.json --triage-only --fail-on-silent` exits 1 while a listed function changes silently.
 

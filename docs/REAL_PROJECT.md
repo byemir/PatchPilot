@@ -16,8 +16,11 @@ It came out of the keyword search in `docs/IMPACT.md` (pull request 639, "fix/pa
 - Repair: accepted on the first attempt, 13,501 tokens, 194.0 s (the model also sees the other modules of the project as read-only context, which is why this costs more than our small examples). Visible tests, hidden tests and the differential check all passed; the differential check generated 200 inputs, 142 valid, 0 divergences.
 - The patch is one line in the target function: it replaces the integer conversion of the index by a timedelta in seconds from the first timestamp. We read it; for a datetime index it gives the same values on both libraries and the same return type. We did not compare it with the maintainers' own fix, and we did not run the project's own test suite on it.
 
+## Second run (same day, same function, same inputs)
+Run again from the same manifest, for rehearsing the demo video: repaired, but in two attempts. Attempt 1 (13,574 tokens) was rejected at the visible tests, so hidden and differential were not reached; attempt 2 (13,478 tokens) passed all three gates, differential PASS with 142 valid inputs of 200 and 0 divergences. 27,052 tokens in total, 362.8 s for the whole scan (342.4 s for the repair). The accepted patch again replaces the integer conversion of the index by a timedelta in seconds. The first run needed one attempt and 13,501 tokens (194.0 s), so the same model on the same function took one and two attempts: two runs, not a rate. Nothing was applied to the clone.
+
 ## What it does not show
-- One function in one project, chosen because the break was known. No other project was run.
+- One function in one project, chosen because the break was known, run twice. No other project was run.
 - The input is ours (five timestamps), not recorded from the project's tests; the hidden inputs are derived by our generator from it.
 - The environments hold the dependencies we installed for this run; for a project with more dependencies the same steps are needed.
 - Getting to this result took five fixes in our own tool, all found by running on this project (a circular import in the runner, copying test-looking module names, an `ImportError` message that hid the module name, a serializer that failed on arrays, and pytest missing from the environments); they are in `docs/engineering-log.md`.
