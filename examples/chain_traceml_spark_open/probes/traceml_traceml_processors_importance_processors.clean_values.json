@@ -1,0 +1,87 @@
+[
+ {
+  "params": [
+   {
+    "cat": "alpha",
+    "num": 10
+   },
+   {
+    "cat": null,
+    "num": 20
+   },
+   {
+    "cat": "beta",
+    "num": null
+   }
+  ],
+  "metrics": [
+   1.5,
+   2.5,
+   3.5
+  ]
+ },
+ {
+  "params": [
+   {
+    "cat": "   ",
+    "num": 5,
+    "all_null": null
+   },
+   {
+    "cat": "gamma",
+    "num": null,
+    "all_null": null
+   },
+   {
+    "cat": null,
+    "num": 15,
+    "all_null": null
+   },
+   {
+    "cat": "delta",
+    "num": 25,
+    "all_null": null
+   }
+  ],
+  "metrics": [
+   10,
+   20,
+   30,
+   40
+  ]
+ },
+ {
+  "params": [
+   {
+    "cat": "x",
+    "num": 1
+   },
+   {
+    "cat": "y",
+    "num": 2
+   }
+  ],
+  "metrics": []
+ },
+ {
+  "params": [
+   {
+    "cat": "a",
+    "num": 1
+   },
+   {
+    "cat": "b",
+    "num": 2
+   },
+   {
+    "cat": "c",
+    "num": 3
+   }
+  ],
+  "metrics": [
+   1,
+   "bad_string",
+   3
+  ]
+ }
+]

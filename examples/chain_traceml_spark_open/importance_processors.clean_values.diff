@@ -1,0 +1,85 @@
+--- a/importance_processors.py
++++ b/importance_processors.py
+@@ -34,22 +34,72 @@
+     if metrics_df.isnull().values.any():
+         return None
+ 
+-    params_df = pd.DataFrame.from_records(params).replace(r"^\s*$", np.nan, regex=True)
++    # Keep raw frame to emulate pandas 2.3.3 dtype decision for all-null columns
++    params_df_raw = pd.DataFrame.from_records(params)
++    params_df = params_df_raw.replace(r"^\s*$", np.nan, regex=True)
+     for col in params_df.columns:
+         if not params_df[col].isnull().sum() == len(params_df[col]):
+-            if params_df[col].dtype == "object":
+-                params_df[col].fillna("NAN", inplace=True)
+-                params_df[col].fillna("NAN", inplace=True)
++            # not all null - fill missing values
++            # Use api type checks to be robust across pandas versions
++            if params_df[col].dtype == "object" or pd.api.types.is_string_dtype(params_df[col]):
++                # categorical / object string column
++                params_df[col] = params_df[col].fillna("NAN")
+                 params_df[col] = params_df[col].astype("category")
+-            elif params_df[col].dtype == "float64" or params_df[col].dtype == "int64":
+-                params_df[col].fillna(params_df[col].mean(), inplace=True)
++            elif pd.api.types.is_numeric_dtype(params_df[col]):
++                params_df[col] = params_df[col].fillna(params_df[col].mean())
+             else:
+-                print("Unexpected Column type: {}".format(params_df[col].dtype))
++                # fallback to original logic for unexpected types
++                if params_df[col].dtype == "object":
++                    params_df[col] = params_df[col].fillna("NAN")
++                    params_df[col] = params_df[col].astype("category")
++                elif params_df[col].dtype == "float64" or params_df[col].dtype == "int64":
++                    params_df[col] = params_df[col].fillna(params_df[col].mean())
++                else:
++                    print("Unexpected Column type: {}".format(params_df[col].dtype))
+         else:
+-            if params_df[col].dtype == "object":
+-                params_df[col] = "NAN"
+-            elif params_df[col].dtype == "float64" or params_df[col].dtype == "int64":
++            # all null - need to decide between "NAN" dummy and numeric 0
++            # Original code used dtype == object vs float/int, but pandas 3.0
++            # changed inference for columns that became all NaN via regex replace
++            # (whitespace-only strings now stay object instead of becoming float).
++            # Emulate 2.3.3 behaviour by inspecting raw param values.
++            dtype = params_df[col].dtype
++            if dtype == "object" or pd.api.types.is_string_dtype(dtype):
++                # Inspect original values for this column from the input list
++                raw_vals = []
++                for d in params:
++                    if col in d:
++                        raw_vals.append(d[col])
++                    else:
++                        raw_vals.append(None)
++                # Determine if column was intended as numeric or categorical
++                has_numeric = any(isinstance(v, (int, float)) and not isinstance(v, bool) and v is not None and not (isinstance(v, float) and math.isnan(v)) for v in raw_vals)
++                has_nonempty_str = any(isinstance(v, str) and v.strip() != "" for v in raw_vals)
++                has_str = any(isinstance(v, str) for v in raw_vals)
++                if has_numeric:
++                    params_df[col] = 0
++                elif has_nonempty_str:
++                    params_df[col] = "NAN"
++                else:
++                    # only None / NaN / whitespace strings
++                    # In 2.3.3 whitespace-only columns were converted to float -> 0,
++                    # None-only columns stayed object -> "NAN"
++                    if has_str:
++                        params_df[col] = 0
++                    else:
++                        params_df[col] = "NAN"
++            elif pd.api.types.is_numeric_dtype(dtype):
+                 params_df[col] = 0
++            else:
++                if params_df[col].dtype == "object":
++                    params_df[col] = "NAN"
++                elif params_df[col].dtype == "float64" or params_df[col].dtype == "int64":
++                    params_df[col] = 0
++                else:
++                    # generic fallback: treat numeric dtypes as 0 else NAN
++                    if pd.api.types.is_numeric_dtype(dtype):
++                        params_df[col] = 0
++                    else:
++                        params_df[col] = "NAN"
+ 
+     return clean_duplicates(params_df, metrics_df)
+ 

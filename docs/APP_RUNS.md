@@ -66,3 +66,17 @@ What it shows: the steps connect without hand-written inputs, and the gates stop
 | `scan` repair, run 2 | the 3 silent functions repaired on the first attempt: `discounted_price` 2,443 tokens (6.1 s), `scores_text` 2,276 (4.8 s), `summary_line` 2,299 (5.7 s); 7,018 tokens, 16.6 s in all. The 2 loud functions are reported, not repaired |
 
 What it shows: a model can name candidates that fixed patterns do not cover, without deciding the verdict, and the chain from folder to verified patch runs for NumPy functions too. What it does not show: a rate. The suggestions differed between runs (4, 5, 5), the same function was healthy in one chain run and silent in the other, one real break was never named, the patterns and prompts were tuned on this set after a first miss, and the code is ours. `healthy` always means no difference on the inputs used.
+
+## Real project through the whole chain: traceml `clean_values`, Muse Spark Open (Baseten), 2026-10-31
+
+`discover` flagged the function, `propose` wrote four inputs (checked on the old library), `scan` classified it and ran the repair behind the three gates. Same manifest and same inputs in all three runs; only the effort setting differs. The pandas and the project are the ones described in `docs/REAL_PROJECT.md`.
+
+| run | effort | attempts | gate results per attempt | tokens | result |
+|---|---|---|---|---|---|
+| 1 | low | 3 | differential check; visible tests; hidden tests | 17,886 | not repaired |
+| 2 | low | 3 | differential check; visible tests; visible tests | 17,732 | not repaired |
+| 3 | medium | 3 | visible tests; differential check; all three gates passed | 24,891 (74.6 s) | repaired |
+
+In the low-effort runs the first patch passed the visible and hidden tests and was stopped by the differential check, which found inputs (for example a category made only of spaces) where the patch and the original differ on the old library. That is the gate doing its job: a patch that looked right on the proposed inputs was not accepted. The accepted patch of run 3 is in `examples/chain_traceml_spark_open/`.
+
+What it shows: the chain works on code from a real project with no hand-written inputs, and a repair that fails at low effort can succeed at medium effort. What it does not show: a rate. One function, three runs, one model; the model chose the inputs, and `healthy` or `silent` holds for those inputs only. Earlier, the local Glimmer model repaired the same function on its first attempt with our own inputs (`docs/REAL_PROJECT.md`).

@@ -1,0 +1,269 @@
+{
+  "manifest": "scan.json",
+  "model": "meta-models/muse-spark-open-1026",
+  "endpoint": null,
+  "effort": "medium",
+  "triage_only": false,
+  "applied": false,
+  "seconds": 74.6,
+  "tokens": 24891,
+  "counts": {
+    "repaired": 1
+  },
+  "targets": [
+    {
+      "file": "../rp_traceml/traceml/traceml/processors/importance_processors.py",
+      "function": "clean_values",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 2 of 4 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "params": [
+            {
+              "cat": "alpha",
+              "num": 10
+            },
+            {
+              "cat": null,
+              "num": 20
+            },
+            {
+              "cat": "beta",
+              "num": null
+            }
+          ],
+          "metrics": [
+            1.5,
+            2.5,
+            3.5
+          ]
+        },
+        "old": [
+          {
+            "$df": {
+              "num": [
+                10.0,
+                20.0,
+                15.0
+              ],
+              "cat_NAN": [
+                false,
+                true,
+                false
+              ],
+              "cat_alpha": [
+                true,
+                false,
+                false
+              ],
+              "cat_beta": [
+                false,
+                false,
+                true
+              ]
+            },
+            "index": [
+              0,
+              1,
+              2
+            ]
+          },
+          {
+            "$df": {
+              "0": [
+                1.5,
+                2.5,
+                3.5
+              ]
+            },
+            "index": [
+              0,
+              1,
+              2
+            ]
+          }
+        ],
+        "new": [
+          {
+            "$df": {
+              "num": [
+                10.0,
+                20.0,
+                NaN
+              ],
+              "cat_alpha": [
+                true,
+                false,
+                false
+              ],
+              "cat_beta": [
+                false,
+                false,
+                true
+              ]
+            },
+            "index": [
+              0,
+              1,
+              2
+            ]
+          },
+          {
+            "$df": {
+              "0": [
+                1.5,
+                2.5,
+                3.5
+              ]
+            },
+            "index": [
+              0,
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      "source_sha256": "cd3a7f182f859806630a5351842a6d5e62360f88cc0a2545f61c5cab3573048f",
+      "model": "meta-models/muse-spark-open-1026",
+      "effort": "medium",
+      "endpoint": null,
+      "seconds": 70.0,
+      "tokens": 24891,
+      "run_dir": "runs/20261031-164827_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "fail",
+            "hidden": "skipped",
+            "differential": "skipped",
+            "outcome": "rejected at the visible tests"
+          },
+          "diagnosis": "Pandas 3.0 enables Copy-on-Write by default; chained `params_df[col].fillna(..., inplace=True)` now operates on a copy and is a no-op, so numeric means are not imputed and object NaNs are not replaced with \"NAN\", breaking `get_dummies` dummy columns.",
+          "tokens": 5269,
+          "differential": null,
+          "counterexample": null
+        },
+        {
+          "attempt": 2,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "fail",
+            "outcome": "rejected at the differential check"
+          },
+          "diagnosis": "pandas 3.0 changed inference from `object` to `StringDtype`/`str` and deprecated `Series.fillna(..., inplace=True)` as a no-op on copies, so `dtype == 'object'` checks failed and numeric/categorical imputation never ran.",
+          "tokens": 7484,
+          "differential": {
+            "verdict": "DIVERGENCE",
+            "generated": 200,
+            "valid": 144,
+            "core_divergences": 2
+          },
+          "counterexample": {
+            "input": {
+              "params": [
+                {
+                  "cat": "   ",
+                  "num": 5,
+                  "all_null": null
+                }
+              ],
+              "metrics": [
+                10
+              ]
+            },
+            "expected": [
+              {
+                "$df": {
+                  "cat": [
+                    0
+                  ],
+                  "num": [
+                    5
+                  ],
+                  "all_null_NAN": [
+                    true
+                  ]
+                },
+                "index": [
+                  0
+                ]
+              },
+              {
+                "$df": {
+                  "0": [
+                    10
+                  ]
+                },
+                "index": [
+                  0
+                ]
+              }
+            ],
+            "got": [
+              {
+                "$df": {
+                  "num": [
+                    5
+                  ],
+                  "cat_NAN": [
+                    true
+                  ],
+                  "all_null_NAN": [
+                    true
+                  ]
+                },
+                "index": [
+                  0
+                ]
+              },
+              {
+                "$df": {
+                  "0": [
+                    10
+                  ]
+                },
+                "index": [
+                  0
+                ]
+              }
+            ],
+            "where": "patched@new"
+          }
+        },
+        {
+          "attempt": 3,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "pandas 3.0 removed working inplace fillna (CoW) and changed dtype inference for all-NaN columns; replacing inplace with assignment and emulating pandas 2.3.3 all-null dtype decision restores golden output on both versions.",
+          "tokens": 12138,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 144,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 3,
+      "diagnosis": "pandas 3.0 removed working inplace fillna (CoW) and changed dtype inference for all-NaN columns; replacing inplace with assignment and emulating pandas 2.3.3 all-null dtype decision restores golden output on both versions.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 144,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "importance_processors.clean_values.diff"
+    }
+  ]
+}

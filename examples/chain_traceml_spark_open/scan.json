@@ -1,0 +1,15 @@
+{
+ "note": "DRAFT written by `patchpilot.discover`. The input files are placeholders (defaults or null), not real inputs: fill them, for example with `python -m patchpilot.capture`, before running `scan`. Add \"old\" and \"new\" interpreters to a target if the project needs its own dependencies.",
+ "targets": [
+  {
+   "file": "../rp_traceml/traceml/traceml/processors/importance_processors.py",
+   "function": "clean_values",
+   "lib": "pandas",
+   "inputs": "probes/traceml_traceml_processors_importance_processors.clean_values.json",
+   "root": "../rp_traceml/traceml",
+   "old": "tm_old/bin/python",
+   "new": "tm_new/bin/python",
+   "inputs_source": "proposed by meta-models/muse-spark-open-1026"
+  }
+ ]
+}
