@@ -36,6 +36,8 @@ Needs Python 3.12 and internet for the first step (a few minutes).
 
 (The app shows "The pinned library environments are missing" until this has been run.)
 
+If `python3.12` is not on your PATH (Python 3.13 or newer will not work: the pinned NumPy 1.26.4 has no wheel for it), install one, for example `conda create -n py312 python=3.12` or `brew install python@3.12`, and pass its full path as `PYTHON312`.
+
 **2. Check, no model and no key:**
 
     python -m patchpilot.app --root examples
