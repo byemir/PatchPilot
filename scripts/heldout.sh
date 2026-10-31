@@ -12,7 +12,11 @@ while read -r name url; do
   d="$W/$name"
   echo "== $name"
   if [ ! -d "$d/.git" ]; then
-    timeout 180 git clone --depth 1 -q "$url" "$d" || { echo "$name: clone failed" | tee "$W/$name.failed"; continue; }
+    python3 -c 'import subprocess, sys
+try:
+    sys.exit(subprocess.run(["git", "clone", "--depth", "1", "-q", sys.argv[1], sys.argv[2]], timeout=180).returncode)
+except subprocess.TimeoutExpired:
+    sys.exit(124)' "$url" "$d" || { echo "$name: clone failed" | tee "$W/$name.failed"; continue; }
   fi
   git -C "$d" rev-parse HEAD > "$W/$name.commit"
   python3 -m patchpilot.discover "$d" --limit 10 --json "$W/$name.discover.json" --manifest "$W/$name.scan.json" --probes-dir "$W/$name.probes" > "$W/$name.discover.txt" 2>&1
