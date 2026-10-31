@@ -14,7 +14,7 @@ It came out of the keyword search in `docs/IMPACT.md` (pull request 639, "fix/pa
 ## Result (one run)
 - Check: `silent`. On pandas 2.3.3 the function returns the elapsed seconds `[0, 3600, 9000, 10800, 18000]`; on pandas 3.0.6 it returns values around -1.7e9, without any error (the index has microsecond resolution there, and the code mixes it with a nanosecond `Timestamp.value`). We also called the function directly, outside PatchPilot, in both environments and got the same two results.
 - Repair: accepted on the first attempt, 13,501 tokens, 194.0 s (the model also sees the other modules of the project as read-only context, which is why this costs more than our small examples). Visible tests, hidden tests and the differential check all passed; the differential check generated 200 inputs, 142 valid, 0 divergences.
-- The patch is one line in the target function: it replaces the integer conversion of the index by a timedelta in seconds from the first timestamp. We read it; for a datetime index it gives the same values on both libraries and the same return type. We did not compare it with the maintainers' own fix, and we did not run the project's own test suite on it.
+- The patch is one line in the target function: it replaces the integer conversion of the index by a timedelta in seconds from the first timestamp. We read it; for a datetime index it gives the same values on both libraries and the same return type. We did not compare it with the maintainers' own fix, and the project's own tests are in the last section.
 
 ## Second run (same day, same function, same inputs)
 Run again from the same manifest, for rehearsing the demo video: repaired, but in two attempts. Attempt 1 (13,574 tokens) was rejected at the visible tests, so hidden and differential were not reached; attempt 2 (13,478 tokens) passed all three gates, differential PASS with 142 valid inputs of 200 and 0 divergences. 27,052 tokens in total, 362.8 s for the whole scan (342.4 s for the repair). The accepted patch again replaces the integer conversion of the index by a timedelta in seconds. The first run needed one attempt and 13,501 tokens (194.0 s), so the same model on the same function took one and two attempts: two runs, not a rate. Nothing was applied to the clone.
@@ -37,10 +37,23 @@ Unlike indsl, this function was not chosen because someone had reported it. The 
 
 ## Result (one run)
 - Check: `silent`, on 2 of 2 inputs, nothing raised. On pandas 2.3.3 the missing parameter values are replaced by the column mean; on 3.0.6 they stay `NaN` (a call of the form `df["c"].fillna(mean, inplace=True)` no longer writes into the table).
-- Repair: accepted on the first attempt, 4,019 tokens, 54.8 s. Visible tests, hidden tests and the differential check passed; the differential generated 200 inputs, 152 valid, 0 divergences. We read the diff: it assigns the result of `fillna` back to the column instead of filling in place, and the logic is otherwise unchanged. We did not run the project's own tests on it and did not compare it with any maintainer change.
+- Repair: accepted on the first attempt, 4,019 tokens, 54.8 s. Visible tests, hidden tests and the differential check passed; the differential generated 200 inputs, 152 valid, 0 divergences. We read the diff: it assigns the result of `fillna` back to the column instead of filling in place, and the logic is otherwise unchanged. We did not compare it with any maintainer change; the project's own tests are in the last section.
 
 ## What it does not show
 - One function in one project, one run. The static count found 10 sites in 7 non-vendored repositories; this is the only one we ran. It is not an estimate of how many projects have such breaks.
 - The inputs are ours and numeric only. The function also fills text columns (`dtype == "object"`); pandas 3 stores text as a new string type, so that branch may behave differently, and we did not test it.
 - Whether the maintainers consider this a defect, or support pandas 3 yet, was not checked.
 
+
+# The projects' own tests, with and without the patches (2026-10-31)
+
+Same Mac, on copies of the two clones in `/tmp` (the clones themselves were not changed). The accepted diffs were applied with `patch`; the same tests were run before and after, in the pandas 2.3.3 and the pandas 3.0.6 environments.
+
+| project | tests run | pandas 2.3.3, without / with patch | pandas 3.0.6, without / with patch |
+|---|---|---|---|
+| traceml | `traceml/tests/test_events_processing/test_importance_processors.py` (8 tests) | 8 passed / 8 passed | 8 passed / 8 passed |
+| indsl | `tests/data_quality/test_out_of_range.py` and `test_studentised_residuals.py` (7 tests; they call the two public functions that use the patched helper) | 7 passed / 7 passed | 7 passed / 7 passed |
+
+What this shows: the patches do not break the project's own tests on either pandas version, and these tests did not catch the silent break on pandas 3 (they pass without the patch), which is the situation PatchPilot is meant for. In the traceml run the number of warnings fell from 9 to 3 with the patch (the chained-assignment warnings are gone).
+
+What it does not show: we ran only the test files named above, not the whole test suites. The test environments lack some of the projects' optional dependencies (for example `statsmodels` for indsl), so the full suites cannot be run there; before this run, 4 of the 8 traceml tests failed on both pandas versions only because `scikit-learn` was missing, so we installed `scikit-learn` 1.9.1 into the two traceml environments. We did not check that the indsl tests reach the patched line. Two functions in two projects, not a rate.
