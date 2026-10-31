@@ -6,6 +6,16 @@ Finds Python functions that silently return different results after a library up
 
 Meta Global AI Developer Hackathon (Oct 26 to Nov 4, 2026). Track: Indie Developer. Problem statement: Push the Frontier (software). Solo entry. The repository was created on 2026-10-27 (first commit after the kickoff) and holds only work from the event. License: PolyForm Strict 1.0.0 (`LICENSE`), public repository; the organizers confirmed that this meets the rules.
 
+## At a glance
+
+- **What it does:** lists functions whose result changes silently after a pandas 3 or NumPy 2 upgrade, has a Meta model propose a patch, and accepts it only if the visible, hidden and differential gates agree. Your files change only on Apply.
+- **Shop set (15 functions we wrote, 7 silent breaks):** Muse Spark Open on Baseten repaired 7 of 7 on the first attempt (9,557 tokens, 76 s); local Muse Glimmer repaired 6, 7 and 7 in three runs.
+- **The gates matter:** on cases where a half-fix passes the visible tests, hidden and differential checks rejected patches that a visible-tests-only workflow would have accepted; on the real traceml function, all six patches of two runs at effort low (three attempts each) were rejected by the gates, and the third patch of a run at effort medium passed.
+- **Real projects:** one function each in indsl and traceml repaired behind the gates; the projects' own tests pass with and without the patch and did not catch the break; the traceml finding was reported upstream (issue 33).
+- **Independent test, honest result:** a pre-registered run on eight projects we had not tuned on classified none of 11 candidate functions, because they need libraries outside the pinned environments (`docs/HELDOUT.md`).
+- Small samples on mostly our own code, one machine, no rates anywhere; each number below has its limits next to it.
+
+
 ## The problem and the idea
 
 After a dependency upgrade some code keeps passing its tests and quietly returns different numbers: pandas 3 makes datetime-to-integer conversions 1000 times smaller, NumPy 2 turns the string "0" into True, a chained assignment stops writing. PatchPilot lists such functions (`scan`), has a model propose a patch, and accepts it only if it passes three gates:
@@ -80,7 +90,7 @@ All runs are small samples on code we wrote (17 benchmark cases, the shop set, t
 | Benchmark, local Glimmer, six cases (low reasoning) | 19 of 30 solved; on cases where a half-fix passes the visible tests (q1 to q3): 42 of 45 (the count of 27 attempts rejected by the hidden check comes from local run files that are not in the repository) |
 | Two real third-party projects, one function each (`docs/REAL_PROJECT.md`) | indsl (known break, before its maintainers' fix): Check silent, local Glimmer repaired it in two runs (first attempt, 13,501 tokens, 194 s; second run: second attempt after the visible tests rejected the first patch, 27,052 tokens, 363 s). polyaxon/traceml (flagged by our static count, not known beforehand): Check silent on 2 of 2 inputs (missing values filled with the mean on pandas 2.3, left as NaN on 3.0), local Glimmer repaired it on the first attempt (4,019 tokens, 55 s). All three gates passed on every accepted patch. The traceml finding was reported upstream (https://github.com/polyaxon/traceml/issues/33; no reply yet). The projects' own tests we ran (8 and 7 tests) pass with and without the patch on both pandas versions, so they did not catch the break. One function per project, our inputs, not a rate |
 
-Impact: `docs/IMPACT.md`; a static count of three pandas-3 patterns in 16 libraries and 7 teaching repositories (0 real hits in the libraries, 5 in teaching notebooks; patterns, not broken programs): `docs/CENSUS.md`. CI gate without a model: `python -m patchpilot.scan scan.json --triage-only --fail-on-silent` exits 1 while a listed function changes silently.
+Impact: `docs/IMPACT.md`; a static count of three pandas-3 patterns in 115 public repositories in four counts (patterns, not broken programs): `docs/CENSUS.md`; real projects, the upstream issue and the pre-registered held-out run: `docs/REAL_PROJECT.md`, `docs/HELDOUT.md`. CI gate without a model: `python -m patchpilot.scan scan.json --triage-only --fail-on-silent` exits 1 while a listed function changes silently.
 
 ## Limits
 
