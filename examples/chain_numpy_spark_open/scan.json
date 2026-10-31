@@ -1,0 +1,45 @@
+{
+ "note": "DRAFT written by `patchpilot.discover`. The input files are placeholders (defaults or null), not real inputs: fill them, for example with `python -m patchpilot.capture`, before running `scan`. Add \"old\" and \"new\" interpreters to a target if the project needs its own dependencies.",
+ "targets": [
+  {
+   "file": "../shop/metrics/discounted_price.py",
+   "function": "discounted_price",
+   "lib": "numpy",
+   "inputs": "probes/metrics_discounted_price.discounted_price.json",
+   "root": "../shop/metrics",
+   "inputs_source": "proposed by meta-models/muse-spark-open-1026"
+  },
+  {
+   "file": "../shop/metrics/p90_latency.py",
+   "function": "p90_latency",
+   "lib": "numpy",
+   "inputs": "probes/metrics_p90_latency.p90_latency.json",
+   "root": "../shop/metrics",
+   "inputs_source": "proposed by meta-models/muse-spark-open-1026"
+  },
+  {
+   "file": "../shop/metrics/scores_text.py",
+   "function": "scores_text",
+   "lib": "numpy",
+   "inputs": "probes/metrics_scores_text.scores_text.json",
+   "root": "../shop/metrics",
+   "inputs_source": "proposed by meta-models/muse-spark-open-1026"
+  },
+  {
+   "file": "../shop/metrics/summary_line.py",
+   "function": "summary_line",
+   "lib": "numpy",
+   "inputs": "probes/metrics_summary_line.summary_line.json",
+   "root": "../shop/metrics",
+   "inputs_source": "proposed by meta-models/muse-spark-open-1026"
+  },
+  {
+   "file": "../shop/orders/monthly_average.py",
+   "function": "monthly_average",
+   "lib": "pandas",
+   "inputs": "probes/orders_monthly_average.monthly_average.json",
+   "root": "../shop/orders",
+   "inputs_source": "proposed by meta-models/muse-spark-open-1026"
+  }
+ ]
+}

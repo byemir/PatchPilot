@@ -1,0 +1,244 @@
+{
+  "manifest": "/tmp/sg_chain/scan.json",
+  "model": "meta-models/muse-spark-open-1026",
+  "endpoint": null,
+  "effort": "low",
+  "triage_only": false,
+  "applied": false,
+  "seconds": 22.9,
+  "tokens": 7018,
+  "counts": {
+    "loud": 2,
+    "repaired": 3
+  },
+  "targets": [
+    {
+      "file": "../shop/metrics/discounted_price.py",
+      "function": "discounted_price",
+      "lib": "numpy",
+      "status": "repaired",
+      "detail": "the new library differs on 1 of 4 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "price": "199.95",
+          "rate": 0.25
+        },
+        "old": 149.96249771118164,
+        "new": 149.96249389648438
+      },
+      "source_sha256": "55b9767829a64e433e99cc57777a9a3cc9e6719e2d401e075cd87f974ceddee9",
+      "model": "meta-models/muse-spark-open-1026",
+      "effort": "low",
+      "endpoint": null,
+      "seconds": 6.1,
+      "tokens": 2443,
+      "run_dir": "/Users/gt.poseidon/dev/PatchPilot/runs/20261031-162419_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "NumPy 2.0 (NEP 50) changed promotion so np.float32 * Python float stays float32 instead of upcasting to float64, causing the last discounted_price probe to lose precision.",
+          "tokens": 2443,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 140,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "NumPy 2.0 (NEP 50) changed promotion so np.float32 * Python float stays float32 instead of upcasting to float64, causing the last discounted_price probe to lose precision.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 140,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "discounted_price.discounted_price.diff"
+    },
+    {
+      "file": "../shop/metrics/p90_latency.py",
+      "function": "p90_latency",
+      "lib": "numpy",
+      "status": "loud",
+      "detail": "raises TypeError on the new library for 4 of 4 inputs",
+      "example": {
+        "input": {
+          "ms": [
+            10,
+            20,
+            30,
+            40,
+            50
+          ]
+        },
+        "old": 40.0,
+        "new": {
+          "error": "TypeError"
+        }
+      }
+    },
+    {
+      "file": "../shop/metrics/scores_text.py",
+      "function": "scores_text",
+      "lib": "numpy",
+      "status": "repaired",
+      "detail": "the new library differs on 4 of 4 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "teams": [
+            "A",
+            "B",
+            "C"
+          ],
+          "raw": [
+            10.04,
+            10.05,
+            10.15
+          ]
+        },
+        "old": "{'A': 10.0, 'B': 10.0, 'C': 10.2}",
+        "new": "{'A': np.float64(10.0), 'B': np.float64(10.0), 'C': np.float64(10.2)}"
+      },
+      "source_sha256": "69816ce56ecbc3845c54f4afe0324b6ee74e29744a582768c7370d2568400307",
+      "model": "meta-models/muse-spark-open-1026",
+      "effort": "low",
+      "endpoint": null,
+      "seconds": 4.8,
+      "tokens": 2276,
+      "run_dir": "/Users/gt.poseidon/dev/PatchPilot/runs/20261031-162426_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "NumPy 2.0 changed repr/str of 0-d arrays/scalars to include the type (np.float64(...)) so str(dict) with NumPy floats no longer matches Python float formatting; converting to Python float restores old output on both versions.",
+          "tokens": 2276,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 155,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "NumPy 2.0 changed repr/str of 0-d arrays/scalars to include the type (np.float64(...)) so str(dict) with NumPy floats no longer matches Python float formatting; converting to Python float restores old output on both versions.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 155,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "scores_text.scores_text.diff"
+    },
+    {
+      "file": "../shop/metrics/summary_line.py",
+      "function": "summary_line",
+      "lib": "numpy",
+      "status": "repaired",
+      "detail": "the new library differs on 4 of 4 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "values": [
+            1,
+            2,
+            3
+          ]
+        },
+        "old": "max=3.0 values=[1.0, 2.0, 3.0]",
+        "new": "max=3.0 values=[np.float64(1.0), np.float64(2.0), np.float64(3.0)]"
+      },
+      "source_sha256": "e1486d879e849071f826e5e9124c05c345ea08a9aa758ad9f279640de1985ff2",
+      "model": "meta-models/muse-spark-open-1026",
+      "effort": "low",
+      "endpoint": null,
+      "seconds": 5.7,
+      "tokens": 2299,
+      "run_dir": "/Users/gt.poseidon/dev/PatchPilot/runs/20261031-162433_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "NumPy 2.x changed repr/str of numpy scalars (np.float64) to 'np.float64(x)'; list(a) on an ndarray yields numpy scalars so str(list(a)) now includes the type prefix. Using ndarray.tolist() converts to Python floats whose repr is version-stable.",
+          "tokens": 2299,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 155,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "NumPy 2.x changed repr/str of numpy scalars (np.float64) to 'np.float64(x)'; list(a) on an ndarray yields numpy scalars so str(list(a)) now includes the type prefix. Using ndarray.tolist() converts to Python floats whose repr is version-stable.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 155,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "summary_line.summary_line.diff"
+    },
+    {
+      "file": "../shop/orders/monthly_average.py",
+      "function": "monthly_average",
+      "lib": "pandas",
+      "status": "loud",
+      "detail": "raises ValueError on the new library for 4 of 4 inputs",
+      "example": {
+        "input": {
+          "rows": [
+            {
+              "ts": "2024-01-05 10:00:00",
+              "amount": 10
+            },
+            {
+              "ts": "2024-01-20 14:30:00",
+              "amount": 20
+            },
+            {
+              "ts": "2024-02-15 09:00:00",
+              "amount": 30
+            },
+            {
+              "ts": "2024-02-28 16:00:00",
+              "amount": null
+            }
+          ]
+        },
+        "old": {
+          "2024-01": 15.0,
+          "2024-02": 30.0
+        },
+        "new": {
+          "error": "ValueError"
+        }
+      }
+    }
+  ]
+}

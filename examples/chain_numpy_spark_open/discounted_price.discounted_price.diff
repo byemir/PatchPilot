@@ -1,0 +1,9 @@
+--- a/discounted_price.py
++++ b/discounted_price.py
+@@ -3,4 +3,5 @@
+ 
+ def discounted_price(price, rate):
+     p = np.float32(price)
+-    return float(p * (1.0 - rate))
++    # Force float64 promotion explicitly to be version-independent (NumPy 1.x upcasted, NumPy 2.x keeps float32)
++    return float(np.float64(p) * np.float64(1.0 - rate))
