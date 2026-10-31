@@ -108,7 +108,10 @@ class App:
 
     # ---- discovery
     def manifests(self) -> list[str]:
+        """Manifests below the root, ordered by their optional integer "order" (default 100), then by path. An optional "title"
+        (one line) is what the page shows in the list instead of the path."""
         out = []
+        meta: dict[str, tuple[int, str]] = {}
         for dp, dirs, files in os.walk(self.root):
             dirs[:] = sorted(d for d in dirs if d not in SKIP_DIRS and not d.startswith("."))
             if Path(dp).relative_to(self.root).parts.__len__() > 4:
@@ -123,10 +126,16 @@ class App:
                     d = json.loads(p.read_text())
                     if isinstance(d, dict) and isinstance(d.get("targets"), list) and d["targets"] and all(
                             isinstance(t, dict) and {"file", "function", "lib", "inputs"} <= set(t) for t in d["targets"]):
-                        out.append(str(p.relative_to(self.root)))
+                        rel = str(p.relative_to(self.root))
+                        out.append(rel)
+                        order = d.get("order")
+                        title = d.get("title")
+                        meta[rel] = (order if isinstance(order, int) and not isinstance(order, bool) else 100,
+                                     " ".join(title.split())[:120] if isinstance(title, str) else "")
                 except (OSError, ValueError):
                     continue
-        return sorted(out)
+        self._meta = meta
+        return sorted(out, key=lambda r: (meta[r][0], r))
 
     def previous(self) -> list[dict]:
         base = self.root / ".patchpilot"
@@ -138,7 +147,8 @@ class App:
         return res
 
     def state(self) -> dict:
-        return {"root": self.root.name, "manifests": self.manifests(), "hosted": hosted_models(),
+        ms = self.manifests()
+        return {"root": self.root.name, "manifests": ms, "titles": {r: self._meta[r][1] for r in ms if self._meta[r][1]}, "hosted": hosted_models(),
                 "endpoint": "http://127.0.0.1:8080/v1", "previous": self.previous(),
                 "changed": self.changed(), "envs": all(Path(repair.default_python(l, k)).exists() for l in repair.ENVS for k in (0, 1)), "job": self.job.since(0)["status"] if self.job else None}
 

@@ -1,4 +1,6 @@
 {
+ "title": "DataFrame module: 6 functions that take tables",
+ "order": 11,
  "targets": [
   {
    "file": "frames/prep.py",

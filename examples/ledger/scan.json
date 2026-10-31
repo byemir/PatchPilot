@@ -1,4 +1,6 @@
 {
+ "title": "Ledger project: 22 functions, inputs recorded from its own tests",
+ "order": 10,
  "targets": [
   {
    "file": "ledger/clean.py",

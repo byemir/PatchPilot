@@ -1,4 +1,6 @@
 {
+ "title": "Project mode: a function that imports its sibling modules",
+ "order": 12,
  "targets": [
   {
    "file": "inv/stock.py",

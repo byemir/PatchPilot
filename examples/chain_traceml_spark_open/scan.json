@@ -1,4 +1,6 @@
 {
+ "title": "Chain run: traceml (recorded with Spark Open; needs the project clone)",
+ "order": 31,
  "note": "DRAFT written by `patchpilot.discover`. The input files are placeholders (defaults or null), not real inputs: fill them, for example with `python -m patchpilot.capture`, before running `scan`. Add \"old\" and \"new\" interpreters to a target if the project needs its own dependencies.",
  "targets": [
   {

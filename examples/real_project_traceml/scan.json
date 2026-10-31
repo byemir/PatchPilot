@@ -1,1 +1,15 @@
-{"targets": [{"file": "../rp_traceml/traceml/traceml/processors/importance_processors.py", "function": "clean_values", "lib": "pandas", "inputs": "probes/clean_values.json", "root": "../rp_traceml/traceml", "old": "/tmp/tm_old/bin/python", "new": "/tmp/tm_new/bin/python"}]}
+{
+ "title": "Real project 2: traceml (needs the project clone, see docs/REAL_PROJECT.md)",
+ "order": 21,
+ "targets": [
+  {
+   "file": "../rp_traceml/traceml/traceml/processors/importance_processors.py",
+   "function": "clean_values",
+   "lib": "pandas",
+   "inputs": "probes/clean_values.json",
+   "root": "../rp_traceml/traceml",
+   "old": "/tmp/tm_old/bin/python",
+   "new": "/tmp/tm_new/bin/python"
+  }
+ ]
+}

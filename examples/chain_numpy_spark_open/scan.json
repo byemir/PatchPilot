@@ -1,4 +1,6 @@
 {
+ "title": "Chain run: NumPy functions found by suggest (recorded with Spark Open)",
+ "order": 30,
  "note": "DRAFT written by `patchpilot.discover`. The input files are placeholders (defaults or null), not real inputs: fill them, for example with `python -m patchpilot.capture`, before running `scan`. Add \"old\" and \"new\" interpreters to a target if the project needs its own dependencies.",
  "targets": [
   {

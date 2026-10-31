@@ -1,4 +1,6 @@
 {
+ "title": "Shop example: 15 functions (use this one for the demo)",
+ "order": 1,
  "note": "A small shop code base written for this project in the way the code is usually written; we did not choose which functions break. Paths are relative to this file.",
  "targets": [
   {

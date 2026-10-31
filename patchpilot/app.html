@@ -472,7 +472,7 @@ async function loadState(keep){
   $("rootname").textContent = S.root;
   if(S.envs === false) showErr("The pinned library environments are missing. Build them once: PYTHON312=/path/to/python3.12 ./scripts/setup_envs.sh");
   if(!keep || !$("manifest").options.length){
-    const m = $("manifest"); m.textContent = ""; S.manifests.forEach((p) => m.appendChild(new Option(p, p)));
+    const m = $("manifest"); m.textContent = ""; S.manifests.forEach((p) => m.appendChild(new Option((S.titles || {})[p] || p, p)));
     $("endpoint").value = S.endpoint;
   }
   const h = $("history"), cur = h.value; h.textContent = ""; h.appendChild(new Option("Past runs", "")); S.previous.forEach((p) => h.appendChild(new Option(p.id, p.id))); h.value = cur;

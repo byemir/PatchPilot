@@ -105,6 +105,15 @@ def main() -> int:
         check("a foreign Origin is refused", call(app, "/api/run", {"manifest": "proj/scan.json", "mode": "check"}, origin="http://evil.example")[0] == 403)
         code, st = call(app, "/api/state")
         check("only real scan manifests are listed", code == 200 and st["manifests"] == ["proj/scan.json"])
+        (root / "zz").mkdir()
+        _d = json.loads((root / "proj" / "scan.json").read_text())
+        _d.update({"title": "  A titled\nexample  ", "order": 0})
+        (root / "zz" / "scan.json").write_text(json.dumps(_d))
+        _, st2 = call(app, "/api/state")
+        check("a manifest with a lower order is listed first and its title is shown on one line",
+              st2["manifests"] == ["zz/scan.json", "proj/scan.json"] and st2["titles"] == {"zz/scan.json": "A titled example"})
+        (root / "zz" / "scan.json").unlink()
+        (root / "zz").rmdir()
         check("the state says whether the pinned environments exist", isinstance(st["envs"], bool))
         check("no hosted model is offered without a key", st["hosted"] == appmod.hosted_models())
 
