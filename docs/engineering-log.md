@@ -166,3 +166,8 @@ The scan took only JSON arguments. Added a second runner (`make_case.RUN_DF`) th
 First real run on `examples/frames` (Mac, app, local Glimmer, effort low): 3 of 3 repaired on the first attempt, 7,182 tokens, 148.8 s for the whole scan. The app header said "JSON inputs"; changed to "JSON values or small tables".
 
 Second run on `examples/frames` (same setup): 3 of 3 repaired, 10,733 tokens, 203.9 s; `add_signup_seconds` took two attempts (the first was rejected at the visible tests; the accepted patch casts to datetime64[ns] before the int64 conversion).
+
+## 2026-10-30: project mode (functions that import sibling modules)
+
+Most real candidates we rejected in the search (22 hits under C3) depended on other modules. Added an optional manifest key `root`: the folder is copied to `proj/` in the case, `build_runner` loads `app.py` (the editable copy of the target) under the module's dotted name with `proj/` on `sys.path`, so relative and package imports resolve; the model edits only `app.py`, so apply, undo and diffs are unchanged. The project's tests are not copied because the case's pytest collected them and failed on imports (found by the first test run). A missing third-party package now shows its error name in the `invalid` detail. `examples/project` and `patchpilot/project_test.py` (7 checks) are new; the offline suite has fifteen tests. Not tried on any third-party project: an attempt to import a cloned project in the build sandbox was blocked, correctly, because that would run code from outside.
+

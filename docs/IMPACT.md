@@ -24,6 +24,10 @@ Of those hits, twelve finalists were read in detail (`docs/real_cases/candidates
 
 Most pandas code takes a DataFrame, not a JSON object. The scan, the repair gates and `capture` now accept a table written as `{"$df": {column: [values]}}` (README, "DataFrames as input and output"). `examples/frames/` has six notebook-style functions we wrote, three with the patterns counted in `docs/CENSUS.md`; its manifest and inputs were recorded from the project's own tests. Offline, with scripted replies, the three silent breaks are repaired behind the gates. No real model run is recorded yet. Results are compared by values, column names and index, not by dtype.
 
+## Functions that import their siblings
+
+Most of the real candidates we rejected depended on other modules of their project. A manifest target can now carry `"root"` (README, "project mode"): the function is run and repaired inside a copy of its project folder, the model may edit only the target file. `examples/project` shows it with scripted replies. It has not been run on a third-party project, and a project whose package imports libraries outside the pinned environments is reported as `invalid`.
+
 ## A gate for pull requests
 
 `python -m patchpilot.scan scan.json --triage-only --fail-on-silent` exits with code 1 when a listed function changes silently on the new library. No model and no API key are used. `docs/ci-example.yml` is an example GitHub Actions workflow (it is in `docs/`, so it is not active, and it was not run on GitHub).

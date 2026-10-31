@@ -27,9 +27,13 @@ SYSTEM_TOOLS = (
 )
 
 
+PROJ_CONTEXT_CHARS = 30_000  # how much of the surrounding project is shown to the model as read-only context
+
+
 def collect(case_dir: Path) -> tuple[dict, dict]:
     editable: dict = {}
     readonly: dict = {}
+    proj_total = 0
     for p in sorted(case_dir.rglob("*.py")):
         if "__pycache__" in p.parts:
             continue
@@ -37,7 +41,11 @@ def collect(case_dir: Path) -> tuple[dict, dict]:
         if not text.strip():
             continue
         rel = p.relative_to(case_dir).as_posix()
-        if rel in PROTECTED or rel.startswith("tests/"):
+        if rel.startswith("proj/"):  # project mode: the rest of the project is context only
+            proj_total += len(text)
+            if proj_total <= PROJ_CONTEXT_CHARS:
+                readonly[rel] = text
+        elif rel in PROTECTED or rel.startswith("tests/"):
             readonly[rel] = text
         else:
             editable[rel] = text

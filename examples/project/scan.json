@@ -1,0 +1,18 @@
+{
+ "targets": [
+  {
+   "file": "inv/stock.py",
+   "function": "flag_low",
+   "lib": "pandas",
+   "inputs": "probes/flag_low.json",
+   "root": "."
+  },
+  {
+   "file": "inv/stock.py",
+   "function": "reorder_plan",
+   "lib": "pandas",
+   "inputs": "probes/reorder_plan.json",
+   "root": "."
+  }
+ ]
+}

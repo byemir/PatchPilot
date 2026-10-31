@@ -34,13 +34,20 @@ from patchpilot import agent, make_case, repair, sandbox, view
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def triage(src: Path, fn: str, probes_file: Path, old: str, new: str) -> tuple[str, str, dict | None]:
+def root_of(base: Path, target: dict) -> Path | None:
+    """Project folder of a target (optional key "root", relative to the manifest), or None for the one-file mode."""
+    r = target.get("root")
+    return (base / r).resolve() if isinstance(r, str) and r else None
+
+
+def triage(src: Path, fn: str, probes_file: Path, old: str, new: str, root: Path | None = None) -> tuple[str, str, dict | None]:
     """Return (status, detail, example) for one function; runs the user's code on the old and the new interpreter.
     example is the first input on which the libraries differ, with both outputs (None when there is none)."""
     try:
         buf = io.StringIO()
         with contextlib.redirect_stderr(buf):
-            make_case.check_source(src, fn)
+            module = make_case.module_name(src, root) if root else None
+            make_case.check_source(src, fn, project=root is not None)
     except SystemExit:
         return "invalid", buf.getvalue().replace("make_case: ", "").strip(), None
     probes = json.loads(probes_file.read_text())
@@ -49,13 +56,16 @@ def triage(src: Path, fn: str, probes_file: Path, old: str, new: str) -> tuple[s
     with tempfile.TemporaryDirectory() as t:
         d = Path(t)
         (d / "app.py").write_text(src.read_text())
-        (d / "run_case.py").write_text(make_case.templates(fn, probes)[0].format(fn=fn))
+        (d / "run_case.py").write_text(make_case.build_runner(fn, probes, module)[0])
+        if module is not None:
+            make_case.copy_project(root, d / "proj")
         (d / "inputs.json").write_text(json.dumps(probes))
         g1, e1 = make_case.run_probes(old, d, "inputs.json")
         if g1 is None:
             return "invalid", f"does not run on the old library ({e1})", None
-        if any(make_case.is_error(x) for x in g1):
-            return "invalid", "raises on the old library for your inputs", None
+        bad = [x["error"] for x in g1 if make_case.is_error(x)]
+        if bad:
+            return "invalid", f"raises {bad[0]} on the old library for your inputs", None
         g2, _ = make_case.run_probes(old, d, "inputs.json")
         if g2 is None or not make_case.same(g1, g2):
             return "invalid", "not deterministic on your inputs", None
@@ -71,7 +81,7 @@ def triage(src: Path, fn: str, probes_file: Path, old: str, new: str) -> tuple[s
         return "silent", f"the new library differs on {len(diff)} of {len(probes)} inputs and nothing is raised", ex
 
 
-def repair_one(src: Path, fn: str, lib: str, probes_file: Path, old: str, new: str, o: argparse.Namespace, on_attempt=None) -> dict:
+def repair_one(src: Path, fn: str, lib: str, probes_file: Path, old: str, new: str, o: argparse.Namespace, on_attempt=None, root: Path | None = None) -> dict:
     """Build a case, let the model repair it behind the gates; returns the record for the report."""
     original = src.read_text()
     model = o.model or ("muse-glimmer" if o.endpoint else "muse-spark-1.3")
@@ -81,6 +91,8 @@ def repair_one(src: Path, fn: str, lib: str, probes_file: Path, old: str, new: s
         buf = io.StringIO()
         margs = ["--src", str(src), "--fn", fn, "--inputs", str(probes_file), "--old", old, "--new", new,
                  "--lib", lib, "--out", str(case)]
+        if root:
+            margs += ["--project-root", str(root)]
         try:
             with contextlib.redirect_stdout(buf), contextlib.redirect_stderr(buf):
                 make_case.main(margs)
@@ -183,7 +195,7 @@ def main(argv=None) -> int:
             print(f"scan: no interpreters for {t['lib']} (build them with scripts/setup_envs.sh)", file=sys.stderr)
             return 2
         else:
-            status, detail, example = triage(src, t["function"], probes, old, new)
+            status, detail, example = triage(src, t["function"], probes, old, new, root_of(base, t))
             row.update({"status": status, "detail": detail, "example": example})
             if status == "silent":
                 row["source_sha256"] = hashlib.sha256(src.read_bytes()).hexdigest()
@@ -200,7 +212,7 @@ def main(argv=None) -> int:
 
             def on_attempt(n, rec, k=k):
                 emit({"event": "attempt", "index": k, "attempt": view.attempt_view(rec)})
-            r = repair_one(src, t["function"], t["lib"], probes, old, new, o, on_attempt)
+            r = repair_one(src, t["function"], t["lib"], probes, old, new, o, on_attempt, root_of(base, t))
             diff = r.pop("diff", None)
             rows[k].update(r)
             rows[k]["status"] = r["status"]

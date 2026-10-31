@@ -129,6 +129,75 @@ def fail(msg: str, code: int = 1):
     sys.exit(code)
 
 
+# Project mode: the function lives in a module of a larger project (it may import its sibling modules). The whole project
+# folder is copied read-only next to the case as proj/, the model still edits one file (app.py = the target module), and the
+# runner loads app.py under the module's real dotted name so that relative and package imports resolve inside proj/.
+PROJ_LOAD = '''import importlib.util
+import json
+import sys
+from pathlib import Path
+
+_HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(_HERE / "proj"))
+
+
+def get_fn():
+    spec = importlib.util.spec_from_file_location("__MODULE__", str(_HERE / "app.py"))
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules["__MODULE__"] = mod
+    spec.loader.exec_module(mod)
+    return mod.__FN__
+'''
+
+SKIP_DIRS = {".git", ".hg", ".patchpilot", ".sandboxes", ".venv", "venv", "env", "node_modules", "__pycache__", ".pytest_cache",
+             ".mypy_cache", ".tox", "build", "dist", "runs", "scan_out"}
+MAX_FILE = 200_000
+MAX_TREE = 20_000_000
+
+
+def copy_project(root: Path, dst: Path) -> int:
+    """Copy the project folder (files up to 200 KB; no VCS, virtualenv, build or test files) to dst; returns the byte count."""
+    total = 0
+    for p in sorted(root.rglob("*")):
+        rel = p.relative_to(root)
+        if any(part in SKIP_DIRS or part.endswith(".egg-info") for part in rel.parts) or not p.is_file() or p.is_symlink():
+            continue
+        if any(part in ("tests", "test") for part in rel.parts) or p.name == "conftest.py" or p.name.startswith("test_") or p.name.endswith("_test.py"):
+            continue  # the case runs its own pytest; the project's tests would be collected (and fail on imports) there
+        size = p.stat().st_size
+        if size > MAX_FILE:
+            continue
+        total += size
+        if total > MAX_TREE:
+            fail(f"the project folder {root} is larger than {MAX_TREE // 10**6} MB (without .git, virtualenvs and build folders); point --project-root at the package folder")
+        (dst / rel).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(p, dst / rel)
+    return total
+
+
+def module_name(src: Path, root: Path) -> str:
+    rel = src.resolve().relative_to(root.resolve()).with_suffix("")
+    parts = list(rel.parts)
+    if parts and parts[-1] == "__init__":
+        parts.pop()
+    if not parts or not all(x.isidentifier() for x in parts):
+        fail(f"{src} cannot be imported as a module from {root} (names must be valid identifiers)")
+    return ".".join(parts)
+
+
+def build_runner(fn: str, probes, module: str | None = None) -> tuple[str, str]:
+    """The finished runner (run_case.py) and visible test for these inputs. With a module name the target is loaded as that
+    module from the project copy in proj/ (project mode); without one, from app.py as before."""
+    if module is None:
+        run_t, test_t = templates(fn, probes)
+        return run_t.format(fn=fn), test_t.format(fn=fn)
+    load = PROJ_LOAD.replace("__MODULE__", module).replace("__FN__", fn)
+    run = RUN_DF.format(fn=fn).replace(f"from app import {fn}\n", load, 1).replace(f"{fn}(**dec(probe))", "get_fn()(**dec(probe))")
+    test = TEST_DF.format(fn=fn).replace(f"from app import {fn}\nfrom run_case import dec, default", "from run_case import dec, default, get_fn")
+    test = test.replace(f"{fn}(**dec(probe))", "get_fn()(**dec(probe))")
+    return run, test
+
+
 def is_error(x) -> bool:
     return isinstance(x, dict) and set(x) == {"error"}
 
@@ -147,7 +216,7 @@ def run_probes(py, d: Path, name: str):
         return None, "the output is not JSON"
 
 
-def check_source(src: Path, fn: str) -> None:
+def check_source(src: Path, fn: str, project: bool = False) -> None:
     try:
         tree = ast.parse(src.read_text())
     except SyntaxError as e:
@@ -155,7 +224,7 @@ def check_source(src: Path, fn: str) -> None:
     if fn not in {n.name for n in tree.body if isinstance(n, ast.FunctionDef)}:
         fail(f"no top-level function named {fn} in {src}")
     for n in ast.walk(tree):
-        if isinstance(n, ast.ImportFrom) and n.level:
+        if isinstance(n, ast.ImportFrom) and n.level and not project:
             fail("the file uses a relative import; the function must live in a self-contained file")
 
 
@@ -196,6 +265,7 @@ def main(argv=None) -> None:
     ap.add_argument("--lib", required=True, help="library name, for example pandas or numpy")
     ap.add_argument("--out", required=True, help="case folder to create (must not exist)")
     ap.add_argument("--hidden-inputs", help="JSON file with your own held-out inputs (same shape as --inputs)")
+    ap.add_argument("--project-root", help="project folder that holds SRC: the function may import its sibling modules (the folder is copied read-only next to the case; the model edits only SRC)")
     ap.add_argument("--hidden", type=int, default=8, help="number of derived held-out inputs (default 8)")
     ap.add_argument("--candidates", type=int, default=200, help="generated candidates to choose from (default 200)")
     a = ap.parse_args(argv)
@@ -208,7 +278,13 @@ def main(argv=None) -> None:
     for p in (a.old, a.new):
         if not Path(p).exists():
             fail(f"interpreter not found: {p}")
-    check_source(src, a.fn)
+    module = None
+    if a.project_root:
+        root = Path(a.project_root)
+        if not root.is_dir():
+            fail(f"{root} is not a folder")
+        module = module_name(src, root)
+    check_source(src, a.fn, project=module is not None)
     inputs = json.loads(Path(a.inputs).read_text())
     if not isinstance(inputs, list) or not inputs or not all(isinstance(p, dict) for p in inputs):
         fail("--inputs must be a non-empty JSON list of objects")
@@ -216,10 +292,12 @@ def main(argv=None) -> None:
     try:
         (out / "tests").mkdir(parents=True)
         (out / "app.py").write_text(src.read_text())
-        run_t, test_t = templates(a.fn, inputs)
-        (out / "run_case.py").write_text(run_t.format(fn=a.fn))
+        run_text, test_text = build_runner(a.fn, inputs, module)
+        if module is not None:
+            copy_project(Path(a.project_root), out / "proj")
+        (out / "run_case.py").write_text(run_text)
         (out / "tests" / "__init__.py").write_text("")
-        (out / "tests" / "test_app.py").write_text(test_t.format(fn=a.fn))
+        (out / "tests" / "test_app.py").write_text(test_text)
         (out / "case.json").write_text(json.dumps({"lib": a.lib, "old": os.path.abspath(a.old), "new": os.path.abspath(a.new), "gen": 2}) + "\n")
         (out / "inputs.json").write_text(json.dumps(inputs, indent=1) + "\n")
 

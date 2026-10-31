@@ -14,6 +14,7 @@ tests=(
   "patchpilot.capture_test"
   "patchpilot.census_test"
   "patchpilot.frames_test"
+  "patchpilot.project_test"
   "patchpilot.isolation_test"
   "patchpilot.landlock_test"
   "patchpilot.gen2_test"
