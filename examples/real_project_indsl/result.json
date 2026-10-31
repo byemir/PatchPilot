@@ -1,0 +1,13 @@
+{
+ "project": "cognitedata/indsl (Apache-2.0)",
+ "commit": "fab55f6dfa8278050a841fc38f57e692504cfeb4 (parent of the merge of pull request 639, before the maintainers' fix)",
+ "function": "indsl/data_quality/outliers.py: _split_timeseries_into_time_and_value_arrays",
+ "environments": {"old": "pandas 2.3.3", "new": "pandas 3.0.6", "other": "numpy>=2,<3, scipy~=1.17.0, typeguard>=4,<5, packaging>=26,<27, pywavelets>=1.6,<2, pytest"},
+ "date": "2026-10-31",
+ "check": {"status": "silent", "old": "elapsed seconds [0, 3600, 9000, 10800, 18000]", "new": "values around -1.7e9, no error"},
+ "repair": {"model": "muse-glimmer, local (llama.cpp), effort low", "status": "repaired", "attempts": 1, "tokens": 13501, "seconds": 194.0,
+            "gates": {"visible": "ok", "hidden": "ok", "differential": "ok"},
+            "differential": {"verdict": "PASS", "generated": 200, "valid": 142, "core_divergences": 0, "wide_divergences": 0},
+            "applied": false},
+ "note": "one run on one function; the patch text is the project's code and is not stored here"
+}

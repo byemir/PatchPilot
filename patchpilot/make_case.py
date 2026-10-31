@@ -53,7 +53,9 @@ def test_runs_on_the_recorded_inputs():
         json.dumps({fn}(**probe))
 '''
 
-# Inputs that carry a table as {"$df": {"column": [values, ...]}} are rebuilt as a pandas DataFrame before the call, and a
+# Inputs that carry a table as {"$df": {"column": [values, ...]}} are rebuilt as a pandas DataFrame before the call (a series as
+# {"$series": {"values": [...], "index": [...], "datetime_index": true, "name": "x"}}; with datetime_index the index strings
+# become a DatetimeIndex, so the resolution the installed pandas infers is part of the test), and a
 # DataFrame or Series result is written as its column lists (values and column names, not dtypes). The plain runner above is
 # used whenever no input contains "$df", so earlier cases and recorded runs do not change.
 RUN_DF = '''import json
@@ -66,6 +68,11 @@ def dec(x):
     if isinstance(x, dict) and set(x) == {{"$df"}}:
         import pandas as pd
         return pd.DataFrame({{k: list(v) for k, v in x["$df"].items()}})
+    if isinstance(x, dict) and set(x) == {{"$series"}}:
+        import pandas as pd
+        v = x["$series"]
+        idx = pd.to_datetime(v["index"]) if v.get("datetime_index") else v.get("index")
+        return pd.Series(v["values"], index=idx, name=v.get("name"))
     if isinstance(x, dict):
         return {{k: dec(v) for k, v in x.items()}}
     if isinstance(x, list):
@@ -81,10 +88,10 @@ def default(o):
         return {{"$series": o.tolist(), "name": None if o.name is None else str(o.name), "index": o.index.tolist()}}
     if hasattr(o, "isoformat"):
         return o.isoformat()
+    if hasattr(o, "tolist"):  # numpy arrays and numpy scalars (an array has .item() too, but it only works for one element)
+        return o.tolist()
     if hasattr(o, "item"):
         return o.item()
-    if hasattr(o, "tolist"):
-        return o.tolist()
     return str(o)
 
 
@@ -98,6 +105,7 @@ if __name__ == "__main__":
             out.append(json.loads(json.dumps({fn}(**dec(probe)), default=default)))
         except Exception as e:
             out.append({{"error": type(e).__name__}})
+            print(type(e).__name__ + ": " + str(e)[:300], file=sys.stderr)
     print(json.dumps(out))
 '''
 
@@ -116,7 +124,8 @@ def test_runs_on_the_recorded_inputs():
 
 
 def uses_frames(probes) -> bool:
-    return '"$df"' in json.dumps(probes)
+    text = json.dumps(probes)
+    return '"$df"' in text or '"$series"' in text
 
 
 def templates(fn: str, probes) -> tuple[str, str]:
@@ -142,6 +151,9 @@ sys.path.insert(0, str(_HERE / "proj"))
 
 
 def get_fn():
+    parent = "__MODULE__".rpartition(".")[0]
+    if parent:  # load the package first: its __init__ may import the target module, which must not find a half-built stand-in
+        importlib.import_module(parent)
     spec = importlib.util.spec_from_file_location("__MODULE__", str(_HERE / "app.py"))
     mod = importlib.util.module_from_spec(spec)
     sys.modules["__MODULE__"] = mod
@@ -156,14 +168,12 @@ MAX_TREE = 20_000_000
 
 
 def copy_project(root: Path, dst: Path) -> int:
-    """Copy the project folder (files up to 200 KB; no VCS, virtualenv, build or test files) to dst; returns the byte count."""
+    """Copy the project folder (files up to 200 KB; no VCS, virtualenv or build folders) to dst; returns the byte count."""
     total = 0
     for p in sorted(root.rglob("*")):
         rel = p.relative_to(root)
         if any(part in SKIP_DIRS or part.endswith(".egg-info") for part in rel.parts) or not p.is_file() or p.is_symlink():
             continue
-        if any(part in ("tests", "test") for part in rel.parts) or p.name == "conftest.py" or p.name.startswith("test_") or p.name.endswith("_test.py"):
-            continue  # the case runs its own pytest; the project's tests would be collected (and fail on imports) there
         size = p.stat().st_size
         if size > MAX_FILE:
             continue
@@ -206,8 +216,13 @@ def same(a, b) -> bool:
     return json.dumps(a, sort_keys=True) == json.dumps(b, sort_keys=True)
 
 
+LAST_STDERR = ""  # stderr of the last run_probes call (the table runner prints the message of an exception there)
+
+
 def run_probes(py, d: Path, name: str):
+    global LAST_STDERR
     r = subprocess.run([os.path.abspath(py), "run_case.py", name], cwd=d, capture_output=True, text=True, timeout=300)
+    LAST_STDERR = r.stderr
     if r.returncode != 0:
         return None, r.stderr.strip()[-400:]
     try:
@@ -295,6 +310,7 @@ def main(argv=None) -> None:
         run_text, test_text = build_runner(a.fn, inputs, module)
         if module is not None:
             copy_project(Path(a.project_root), out / "proj")
+            (out / "pytest.ini").write_text("[pytest]\ntestpaths = tests\n")  # the case collects its own tests, not the project's
         (out / "run_case.py").write_text(run_text)
         (out / "tests" / "__init__.py").write_text("")
         (out / "tests" / "test_app.py").write_text(test_text)

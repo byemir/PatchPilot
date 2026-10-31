@@ -13,6 +13,20 @@
    "lib": "pandas",
    "inputs": "probes/reorder_plan.json",
    "root": "."
+  },
+  {
+   "file": "inv/stock.py",
+   "function": "span_seconds",
+   "lib": "pandas",
+   "inputs": "probes/span_seconds.json",
+   "root": "."
+  },
+  {
+   "file": "inv/stock.py",
+   "function": "elapsed_and_values",
+   "lib": "pandas",
+   "inputs": "probes/elapsed_and_values.json",
+   "root": "."
   }
  ]
 }

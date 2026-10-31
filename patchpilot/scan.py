@@ -40,6 +40,18 @@ def root_of(base: Path, target: dict) -> Path | None:
     return (base / r).resolve() if isinstance(r, str) and r else None
 
 
+def interpreters(base: Path, target: dict) -> tuple[str | None, str | None]:
+    """The old and the new interpreter of a target: its own "old" and "new" keys (paths, relative to the manifest or absolute;
+    for a project that needs its own dependencies) or the pinned ones for pandas and NumPy."""
+    def one(key: str, side: int):
+        v = target.get(key)
+        if isinstance(v, str) and v:
+            p = Path(v).expanduser()
+            return str(p if p.is_absolute() else (base / p))
+        return repair.default_python(target["lib"], side)
+    return one("old", 0), one("new", 1)
+
+
 def triage(src: Path, fn: str, probes_file: Path, old: str, new: str, root: Path | None = None) -> tuple[str, str, dict | None]:
     """Return (status, detail, example) for one function; runs the user's code on the old and the new interpreter.
     example is the first input on which the libraries differ, with both outputs (None when there is none)."""
@@ -65,7 +77,8 @@ def triage(src: Path, fn: str, probes_file: Path, old: str, new: str, root: Path
             return "invalid", f"does not run on the old library ({e1})", None
         bad = [x["error"] for x in g1 if make_case.is_error(x)]
         if bad:
-            return "invalid", f"raises {bad[0]} on the old library for your inputs", None
+            why = next((ln for ln in reversed(make_case.LAST_STDERR.strip().splitlines()) if ln.startswith(bad[0])), "")
+            return "invalid", f"raises {bad[0]} on the old library for your inputs" + (f" ({why[:200]})" if why else ""), None
         g2, _ = make_case.run_probes(old, d, "inputs.json")
         if g2 is None or not make_case.same(g1, g2):
             return "invalid", "not deterministic on your inputs", None
@@ -187,12 +200,12 @@ def main(argv=None) -> int:
     jobs = []  # (index, src, probes, old, new)
     for k, t in enumerate(targets):  # pass 1: classify every function on both libraries (no model)
         src, probes = base / t["file"], base / t["inputs"]
-        old, new = repair.default_python(t["lib"], 0), repair.default_python(t["lib"], 1)
+        old, new = interpreters(base, t)
         row = {"file": t["file"], "function": t["function"], "lib": t["lib"], "path": str(src.resolve())}
         if not src.is_file() or not probes.is_file():
             row.update({"status": "invalid", "detail": "file or inputs not found", "example": None})
         elif not old or not new or not Path(old).exists() or not Path(new).exists():
-            print(f"scan: no interpreters for {t['lib']} (build them with scripts/setup_envs.sh)", file=sys.stderr)
+            print(f"scan: no usable interpreters for {t['lib']} (build the pinned ones with scripts/setup_envs.sh, or give this target its own \"old\" and \"new\" interpreter paths)", file=sys.stderr)
             return 2
         else:
             status, detail, example = triage(src, t["function"], probes, old, new, root_of(base, t))
