@@ -54,3 +54,15 @@ The whole chain on the shop example, one run, Apple M2 Ultra, effort low: `patch
 | `scan` repair | 3 of 4 repaired on the first attempt (`fill_missing_region` 3,088 tokens, 10.5 s; `flag_big_orders` 1,922, 6.6 s; `last_seen_epoch` 3,920, 14.1 s). `clean_names`: not repaired in three attempts (8,764 tokens): the diagnosis was correct (text columns are no longer the object dtype on pandas 3), attempts 1 and 3 passed the visible tests and failed the hidden tests, attempt 2 failed the visible tests; nothing was written. The whole scan took 74 s and 17,694 tokens |
 
 What it shows: the steps connect without hand-written inputs, and the gates stopped three wrong patches. What it does not show: a rate (one run, one model, code we wrote, a set the patterns were tuned on after a first pass that found only 2 of 7), or that a function the model finds no difference for is safe. On the same set with hand-written inputs the same model repaired `clean_names` on its first attempt (`examples/shop_result_spark_open/`): the inputs change the outcome.
+
+## Candidates from a model, then repair: NumPy functions, Muse Spark Open (Baseten), 2026-10-31
+
+`patchpilot.suggest` sends the source of each runnable function that `discover` does not list to the model and asks one question: may the result differ, or may the function raise, on the new library. The reply is read as JSON and never executed; a suggestion is a hypothesis. The suggested functions go into a draft manifest, `propose` lets the model write inputs (checked on the old library), and `scan` classifies and repairs behind the three gates. Shop example, effort low, Apple M2 Ultra.
+
+| measurement | result |
+|---|---|
+| `suggest`, three runs | named 4, 5 and 5 of the 6 shop functions that change under NumPy 2 (the first run missed `p90_latency`); none of the 5 functions that do not change; `area_under` was never named; 8,628 to 9,469 tokens per run |
+| `propose` + classify, two chain runs | run 1: `discounted_price` got inputs that did not separate the libraries and was classified healthy. Run 2: silent (1 of 4 inputs differ). The other four: `scores_text` and `summary_line` silent (4 of 4), `p90_latency` loud (TypeError, 4 of 4), `monthly_average` loud (ValueError, 4 of 4) |
+| `scan` repair, run 2 | the 3 silent functions repaired on the first attempt: `discounted_price` 2,443 tokens (6.1 s), `scores_text` 2,276 (4.8 s), `summary_line` 2,299 (5.7 s); 7,018 tokens, 16.6 s in all. The 2 loud functions are reported, not repaired |
+
+What it shows: a model can name candidates that fixed patterns do not cover, without deciding the verdict, and the chain from folder to verified patch runs for NumPy functions too. What it does not show: a rate. The suggestions differed between runs (4, 5, 5), the same function was healthy in one chain run and silent in the other, one real break was never named, the patterns and prompts were tuned on this set after a first miss, and the code is ours. `healthy` always means no difference on the inputs used.

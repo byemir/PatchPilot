@@ -1,5 +1,5 @@
 {
-  "manifest": "/tmp/sg_chain/scan.json",
+  "manifest": "scan.json",
   "model": "meta-models/muse-spark-open-1026",
   "endpoint": null,
   "effort": "low",
@@ -32,7 +32,7 @@
       "endpoint": null,
       "seconds": 6.1,
       "tokens": 2443,
-      "run_dir": "/Users/gt.poseidon/dev/PatchPilot/runs/20261031-162419_case",
+      "run_dir": "runs/20261031-162419_case",
       "attempts_detail": [
         {
           "attempt": 1,
@@ -115,7 +115,7 @@
       "endpoint": null,
       "seconds": 4.8,
       "tokens": 2276,
-      "run_dir": "/Users/gt.poseidon/dev/PatchPilot/runs/20261031-162426_case",
+      "run_dir": "runs/20261031-162426_case",
       "attempts_detail": [
         {
           "attempt": 1,
@@ -171,7 +171,7 @@
       "endpoint": null,
       "seconds": 5.7,
       "tokens": 2299,
-      "run_dir": "/Users/gt.poseidon/dev/PatchPilot/runs/20261031-162433_case",
+      "run_dir": "runs/20261031-162433_case",
       "attempts_detail": [
         {
           "attempt": 1,
