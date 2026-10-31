@@ -295,6 +295,7 @@ tr.row td:first-child{border-left:4px solid var(--st,transparent)}
     <div class="grp g-run"><span class="cap">&nbsp;</span>
       <div class="row">
         <select id="history" aria-label="Past runs"></select>
+        <button class="btn" id="clear" hidden title="Empty the table and the Resume state. Files are not touched.">✕ Clear results</button>
         <button class="btn" id="reset" title="Put every file the app wrote back to its first content">↺ Reset</button>
         <button class="btn resume" id="resume" hidden title="Repair the functions that are not fixed yet. Fixed ones and their Apply buttons stay.">⏯ Resume</button>
         <button class="btn primary go" id="run">▶ Run</button>
@@ -339,7 +340,7 @@ function seg(id, items, key){
   items.forEach(([v, label, tip]) => {const b = el("button", null, label); b.dataset.v = v; if(tip) b.title = tip; b.setAttribute("aria-pressed", String(pick[key] === v));
     b.onclick = () => {pick[key] = v; sync();}; s.appendChild(b);});
 }
-let manual = false, scrollTo = -1, autoApply = false, autoWrite = false, autoQ = [], autoBusy = false, resetArmed = false;
+let manual = false, scrollTo = -1, autoApply = false, autoWrite = false, autoQ = [], autoBusy = false, resetArmed = false, stopping = false;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 function sync(){
   const repair = pick.mode === "repair";
@@ -353,7 +354,10 @@ function sync(){
   $("run").textContent = repair ? "▶ Repair" : "▶ Check";
   $("run").disabled = running || readonly && false || !(S && S.manifests.length);
   $("manifest").disabled = running; $("history").disabled = running;
-  $("stop").hidden = !running; $("run").hidden = running; resumeUi();
+  $("stop").hidden = !running; $("run").hidden = running;
+  $("stop").textContent = stopping ? "Stopping…" : "■ Stop"; $("stop").disabled = stopping;
+  $("stop").title = stopping ? "The current model call finishes first, then the run ends" : "Stop after the current step";
+  resumeUi();
   autoUi();
   if(loc) checkHealth();
 }
@@ -366,6 +370,7 @@ function autoUi(){
   const n = S ? S.changed || 0 : 0, rb = $("reset");
   rb.textContent = resetArmed ? "Reset files?" : "↺ Reset" + (n ? " (" + n + ")" : "");
   rb.className = "btn" + (resetArmed ? " warn" : ""); rb.disabled = running || !n;
+  rb.title = stopping ? "The run is still stopping. Reset opens when it has ended." : running ? "Not while a run is going. Stop it first." : !n ? "Nothing to reset: no file has been written by the app yet (Apply writes a file)." : "Put every file the app wrote back to its first content";
 }
 let hTimer = null;
 async function checkHealth(){
@@ -395,7 +400,7 @@ function progress(){
 function unfixed(){return rows.map((r, k) => (!r.status || ["not_repaired", "error", "case_failed", "silent"].includes(r.status)) ? k : -1).filter((k) => k >= 0);}
 function resumeUi(){
   const ks = unfixed(), show = !running && !readonly && jobRepair && ks.length > 0;
-  $("resume").hidden = !show; if(show) $("resume").textContent = "⏯ Resume (" + ks.length + ")";
+  $("clear").hidden = running || !rows.length; $("resume").hidden = !show; if(show) $("resume").textContent = "⏯ Resume (" + ks.length + ")";
 }
 function render(){
   resumeUi();
@@ -547,7 +552,8 @@ async function tick(){
   try{
     const j = await api("/api/job?since=" + since);
     (j.events || []).forEach(onEvent); since = j.n; render();
-    if(j.status && j.status !== "running" && j.status !== "stopping"){running = false; clearInterval(poll); poll = null; rows.forEach((r) => r.working = false); sync(); render(); loadState(true);}
+    if(j.status === "stopping" && !stopping){stopping = true; sync(); autoUi();}
+    if(j.status && j.status !== "running" && j.status !== "stopping"){running = false; stopping = false; clearInterval(poll); poll = null; rows.forEach((r) => r.working = false); sync(); render(); loadState(true);}
   }catch(e){showErr(e.message);}
 }
 function follow(){running = true; sync(); clearInterval(poll); poll = setInterval(tick, 400); tick();}
@@ -565,7 +571,8 @@ async function startJob(mode, only, model){
   catch(e){showErr(e.message); rows.forEach((r) => r.working = false); retain = {}; jobOnly = null; render();}
 }
 $("run").onclick = () => startJob(pick.mode, null);
-$("stop").onclick = async () => {try{await api("/api/stop", {});}catch(e){showErr(e.message);}};
+$("stop").onclick = async () => {stopping = true; sync(); autoUi(); try{await api("/api/stop", {});}catch(e){stopping = false; sync(); autoUi(); showErr(e.message);}};
+$("clear").onclick = () => {rows = []; retain = {}; jobOnly = null; jobRepair = false; readonly = false; open = -1; manual = false; sumb = {}; $("history").value = ""; showErr(""); sync(); render(); autoUi();};
 $("resume").onclick = () => {const ks = unfixed(); if(ks.length) startJob("repair", ks, lastModel);};
 $("history").onchange = async () => {
   const id = $("history").value; showErr("");
