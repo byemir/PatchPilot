@@ -1,0 +1,40 @@
+{
+ "project": "polyaxon/traceml (Apache-2.0)",
+ "commit": "2452c1a8f2be742a8a3b8e379568a6ce3bf4394c (shallow clone of the default branch, 2026-10-31; the commit is dated 2026-10-21)",
+ "function": "traceml/traceml/processors/importance_processors.py: clean_values",
+ "how_chosen": "flagged by the static count in docs/CENSUS.md (third count): column.fillna(..., inplace=True) on a selected column; whether it changes a result was not known before the run",
+ "environments": {
+  "old": "pandas 2.3.3",
+  "new": "pandas 3.0.6",
+  "other": "numpy>=2,<3, clipped, pytest"
+ },
+ "inputs": "two inputs written by us (lists of numeric parameter records with missing values and a list of metrics); string columns were not tried",
+ "date": "2026-10-31",
+ "check": {
+  "status": "silent",
+  "differs_on": "2 of 2 inputs",
+  "old": "missing values replaced by the column mean",
+  "new": "missing values stay NaN, no error"
+ },
+ "repair": {
+  "model": "muse-glimmer, local (llama.cpp), effort low",
+  "status": "repaired",
+  "attempts": 1,
+  "tokens": 4019,
+  "seconds": 54.8,
+  "gates": {
+   "visible": "ok",
+   "hidden": "ok",
+   "differential": "ok"
+  },
+  "differential": {
+   "verdict": "PASS",
+   "generated": 200,
+   "valid": 152,
+   "core_divergences": 0,
+   "wide_divergences": 0
+  },
+  "applied": false
+ },
+ "note": "one function, one run; the patch text is the project's code and is not stored here"
+}

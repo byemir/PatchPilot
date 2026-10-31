@@ -45,4 +45,30 @@ with tempfile.TemporaryDirectory() as t:
     (p / "tests" / "test_a.py").write_text("import pandas as pd\ndf['c'].fillna(0, inplace=True)\n")
     r = census.scan_package(p)
     check("test folders are left out and the result has no source text", r["inplace"] == 1 and r["files"] == 1 and r["sites"] == ["inplace a.py:2"], str(r))
+
+spec2 = importlib.util.spec_from_file_location("census_scope", Path(__file__).resolve().parent.parent / "scripts" / "census_scope.py")
+scope = importlib.util.module_from_spec(spec2)
+spec2.loader.exec_module(scope)
+SRC = (
+    "import pandas as pd\n"
+    "def clean(df, k):\n"
+    "    df['c'].fillna(0, inplace=True)\n"
+    "    return df\n"
+    "class A:\n"
+    "    def m(self, df):\n"
+    "        df['c'].fillna(0, inplace=True)\n"
+    "def outer(df):\n"
+    "    def inner(x):\n"
+    "        x['c'].fillna(0, inplace=True)\n"
+    "    return inner\n"
+    "def noargs():\n"
+    "    pass\n"
+    "df['c'].fillna(0, inplace=True)\n"
+)
+check("a site in a module-level function with arguments is a function", scope.classify(SRC, 3) == ("function", "clean(df, k)"), str(scope.classify(SRC, 3)))
+check("a site in a method is a method", scope.classify(SRC, 7)[0] == "method")
+check("a site in a nested function is a method (not checkable on its own)", scope.classify(SRC, 10)[0] == "method")
+check("a module-level function without parameters is no_args", scope.classify("import pandas as pd\ndef f():\n    df['c'].fillna(0, inplace=True)\n", 3)[0] == "no_args")
+check("a site at module level is module", scope.classify(SRC, 14)[0] == "module")
+check("a file that does not parse is unparsed", scope.classify("def (:\n", 1)[0] == "unparsed")
 print(f"census_test: {passed} checks passed")

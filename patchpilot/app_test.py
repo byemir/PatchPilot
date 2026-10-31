@@ -106,7 +106,7 @@ def main() -> int:
         code, st = call(app, "/api/state")
         check("only real scan manifests are listed", code == 200 and st["manifests"] == ["proj/scan.json"])
         check("the state says whether the pinned environments exist", isinstance(st["envs"], bool))
-        check("no hosted model is offered without a key", st["hosted"] == [] or appmod.meta_client.KEY_PATH.exists())
+        check("no hosted model is offered without a key", st["hosted"] == appmod.hosted_models())
 
         bad = [{"manifest": "../x.json", "mode": "check"}, {"manifest": "proj/other.json", "mode": "check"}, {"manifest": "proj/scan.json", "mode": "rm"},
                {"manifest": "proj/scan.json", "mode": "repair", "model": "local", "endpoint": "http://example.com:8080/v1"},
@@ -232,8 +232,9 @@ def main() -> int:
         check("one row is repaired with --only", code == 200 and a[a.index("--only") + 1] == "0" and "--endpoint" in a)
         key = tmp / "key"
         key.write_text("SECRET-KEY-VALUE")
-        saved = appmod.meta_client.KEY_PATH
+        saved, saved_b = appmod.meta_client.KEY_PATH, appmod.meta_client.BASETEN_KEY_PATH
         appmod.meta_client.KEY_PATH = key
+        appmod.meta_client.BASETEN_KEY_PATH = tmp / "no_baseten_key"
         try:
             check("a hosted model is offered only when the key file exists", call(app, "/api/state")[1]["hosted"] == list(appmod.HOSTED))
             code, r = call(app, "/api/run", {"manifest": "proj/scan.json", "mode": "repair", "model": "muse-spark-1.3"})
@@ -242,7 +243,7 @@ def main() -> int:
             check("a hosted model run passes --model and no local endpoint", code == 200 and a[a.index("--model") + 1] == "muse-spark-1.3" and "--endpoint" not in a)
             check("the page and the job events never contain the key", "SECRET-KEY-VALUE" not in json.dumps(call(app, "/api/state")[1]) + json.dumps(call(app, "/api/job?since=0")[1]))
         finally:
-            appmod.meta_client.KEY_PATH = saved
+            appmod.meta_client.KEY_PATH, appmod.meta_client.BASETEN_KEY_PATH = saved, saved_b
 
         # real subprocess, check only, on the sample repository
         shutil.copytree(REPO / "examples" / "sample_repo", root / "sample")

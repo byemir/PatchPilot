@@ -13,6 +13,7 @@ Each row is one run; the time and tokens are for the whole scan (Check included)
 | shop | muse-glimmer, local | 7 of 7 | 5 | 13,117 | 327 | `examples/shop_result_run3/` |
 | ledger (7 silent of 21) | muse-glimmer, local | 7 of 7 | 7 | 12,547 | 338 | `examples/ledger_result/` |
 | ledger | muse-spark-1.3, hosted | 7 of 7 | 7 | 19,376 | 167 | `examples/ledger_result_spark/` |
+| shop | muse-spark-open-1026 (open weights), hosted on Baseten | 7 of 7 | 7 | 9,557 | 76 | `examples/shop_result_spark_open/` |
 | frames (3 silent of 6, DataFrame inputs) | muse-glimmer, local | 3 of 3 | 3 | 7,182 | 149 | `examples/frames_result/` |
 | frames | muse-glimmer, local | 3 of 3 | 2 | 10,733 | 204 | `examples/frames_result_run2/` |
 
@@ -21,3 +22,19 @@ In shop run 3 the gates rejected three patches on the way (`last_seen_epoch` onc
 The frames run is one run on three functions, not a rate: each was repaired on the first attempt (2,364, 2,060 and 2,758 tokens; 44.0, 33.6 and 56.2 s). The functions are ones we wrote, with inputs recorded from their own tests.
 
 Frames run 2: `add_signup_seconds` needed two attempts (the first was rejected at the visible tests; 6,517 tokens, 123.1 s in total for that function); `fill_missing` and `flag_outliers` were repaired on the first attempt (2,127 and 2,089 tokens; 33.6 and 31.2 s). Two runs on three functions we wrote: both repaired all three, not a rate.
+
+Shop run with Muse Spark Open: tokens per function 855, 1,006, 2,410, 1,287, 1,360, 1,189 and 1,450; all three gates passed on every accepted patch.
+
+## Benchmark, Muse Spark Open (Baseten), 2026-10-31
+
+Five cases, 5 runs each, effort low, one batch, token count taken from the service (`counted` true), file-system deny on, result file `results/bench_20261031-123937_meta-models-muse-spark-open-1026.json`.
+
+| case | solved | average tokens |
+|---|---|---|
+| n6 | 5 of 5 | 1,236 |
+| n7 | 1 of 5 | 6,057 |
+| p1 | 5 of 5 (first try 4) | 3,920 |
+| p2 | 5 of 5 (first try 4) | 3,422 |
+| p3 | 5 of 5 | 2,281 |
+
+In all: 21 of 25 solved, 19 on the first attempt, 84,581 tokens. n7 is the weak case for this model; we did not look into why. One batch per case, so these numbers show what happened in this batch, not a success rate.

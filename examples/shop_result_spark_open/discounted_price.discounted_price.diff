@@ -1,0 +1,10 @@
+--- a/discounted_price.py
++++ b/discounted_price.py
+@@ -3,4 +3,6 @@
+ 
+ def discounted_price(price, rate):
+     p = np.float32(price)
+-    return float(p * (1.0 - rate))
++    # Explicitly upcast to Python float (float64) before multiply to restore
++    # pre-NEP50 promotion (float32+Python float -> float64) on both versions.
++    return float(float(p) * (1.0 - rate))

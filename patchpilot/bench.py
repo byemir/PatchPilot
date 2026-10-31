@@ -28,7 +28,7 @@ def score(case_dir: Path, cfg: dict, r: dict, seed: int) -> dict:
 
 def refuse_unisolated_with_key(no_fs_deny: bool) -> None:
     """Model code run without the OS layer can read the key file; refuse that combination."""
-    if no_fs_deny and agent.meta_client.KEY_PATH.exists():
+    if no_fs_deny and agent.meta_client.any_key_file():
         raise SystemExit("--no-fs-deny is refused while the key file exists (" + str(agent.meta_client.KEY_PATH) +
                          "): model code run without the OS layer could read it.")
 
@@ -123,7 +123,7 @@ def main() -> None:
         rows.append(row)
 
     Path("results").mkdir(exist_ok=True)
-    out = Path("results") / f"bench_{started}_{a.model}{'_NOFSDENY' if a.no_fs_deny else ''}{'_tools' if a.tools else ''}{'_local' if a.endpoint else ''}.json"
+    out = Path("results") / f"bench_{started}_{a.model.replace(chr(47), chr(45))}{'_NOFSDENY' if a.no_fs_deny else ''}{'_tools' if a.tools else ''}{'_local' if a.endpoint else ''}.json"
     out.write_text(json.dumps(rows, indent=2))
     print("\n| case | runs | solved | first try | avg tokens | scored pass |\n|---|---|---|---|---|---|")
     for r in rows:

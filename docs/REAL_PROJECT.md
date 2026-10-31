@@ -1,4 +1,4 @@
-# One real project: indsl, before the maintainers' fix
+# Two real projects: indsl (before the maintainers' fix) and traceml (found by a scan)
 
 What this is: PatchPilot's project mode (README, "Functions that import their siblings") run once on a function of a real, third-party project, at the commit before the maintainers fixed it. What it is not: a rate, a survey, or a claim about how many projects work this way. The files are in `examples/real_project_indsl/` (our manifest, our one input, the numbers). No code from indsl is in this repository.
 
@@ -24,3 +24,23 @@ Run again from the same manifest, for rehearsing the demo video: repaired, but i
 - The input is ours (five timestamps), not recorded from the project's tests; the hidden inputs are derived by our generator from it.
 - The environments hold the dependencies we installed for this run; for a project with more dependencies the same steps are needed.
 - Getting to this result took five fixes in our own tool, all found by running on this project (a circular import in the runner, copying test-looking module names, an `ImportError` message that hid the module name, a serializer that failed on arrays, and pytest missing from the environments); they are in `docs/engineering-log.md`.
+
+# Second project: polyaxon/traceml, a function the scan flagged
+
+Unlike indsl, this function was not chosen because someone had reported it. The static count in `docs/CENSUS.md` (third count) flagged three `column.fillna(..., inplace=True)` sites in `traceml/processors/importance_processors.py`; the function `clean_values(params, metrics)` takes lists of records and numbers and returns two tables. We did not know whether it changed a result, and we did not look for a maintainer fix. Files: `examples/real_project_traceml/` (our manifest, our two inputs, the numbers). No traceml code is in this repository.
+
+## What was run (2026-10-31, same Mac)
+1. `git clone --depth 1` of `polyaxon/traceml` (Apache-2.0) into `/tmp`, commit `2452c1a8f2be742a8a3b8e379568a6ce3bf4394c` (the default branch that day; the commit is dated 2026-10-21). Nothing was written into the clone (no `--apply`).
+2. Two virtual environments, pandas 2.3.3 and 3.0.6, each with NumPy 2, `clipped` (its only import besides pandas and NumPy) and pytest.
+3. A manifest with `"root"`, `"old"` and `"new"`, and two inputs written by us: four and five parameter records with missing numeric values, and a list of metrics.
+4. `scan --triage-only`, then `scan` with the local Muse Glimmer (effort low), started with a clean environment (`env -i`).
+
+## Result (one run)
+- Check: `silent`, on 2 of 2 inputs, nothing raised. On pandas 2.3.3 the missing parameter values are replaced by the column mean; on 3.0.6 they stay `NaN` (a call of the form `df["c"].fillna(mean, inplace=True)` no longer writes into the table).
+- Repair: accepted on the first attempt, 4,019 tokens, 54.8 s. Visible tests, hidden tests and the differential check passed; the differential generated 200 inputs, 152 valid, 0 divergences. We read the diff: it assigns the result of `fillna` back to the column instead of filling in place, and the logic is otherwise unchanged. We did not run the project's own tests on it and did not compare it with any maintainer change.
+
+## What it does not show
+- One function in one project, one run. The static count found 10 sites in 7 non-vendored repositories; this is the only one we ran. It is not an estimate of how many projects have such breaks.
+- The inputs are ours and numeric only. The function also fills text columns (`dtype == "object"`); pandas 3 stores text as a new string type, so that branch may behave differently, and we did not test it.
+- Whether the maintainers consider this a defect, or support pandas 3 yet, was not checked.
+

@@ -35,6 +35,12 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
 ENDPOINT_RE = re.compile(r"^http://(127\.0\.0\.1|localhost|\[::1\]):\d{1,5}(/[A-Za-z0-9._~/-]*)?$")
 HOSTED = ("muse-spark-1.3", "muse-wonder-1.0")
+BASETEN = tuple(meta_client.BASETEN_MODELS)  # served by Baseten, needs its own key file
+
+
+def hosted_models() -> list[str]:
+    """Hosted models whose key file exists."""
+    return (list(HOSTED) if meta_client.KEY_PATH.exists() else []) + (list(BASETEN) if meta_client.BASETEN_KEY_PATH.exists() else [])
 SKIP_DIRS = {".git", ".venv", ".sandboxes", "node_modules", "__pycache__", "runs", ".patchpilot"}
 CLEAN_ENV_KEYS = ("HOME", "PATH", "TMPDIR", "LANG", "USER", "LOGNAME", "TERM")
 
@@ -131,7 +137,7 @@ class App:
         return res
 
     def state(self) -> dict:
-        return {"root": self.root.name, "manifests": self.manifests(), "hosted": list(HOSTED) if meta_client.KEY_PATH.exists() else [],
+        return {"root": self.root.name, "manifests": self.manifests(), "hosted": hosted_models(),
                 "endpoint": "http://127.0.0.1:8080/v1", "previous": self.previous(),
                 "changed": self.changed(), "envs": all(Path(repair.default_python(l, k)).exists() for l in repair.ENVS for k in (0, 1)), "job": self.job.since(0)["status"] if self.job else None}
 
@@ -177,7 +183,7 @@ class App:
                     if not isinstance(ep, str) or not ENDPOINT_RE.match(ep):
                         return 400, {"error": "the endpoint must be a loopback address"}
                     argv_model = ["--endpoint", ep]
-                elif p.get("model") in HOSTED and meta_client.KEY_PATH.exists():
+                elif p.get("model") in hosted_models():
                     argv_model = ["--model", p["model"]]
                 else:
                     return 400, {"error": "unknown model"}

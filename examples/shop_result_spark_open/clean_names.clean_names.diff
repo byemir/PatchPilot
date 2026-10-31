@@ -1,0 +1,11 @@
+--- a/clean_names.py
++++ b/clean_names.py
+@@ -3,6 +3,7 @@
+ 
+ def clean_names(names):
+     s = pd.Series(names)
+-    if s.dtype == object:
++    # pandas 2.x used object dtype, pandas 3.x uses string dtype -> check for any string-like dtype
++    if pd.api.types.is_string_dtype(s.dtype) or s.dtype == object:
+         s = s.str.strip().str.title()
+     return s.tolist()

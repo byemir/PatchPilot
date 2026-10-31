@@ -60,3 +60,54 @@ Teaching and application code (`docs/census/repos.json`):
 - The few hits are in teaching notebooks. Interpretation: the remaining risk sits in downstream application code that has no such test suite and pins nothing; 7 repositories are a small, hand-picked sample of that and cannot say how large it is.
 - This is not an estimate of how many projects are affected, and the tool does not claim a headline number. Its use case is the code we cannot sample here: your own functions, checked with your own inputs.
 - The scan can be repeated: `python scripts/census.py DIR [DIR ...] --json out.json` (checked offline in `patchpilot/census_test.py`). Our own example `examples/ledger` gives `chained 1, inplace 1` by construction: we wrote those two sites.
+
+## Second count: the first 20 repositories of GitHub's "pandas" topic (2026-10-31)
+
+Same method and the same three patterns. The list rule was written before counting (`docs/census/PREREGISTERED2.txt`): the first 20 Python repositories on the GitHub topic page for pandas on 2026-10-31, minus pandas itself and the three already counted above (yfinance, seaborn, dask), leaving 16. Counts and `kind file:line` only, in `docs/census/repos2.json`; no source text was copied. Default branch, shallow clone, commit in brackets.
+
+| repository (commit) | pandas files / files | LOC | chained | inplace | datetime |
+|---|---|---|---|---|---|
+| 30-Days-Of-Python (50c11a8) | 0 / 33 | 0 | 0 | 0 | 0 |
+| abu (8a48f0c) | 95 / 299 | 22,606 | 0 | 17 | 0 |
+| data-science-ipython-notebooks (5b3c00d) | 27 / 159 | 4,365 | 0 | 0 | 0 |
+| datasets (62e0b42) | 13 / 157 | 16,501 | 0 | 0 | 0 |
+| fg-data-profiling (0a8bf02) | 91 / 214 | 9,186 | 0 | 0 | 0 |
+| ibis (8c3800b) | 44 / 206 | 35,305 | 0 | 0 | 0 |
+| lux (972e5ec) | 33 / 73 | 5,065 | 0 | 0 | 0 |
+| mlcourse.ai (df74e85) | 385 / 522 | 79,869 | 44 | 145 | 10 |
+| modin (7ca200b) | 122 / 320 | 65,610 | 0 | 4 | 0 |
+| orange3 (7ba04e1) | 10 / 426 | 6,839 | 0 | 0 | 0 |
+| pandas-ai (bbbb771) | 19 / 100 | 1,846 | 0 | 0 | 0 |
+| pygwalker (d91e207) | 20 / 112 | 2,106 | 0 | 0 | 0 |
+| Sequoia-X (444c0db) | 8 / 18 | 616 | 0 | 0 | 0 |
+| tqdm (9cf5a12) | 2 / 47 | 1,259 | 0 | 0 | 0 |
+| tushare (0938569) | 22 / 52 | 6,972 | 0 | 0 | 0 |
+| visidata (5f67ff8) | 3 / 276 | 478 | 0 | 0 | 0 |
+| total | | | 44 | 166 | 10 |
+
+Reading, with limits:
+- 13 of the 16 repositories have no hit. The hits are in `mlcourse.ai` (course notebooks: 44 chained, 145 inplace, 10 datetime), `abu` (17 inplace, an application: quantitative trading), `modin` (4 inplace, all in one Kaggle stress-test script, not in the library) and nowhere else. These are syntactic matches; we did not run these projects.
+- We read the 17 `abu` sites. Their enclosing code: 6 are in a method or a closure that uses object state (`self`), 1 is in a constructor, 4 are in a notebook, 4 are in demo functions of a script, and 2 are in one module-level function that takes a DataFrame (`calc_atr`). On our own small example of the same two forms, with pandas 2.3.3 and 3.0.6: `df["c"].fillna(other_series, inplace=True)` no longer fills (silent: a first value stays missing), and `fillna(method="bfill", inplace=True)` raises `TypeError` (loud). Both sites in that module-level function use the `method=` form, so it would raise on pandas 3 (loud, not silent), and PatchPilot repairs only silent breaks; we did not run it.
+- What this means for the tool: in this sample the real hits sit mostly in methods that depend on object state, in notebooks and in scripts, not in pure functions that take JSON values or tables. That is outside what PatchPilot handles now (the Limitations list says so). We did not find a new silent break in a pure function; we did not look beyond these 16 repositories.
+
+## Third count: pages 2 to 5 of the same topic list (2026-10-31)
+
+Same method and patterns again. The rule was written before the count (`docs/census/PREREGISTERED3.txt`, list in `docs/census/pool3.txt`): pages 2 to 5 of the GitHub topic page for pandas on 2026-10-31, minus the four repositories already counted, 76 repositories; all 76 were cloned (shallow, default branch). Counts and `file:line` are in `docs/census/repos3.json`. Each site was then placed by `scripts/census_scope.py` into the kind of code that contains it (`docs/census/scope3.json`; the script prints names and parameter names of functions, no source text).
+
+Result: 8 of 76 repositories have at least one site; 2 chained, 11 inplace, 7 datetime, 20 sites in all. Repositories with sites (the rest have none):
+
+| repository | pandas files / files | chained | inplace | datetime | where the sites are |
+|---|---|---|---|---|---|
+| business-science/pytimetk | 70 / 87 | 0 | 1 | 0 | 1 function |
+| graphistry/pygraphistry | 172 / 474 | 0 | 0 | 1 | 1 function |
+| machow/siuba | 32 / 93 | 0 | 1 | 0 | 1 function |
+| polyaxon/traceml | 7 / 68 | 0 | 3 | 0 | 3 function |
+| ryfeus/lambda-packs | 336 / 24885 | 2 | 3 | 5 | 5 function, 5 method |
+| stitchfix/hamilton | 43 / 113 | 0 | 1 | 1 | 2 function |
+| unionai-oss/pandera | 47 / 274 | 0 | 1 | 0 | 1 method |
+| wq/django-rest-pandas | 2 / 8 | 0 | 1 | 0 | 1 method |
+
+Reading, with limits:
+- `ryfeus/lambda-packs` holds vendored copies of old pandas source (10 of the 20 sites); they are not application code and are not interpreted. Of the other 10 sites in 7 repositories, 8 are inside a module-level function that takes arguments (the shape PatchPilot handles) and 2 are in methods.
+- We read the lines of five of them. One is a false positive of the datetime pattern (`hamilton`, a week number cast to int, not a timestamp). Three are `column.method(..., inplace=True)` on a selected column inside functions that take a table or lists (`traceml` `clean_values`, `siuba` `complete`, `pytimetk` `create_recipe`); on pandas 3 such a call no longer writes into the table. `traceml` `clean_values` was then run through PatchPilot: `docs/REAL_PROJECT.md`, second project. One is a conversion of timestamps to int64 in `graphistry` that we did not examine further.
+- These are syntactic matches in a sample of repositories ordered by GitHub's default, not a measure of how common the problem is. Whether each site changes a result was not checked here, except where `docs/REAL_PROJECT*.md` says a function was run.

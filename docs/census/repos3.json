@@ -1,0 +1,714 @@
+{
+ "AmoDinho__datacamp-python-data-science-track": {
+  "files": 85,
+  "pandas_files": 25,
+  "loc": 1419,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "Daniel15568__percentify": {
+  "files": 3,
+  "pandas_files": 2,
+  "loc": 1496,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "HazyResearch__meerkat": {
+  "files": 344,
+  "pandas_files": 40,
+  "loc": 7902,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "IntelPython__sdc": {
+  "files": 321,
+  "pandas_files": 231,
+  "loc": 22435,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "JackMcKew__pandas_alive": {
+  "files": 9,
+  "pandas_files": 8,
+  "loc": 2397,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "JohnSnowLabs__nlu": {
+  "files": 601,
+  "pandas_files": 98,
+  "loc": 7055,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "JoinQuant__jqdatasdk": {
+  "files": 18,
+  "pandas_files": 5,
+  "loc": 2046,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "MaxHalford__prince": {
+  "files": 22,
+  "pandas_files": 12,
+  "loc": 2638,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "MazzaWill__neo4j-python-pandas-py2neo-v3": {
+  "files": 15,
+  "pandas_files": 4,
+  "loc": 401,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "PhantomInsights__baby-names-analysis": {
+  "files": 2,
+  "pandas_files": 1,
+  "loc": 149,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "PhantomInsights__mexican-government-report": {
+  "files": 3,
+  "pandas_files": 1,
+  "loc": 197,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "PhantomInsights__subreddit-analyzer": {
+  "files": 6,
+  "pandas_files": 1,
+  "loc": 358,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "ResidentMario__missingno": {
+  "files": 5,
+  "pandas_files": 1,
+  "loc": 388,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "RomelTorres__alpha_vantage": {
+  "files": 22,
+  "pandas_files": 2,
+  "loc": 513,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "ScottfreeLLC__AlphaPy": {
+  "files": 25,
+  "pandas_files": 14,
+  "loc": 7513,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "Squarespace__datasheets": {
+  "files": 9,
+  "pandas_files": 4,
+  "loc": 1097,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "adamerose__PandasGUI": {
+  "files": 38,
+  "pandas_files": 8,
+  "loc": 3678,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "addisonlynch__iexfinance": {
+  "files": 31,
+  "pandas_files": 14,
+  "loc": 1342,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "aeturrell__skimpy": {
+  "files": 7,
+  "pandas_files": 2,
+  "loc": 1041,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "amirziai__flatten": {
+  "files": 2,
+  "pandas_files": 0,
+  "loc": 0,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "approximatelabs__sketch": {
+  "files": 7,
+  "pandas_files": 2,
+  "loc": 459,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "aws__aws-sdk-pandas": {
+  "files": 200,
+  "pandas_files": 50,
+  "loc": 14137,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "buckaroo-data__buckaroo": {
+  "files": 179,
+  "pandas_files": 88,
+  "loc": 15170,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "business-science__pytimetk": {
+  "files": 87,
+  "pandas_files": 70,
+  "loc": 27316,
+  "chained": 0,
+  "inplace": 1,
+  "datetime": 0,
+  "sites": [
+   "inplace src/pytimetk/core/correlationfunnel.py:496"
+  ]
+ },
+ "capitalone__DataProfiler": {
+  "files": 80,
+  "pandas_files": 42,
+  "loc": 14867,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "capitalone__datacompy": {
+  "files": 24,
+  "pandas_files": 7,
+  "loc": 3588,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "chezou__tabula-py": {
+  "files": 10,
+  "pandas_files": 2,
+  "loc": 942,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "databricks__koalas": {
+  "files": 57,
+  "pandas_files": 34,
+  "loc": 36479,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "dmnfarrell__pandastable": {
+  "files": 27,
+  "pandas_files": 17,
+  "loc": 11180,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "dovpanda-dev__dovpanda": {
+  "files": 8,
+  "pandas_files": 2,
+  "loc": 112,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "dpguthrie__yahooquery": {
+  "files": 11,
+  "pandas_files": 5,
+  "loc": 1662,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "elastic__eland": {
+  "files": 52,
+  "pandas_files": 18,
+  "loc": 8667,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "fal-ai__dbt-fal": {
+  "files": 167,
+  "pandas_files": 39,
+  "loc": 2451,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "fbdesignpro__sweetviz": {
+  "files": 24,
+  "pandas_files": 14,
+  "loc": 1903,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "finvfamily__finshare": {
+  "files": 94,
+  "pandas_files": 32,
+  "loc": 5845,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "firmai__pandapy": {
+  "files": 2,
+  "pandas_files": 1,
+  "loc": 672,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "flypythoncom__python": {
+  "files": 80,
+  "pandas_files": 5,
+  "loc": 244,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "fugue-project__fugue": {
+  "files": 144,
+  "pandas_files": 31,
+  "loc": 10143,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "gboeing__pynamical": {
+  "files": 10,
+  "pandas_files": 5,
+  "loc": 1396,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "graphistry__pygraphistry": {
+  "files": 474,
+  "pandas_files": 172,
+  "loc": 65055,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 1,
+  "sites": [
+   "datetime graphistry/compute/gfql/datetime_search_index.py:195"
+  ]
+ },
+ "ing-bank__popmon": {
+  "files": 78,
+  "pandas_files": 29,
+  "loc": 5013,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "jmcarpenter2__swifter": {
+  "files": 10,
+  "pandas_files": 4,
+  "loc": 1916,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "jmcnamara__XlsxWriter": {
+  "files": 157,
+  "pandas_files": 13,
+  "loc": 216,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "keithorange__PatternPy": {
+  "files": 3,
+  "pandas_files": 2,
+  "loc": 138,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "kmhmubin__Face-Recognition-Attendance-System": {
+  "files": 8,
+  "pandas_files": 1,
+  "loc": 65,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "lit26__finvizfinance": {
+  "files": 35,
+  "pandas_files": 14,
+  "loc": 1847,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "lk-geimfari__mimesis": {
+  "files": 59,
+  "pandas_files": 0,
+  "loc": 0,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "lotus-data__lotus": {
+  "files": 129,
+  "pandas_files": 80,
+  "loc": 10903,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "machow__siuba": {
+  "files": 93,
+  "pandas_files": 32,
+  "loc": 5303,
+  "chained": 0,
+  "inplace": 1,
+  "datetime": 0,
+  "sites": [
+   "inplace siuba/dply/verbs.py:2270"
+  ]
+ },
+ "man-group__arctic": {
+  "files": 65,
+  "pandas_files": 18,
+  "loc": 3497,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "mars-project__mars": {
+  "files": 1083,
+  "pandas_files": 126,
+  "loc": 46244,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "mwouts__itables": {
+  "files": 92,
+  "pandas_files": 17,
+  "loc": 2306,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "nalepae__pandarallel": {
+  "files": 15,
+  "pandas_files": 10,
+  "loc": 1038,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "narwhals-dev__narwhals": {
+  "files": 198,
+  "pandas_files": 28,
+  "loc": 19044,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "peerchemist__finta": {
+  "files": 7,
+  "pandas_files": 5,
+  "loc": 1956,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "pgalko__BambooAI": {
+  "files": 134,
+  "pandas_files": 18,
+  "loc": 10180,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "phamdinhkhanh__vnquant": {
+  "files": 21,
+  "pandas_files": 5,
+  "loc": 660,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "polyaxon__traceml": {
+  "files": 68,
+  "pandas_files": 7,
+  "loc": 1553,
+  "chained": 0,
+  "inplace": 3,
+  "datetime": 0,
+  "sites": [
+   "inplace traceml/traceml/processors/importance_processors.py:41",
+   "inplace traceml/traceml/processors/importance_processors.py:42",
+   "inplace traceml/traceml/processors/importance_processors.py:45"
+  ]
+ },
+ "pyjanitor-devs__pyjanitor": {
+  "files": 140,
+  "pandas_files": 117,
+  "loc": 26070,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "pyranges__pyranges0": {
+  "files": 48,
+  "pandas_files": 29,
+  "loc": 9094,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "ramonhagenaars__nptyping": {
+  "files": 18,
+  "pandas_files": 1,
+  "loc": 108,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "ranaroussi__pystore": {
+  "files": 17,
+  "pandas_files": 10,
+  "loc": 2501,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "reloadware__reloadium": {
+  "files": 71,
+  "pandas_files": 0,
+  "loc": 0,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "rsheftel__pandas_market_calendars": {
+  "files": 51,
+  "pandas_files": 41,
+  "loc": 12926,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "ruddra__docker-django": {
+  "files": 16,
+  "pandas_files": 0,
+  "loc": 0,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "ryfeus__lambda-packs": {
+  "files": 24885,
+  "pandas_files": 336,
+  "loc": 222877,
+  "chained": 2,
+  "inplace": 3,
+  "datetime": 5,
+  "sites": [
+   "inplace Pandas_numpy/source/pandas/core/generic.py:2565",
+   "inplace Pandas_numpy/source/pandas/core/indexes/multi.py:570",
+   "datetime Pandas_numpy/source/pandas/core/reshape/tile.py:291",
+   "datetime Pandas_numpy/source/pandas/core/reshape/tile.py:319",
+   "datetime Pandas_numpy/source/pandas/io/stata.py:385",
+   "chained Pandas_numpy/source/pandas/plotting/_converter.py:933",
+   "inplace Tensorflow_Pandas_Numpy/source3.6/pandas/core/indexes/multi.py:688",
+   "datetime Tensorflow_Pandas_Numpy/source3.6/pandas/core/reshape/tile.py:424",
+   "datetime Tensorflow_Pandas_Numpy/source3.6/pandas/io/stata.py:396",
+   "chained Tensorflow_Pandas_Numpy/source3.6/pandas/plotting/_converter.py:957"
+  ]
+ },
+ "scikit-hep__awkward": {
+  "files": 455,
+  "pandas_files": 2,
+  "loc": 940,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "shashankvemuri__Finance": {
+  "files": 70,
+  "pandas_files": 40,
+  "loc": 4354,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "simonw__csvs-to-sqlite": {
+  "files": 4,
+  "pandas_files": 1,
+  "loc": 420,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "sktime__pytorch-forecasting": {
+  "files": 226,
+  "pandas_files": 22,
+  "loc": 10823,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "stitchfix__hamilton": {
+  "files": 113,
+  "pandas_files": 43,
+  "loc": 4326,
+  "chained": 0,
+  "inplace": 1,
+  "datetime": 1,
+  "sites": [
+   "inplace examples/model_examples/time-series/data_loaders.py:58",
+   "datetime examples/model_examples/time-series/transforms.py:133"
+  ]
+ },
+ "thombashi__pytablewriter": {
+  "files": 79,
+  "pandas_files": 3,
+  "loc": 1378,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "twelvedata__twelvedata-python": {
+  "files": 13,
+  "pandas_files": 4,
+  "loc": 8194,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ },
+ "unionai-oss__pandera": {
+  "files": 274,
+  "pandas_files": 47,
+  "loc": 15830,
+  "chained": 0,
+  "inplace": 1,
+  "datetime": 0,
+  "sites": [
+   "inplace pandera/backends/pandas/components.py:504"
+  ]
+ },
+ "wq__django-rest-pandas": {
+  "files": 8,
+  "pandas_files": 2,
+  "loc": 531,
+  "chained": 0,
+  "inplace": 1,
+  "datetime": 0,
+  "sites": [
+   "inplace rest_pandas/serializers.py:49"
+  ]
+ },
+ "xorbitsai__xorbits": {
+  "files": 1123,
+  "pandas_files": 146,
+  "loc": 49803,
+  "chained": 0,
+  "inplace": 0,
+  "datetime": 0,
+  "sites": []
+ }
+}

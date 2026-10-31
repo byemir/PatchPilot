@@ -23,6 +23,7 @@ Your files change only when you press **Apply** (or pass `--apply`); **Undo** re
 | Muse Glimmer 30B (open weights, Apache 2.0), Q4_K_M GGUF | the repair loop, served with llama.cpp; no API key, requests go only to a loopback address | one Apple M2 Ultra Mac |
 | Muse Spark 1.3 | hosted, Meta Model API (Chat Completions): same gates, same benchmark | Meta |
 | Muse Wonder 1.0 | hosted, Meta Model API (Chat Completions): same gates, same benchmark | Meta |
+| Muse Spark Open (`meta-models/muse-spark-open-1026`, open weights) | hosted on Baseten's inference service (Chat Completions): same gates, same benchmark | Baseten |
 
 Every model the repair loop calls is a Meta model. Glimmer weights: `meta-models/Muse-Glimmer-30B-GGUF`, revision `b44f1072cf75e918a1b82a3a17b45c4389b076e7`, file `Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf` (sha256 `4cc57c0f51040a226e5a72cc47b7613f7772950e460a665f7083de89f183f60e`); llama.cpp 0.8.0 (build 11960). Hardware, hashes and the exact commands: `docs/DETAILS.md`, "How the local model is run".
 
@@ -44,7 +45,7 @@ If `python3.12` is not on your PATH (Python 3.13 or newer will not work: the pin
 
 Open `127.0.0.1:8765`, pick `shop/scan.json`, press **Check**: of 15 functions we wrote, 5 are unaffected, 3 fail loudly, 7 differ silently.
 
-**3. Offline tests (no model, no key; fifteen tests, about four and a half minutes, 265 s summed in the latest run on the Mac):**
+**3. Offline tests (no model, no key; sixteen tests, about five minutes):**
 
     bash scripts/run_offline_tests.sh
 
@@ -54,7 +55,7 @@ Open `127.0.0.1:8765`, pick `shop/scan.json`, press **Check**: of 15 functions w
     hf download meta-models/Muse-Glimmer-30B-GGUF --local-dir ~/models/muse-glimmer --include "Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf"
     llama-server -m ~/models/muse-glimmer/Muse-Glimmer-30B-KQuant-17GB-Q4_K_M.gguf -a muse-glimmer -ngl 99 -c 65536 -np 1 --host 127.0.0.1 --port 8080 --chat-template-kwargs '{"reasoning_strength":"low"}'
 
-Then press **Repair** in the app, or run `bash scripts/demo_repair.sh` (one function, one command, your file untouched). **Hosted models:** put a Meta Model API key in the key file described in `docs/DETAILS.md` ("Run the agent") and the app uses it.
+Then press **Repair** in the app, or run `bash scripts/demo_repair.sh` (one function, one command, your file untouched). **Hosted models:** put a Meta Model API key in the key file described in `docs/DETAILS.md` ("Run the agent") and the app offers Muse Spark and Muse Wonder; a Baseten key in `~/.config/patchpilot/baseten_key` adds Muse Spark Open. Each key is sent only to its own service.
 
 **Your own code:** `python -m patchpilot.repair my_module.py my_function --inputs probes.json --lib pandas --endpoint http://127.0.0.1:8080/v1`. `python -m patchpilot.capture` records inputs from your own tests. Functions must be pure, deterministic, with JSON or small DataFrame (`$df`, `$series`) inputs; a function may live in a project folder (`"root"` in the manifest, with its own interpreters via `"old"` and `"new"`).
 
@@ -70,8 +71,9 @@ All runs are small samples on code we wrote (17 benchmark cases, the shop set, t
 | Ledger project (22 functions, inputs recorded from its own tests) | local Glimmer and hosted Spark: 7 of 7 repaired on the first attempt (`docs/APP_RUNS.md`) |
 | DataFrame module (6 functions) | local Glimmer: 3 of 3 repaired in both runs, one wrong patch blocked in run 2 |
 | Benchmark, hosted Spark and Wonder, five cases | 125 of 125 runs solved; on the hardest case (p4): Spark 0 of 5, Wonder 3 of 5 |
+| Muse Spark Open (open weights, via Baseten): shop set and five benchmark cases | shop: 7 of 7 repaired, all on the first attempt (9,557 tokens, 76 s; `examples/shop_result_spark_open/`). Benchmark, 5 runs per case: 21 of 25 solved, 19 on the first attempt, 84,581 tokens; case n7 only 1 of 5 (`docs/APP_RUNS.md`). One batch, not a rate |
 | Benchmark, local Glimmer, six cases (low reasoning) | 19 of 30 solved; on cases where a half-fix passes the visible tests (q1 to q3): 42 of 45 (the count of 27 attempts rejected by the hidden check comes from local run files that are not in the repository) |
-| One real third-party project (indsl, before its maintainers' fix) | Check: silent break; local Glimmer repaired it in two runs: on the first attempt (13,501 tokens, 194 s) and, in a second run, on the second attempt after the visible tests rejected the first patch (27,052 tokens, 363 s); all three gates passed on the accepted patch. One function, chosen because the break was known, two runs, not a rate: `docs/REAL_PROJECT.md` |
+| Two real third-party projects, one function each (`docs/REAL_PROJECT.md`) | indsl (known break, before its maintainers' fix): Check silent, local Glimmer repaired it in two runs (first attempt, 13,501 tokens, 194 s; second run: second attempt after the visible tests rejected the first patch, 27,052 tokens, 363 s). polyaxon/traceml (flagged by our static count, not known beforehand): Check silent on 2 of 2 inputs (missing values filled with the mean on pandas 2.3, left as NaN on 3.0), local Glimmer repaired it on the first attempt (4,019 tokens, 55 s). All three gates passed on every accepted patch. One function per project, our inputs, not a rate |
 
 Impact: `docs/IMPACT.md`; a static count of three pandas-3 patterns in 16 libraries and 7 teaching repositories (0 real hits in the libraries, 5 in teaching notebooks; patterns, not broken programs): `docs/CENSUS.md`. CI gate without a model: `python -m patchpilot.scan scan.json --triage-only --fail-on-silent` exits 1 while a listed function changes silently.
 

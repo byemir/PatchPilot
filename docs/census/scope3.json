@@ -1,0 +1,206 @@
+{
+ "AmoDinho__datacamp-python-data-science-track": [],
+ "Daniel15568__percentify": [],
+ "HazyResearch__meerkat": [],
+ "IntelPython__sdc": [],
+ "JackMcKew__pandas_alive": [],
+ "JohnSnowLabs__nlu": [],
+ "JoinQuant__jqdatasdk": [],
+ "MaxHalford__prince": [],
+ "MazzaWill__neo4j-python-pandas-py2neo-v3": [],
+ "PhantomInsights__baby-names-analysis": [],
+ "PhantomInsights__mexican-government-report": [],
+ "PhantomInsights__subreddit-analyzer": [],
+ "ResidentMario__missingno": [],
+ "RomelTorres__alpha_vantage": [],
+ "ScottfreeLLC__AlphaPy": [],
+ "Squarespace__datasheets": [],
+ "adamerose__PandasGUI": [],
+ "addisonlynch__iexfinance": [],
+ "aeturrell__skimpy": [],
+ "amirziai__flatten": [],
+ "approximatelabs__sketch": [],
+ "aws__aws-sdk-pandas": [],
+ "buckaroo-data__buckaroo": [],
+ "business-science__pytimetk": [
+  {
+   "kind": "inplace",
+   "site": "src/pytimetk/core/correlationfunnel.py:496",
+   "class": "function",
+   "detail": "create_recipe(data, n_bins, thresh_infreq, name_infreq, ...)"
+  }
+ ],
+ "capitalone__DataProfiler": [],
+ "capitalone__datacompy": [],
+ "chezou__tabula-py": [],
+ "databricks__koalas": [],
+ "dmnfarrell__pandastable": [],
+ "dovpanda-dev__dovpanda": [],
+ "dpguthrie__yahooquery": [],
+ "elastic__eland": [],
+ "fal-ai__dbt-fal": [],
+ "fbdesignpro__sweetviz": [],
+ "finvfamily__finshare": [],
+ "firmai__pandapy": [],
+ "flypythoncom__python": [],
+ "fugue-project__fugue": [],
+ "gboeing__pynamical": [],
+ "graphistry__pygraphistry": [
+  {
+   "kind": "datetime",
+   "site": "graphistry/compute/gfql/datetime_search_index.py:195",
+   "class": "function",
+   "detail": "_zone_codes(localized)"
+  }
+ ],
+ "ing-bank__popmon": [],
+ "jmcarpenter2__swifter": [],
+ "jmcnamara__XlsxWriter": [],
+ "keithorange__PatternPy": [],
+ "kmhmubin__Face-Recognition-Attendance-System": [],
+ "lit26__finvizfinance": [],
+ "lk-geimfari__mimesis": [],
+ "lotus-data__lotus": [],
+ "machow__siuba": [
+  {
+   "kind": "inplace",
+   "site": "siuba/dply/verbs.py:2270",
+   "class": "function",
+   "detail": "complete(__data)"
+  }
+ ],
+ "man-group__arctic": [],
+ "mars-project__mars": [],
+ "mwouts__itables": [],
+ "nalepae__pandarallel": [],
+ "narwhals-dev__narwhals": [],
+ "peerchemist__finta": [],
+ "pgalko__BambooAI": [],
+ "phamdinhkhanh__vnquant": [],
+ "polyaxon__traceml": [
+  {
+   "kind": "inplace",
+   "site": "traceml/traceml/processors/importance_processors.py:41",
+   "class": "function",
+   "detail": "clean_values(params, metrics)"
+  },
+  {
+   "kind": "inplace",
+   "site": "traceml/traceml/processors/importance_processors.py:42",
+   "class": "function",
+   "detail": "clean_values(params, metrics)"
+  },
+  {
+   "kind": "inplace",
+   "site": "traceml/traceml/processors/importance_processors.py:45",
+   "class": "function",
+   "detail": "clean_values(params, metrics)"
+  }
+ ],
+ "pyjanitor-devs__pyjanitor": [],
+ "pyranges__pyranges0": [],
+ "ramonhagenaars__nptyping": [],
+ "ranaroussi__pystore": [],
+ "reloadware__reloadium": [],
+ "rsheftel__pandas_market_calendars": [],
+ "ruddra__docker-django": [],
+ "ryfeus__lambda-packs": [
+  {
+   "kind": "inplace",
+   "site": "Pandas_numpy/source/pandas/core/generic.py:2565",
+   "class": "method",
+   "detail": ""
+  },
+  {
+   "kind": "inplace",
+   "site": "Pandas_numpy/source/pandas/core/indexes/multi.py:570",
+   "class": "method",
+   "detail": ""
+  },
+  {
+   "kind": "datetime",
+   "site": "Pandas_numpy/source/pandas/core/reshape/tile.py:291",
+   "class": "function",
+   "detail": "_coerce_to_type(x)"
+  },
+  {
+   "kind": "datetime",
+   "site": "Pandas_numpy/source/pandas/core/reshape/tile.py:319",
+   "class": "function",
+   "detail": "_convert_bin_to_numeric_type(bins, dtype)"
+  },
+  {
+   "kind": "datetime",
+   "site": "Pandas_numpy/source/pandas/io/stata.py:385",
+   "class": "method",
+   "detail": ""
+  },
+  {
+   "kind": "chained",
+   "site": "Pandas_numpy/source/pandas/plotting/_converter.py:933",
+   "class": "function",
+   "detail": "_annual_finder(vmin, vmax, freq)"
+  },
+  {
+   "kind": "inplace",
+   "site": "Tensorflow_Pandas_Numpy/source3.6/pandas/core/indexes/multi.py:688",
+   "class": "method",
+   "detail": ""
+  },
+  {
+   "kind": "datetime",
+   "site": "Tensorflow_Pandas_Numpy/source3.6/pandas/core/reshape/tile.py:424",
+   "class": "function",
+   "detail": "_convert_bin_to_numeric_type(bins, dtype)"
+  },
+  {
+   "kind": "datetime",
+   "site": "Tensorflow_Pandas_Numpy/source3.6/pandas/io/stata.py:396",
+   "class": "method",
+   "detail": ""
+  },
+  {
+   "kind": "chained",
+   "site": "Tensorflow_Pandas_Numpy/source3.6/pandas/plotting/_converter.py:957",
+   "class": "function",
+   "detail": "_annual_finder(vmin, vmax, freq)"
+  }
+ ],
+ "scikit-hep__awkward": [],
+ "shashankvemuri__Finance": [],
+ "simonw__csvs-to-sqlite": [],
+ "sktime__pytorch-forecasting": [],
+ "stitchfix__hamilton": [
+  {
+   "kind": "inplace",
+   "site": "examples/model_examples/time-series/data_loaders.py:58",
+   "class": "function",
+   "detail": "calendar(calendar_path)"
+  },
+  {
+   "kind": "datetime",
+   "site": "examples/model_examples/time-series/transforms.py:133",
+   "class": "function",
+   "detail": "week(date)"
+  }
+ ],
+ "thombashi__pytablewriter": [],
+ "twelvedata__twelvedata-python": [],
+ "unionai-oss__pandera": [
+  {
+   "kind": "inplace",
+   "site": "pandera/backends/pandas/components.py:504",
+   "class": "method",
+   "detail": ""
+  }
+ ],
+ "wq__django-rest-pandas": [
+  {
+   "kind": "inplace",
+   "site": "rest_pandas/serializers.py:49",
+   "class": "method",
+   "detail": ""
+  }
+ ],
+ "xorbitsai__xorbits": []
+}

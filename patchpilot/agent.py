@@ -245,7 +245,7 @@ if __name__ == "__main__":
     ap.add_argument("--endpoint", help="base URL of a local OpenAI-compatible server (loopback only, no API key is sent)")
     a = ap.parse_args()
     a.model = a.model or ("muse-glimmer" if a.endpoint else "muse-spark-1.3")
-    if a.no_fs_deny and meta_client.KEY_PATH.exists():
+    if a.no_fs_deny and meta_client.any_key_file():
         raise SystemExit("--no-fs-deny is refused while the key file exists (" + str(meta_client.KEY_PATH) +
                          "): model code run without the OS layer could read it.")
     sandbox.set_fs_deny(not a.no_fs_deny)

@@ -1,0 +1,11 @@
+--- a/last_seen_epoch.py
++++ b/last_seen_epoch.py
+@@ -3,4 +3,7 @@
+ 
+ def last_seen_epoch(stamps):
+     ts = pd.to_datetime(pd.Series(stamps))
+-    return int(ts.astype("int64").max() // 10**9)
++    m = ts.max()
++    # Timestamp.value is defined as nanoseconds since epoch in both pandas 2 and 3,
++    # unlike Series.astype('int64') which became resolution-dependent in pandas 3.0
++    return int(m.value // 10**9)

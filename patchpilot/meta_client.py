@@ -10,6 +10,8 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 BASE_URL = "https://api.meta.ai/v1"  # fixed on purpose: the key must never be sent elsewhere
+BASETEN_URL = "https://inference.baseten.co/v1"  # fixed too: Muse Spark Open, served by Baseten for the hackathon (its own key file)
+BASETEN_MODELS = ("meta-models/muse-spark-open-1026",)  # the only model the hackathon Baseten key works with
 
 
 class MetaAPIError(RuntimeError):
@@ -21,38 +23,59 @@ class MetaAuthError(MetaAPIError):
 
 
 KEY_PATH = Path.home() / ".config" / "patchpilot" / "meta_key"
+BASETEN_KEY_PATH = Path.home() / ".config" / "patchpilot" / "baseten_key"
 
 
-def _key() -> str:
+def provider_of(model: str) -> str:
+    """Which service a hosted model name goes to; each service has its own fixed URL and its own key file."""
+    return "baseten" if model in BASETEN_MODELS else "meta"
+
+
+def _key_path(provider: str) -> Path:
+    return BASETEN_KEY_PATH if provider == "baseten" else KEY_PATH
+
+
+def any_key_file() -> bool:
+    """True if a key file for any hosted service exists (the isolation guards refuse to be switched off then)."""
+    return KEY_PATH.exists() or BASETEN_KEY_PATH.exists()
+
+
+def _key(provider: str = "meta") -> str:
     # The key lives in a file outside the repository, is read at call time, is never read from or written
-    # to the environment and is never passed to a subprocess.
+    # to the environment and is never passed to a subprocess. A key is only ever sent to its own service.
+    path = _key_path(provider)
     try:
-        file_mode = KEY_PATH.stat().st_mode & 0o777
-        dir_mode = KEY_PATH.parent.stat().st_mode & 0o777
+        file_mode = path.stat().st_mode & 0o777
+        dir_mode = path.parent.stat().st_mode & 0o777
     except OSError:
-        raise MetaAuthError(f"Key file not found: {KEY_PATH} (directory mode 0700, file mode 0600; never commit it).") from None
+        raise MetaAuthError(f"Key file not found: {path} (directory mode 0700, file mode 0600; never commit it).") from None
     if file_mode & 0o077 or dir_mode & 0o077:
         raise MetaAuthError(f"Key file permissions are too open (file {oct(file_mode)}, directory {oct(dir_mode)}); use 0600 and 0700.")
-    key = KEY_PATH.read_text().strip()
+    key = path.read_text().strip()
     if not key:
         raise MetaAuthError("Key file is empty.")
     return key
 
 
-def _request(method: str, path: str, payload: dict | None = None, timeout_s: float = 120.0) -> dict:
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, *args, **kwargs):
+        return None  # the Authorization header must not follow a redirect to another host
+
+
+def _request(method: str, path: str, payload: dict | None = None, timeout_s: float = 120.0, provider: str = "meta") -> dict:
     data = json.dumps(payload).encode() if payload is not None else None
     req = urllib.request.Request(
-        BASE_URL + path,
+        (BASETEN_URL if provider == "baseten" else BASE_URL) + path,
         data=data,
         method=method,
         headers={
-            "Authorization": f"Bearer {_key()}",
+            "Authorization": f"Bearer {_key(provider)}",
             "Content-Type": "application/json",
             "Accept": "application/json",
         },
     )
     try:
-        with urllib.request.urlopen(req, timeout=timeout_s) as resp:
+        with urllib.request.build_opener(_NoRedirect()).open(req, timeout=timeout_s) as resp:
             return json.loads(resp.read().decode())
     except urllib.error.HTTPError as e:
         body = e.read().decode(errors="replace")[:1000]
@@ -69,11 +92,6 @@ LOCAL_HOSTS = ("127.0.0.1", "localhost", "::1")
 LOCAL_SAMPLING = {"temperature": 1.0, "top_p": 0.95, "top_k": 64}  # published Muse Glimmer settings; greedy decoding is advised against
 LOCAL_REASONING = ("low", "medium", "high", "xhigh")  # reasoning_strength levels of the Muse Glimmer chat template
 LOCAL_MAX_TOKENS = 12000  # hard cap: a runaway reasoning trace must not keep the single server slot busy past the 900 s client timeout
-
-
-class _NoRedirect(urllib.request.HTTPRedirectHandler):
-    def redirect_request(self, *args, **kwargs):
-        return None
 
 
 def _check_local(url: str) -> str:
@@ -142,7 +160,7 @@ def chat(messages: list, model: str, *, reasoning_effort: str | None = None, tim
         payload["tools"] = tools
     if tool_choice is not None:
         payload["tool_choice"] = tool_choice
-    return _request("POST", "/chat/completions", payload, timeout_s)
+    return _request("POST", "/chat/completions", payload, timeout_s, provider_of(model))
 
 
 def message_of(resp: dict) -> dict:
@@ -220,11 +238,13 @@ if __name__ == "__main__":
         print(text_of(resp))
         print("usage:", json.dumps(resp.get("usage")))
     elif cmd == "keycheck":
-        k = _key()
-        print(f"key file ok: {KEY_PATH} (mode {oct(KEY_PATH.stat().st_mode & 0o777)}, {len(k)} characters)")
+        prov = sys.argv[2] if len(sys.argv) > 2 else "meta"
+        k = _key(prov)
+        kp = _key_path(prov)
+        print(f"key file ok: {kp} (mode {oct(kp.stat().st_mode & 0o777)}, {len(k)} characters)")
     elif cmd == "toolprobe":
         if len(sys.argv) < 3:
             sys.exit("usage: python -m patchpilot.meta_client toolprobe <model>")
         sys.exit(toolprobe(sys.argv[2]))
     else:
-        sys.exit("usage: python -m patchpilot.meta_client [models | ping <model> | toolprobe <model>]")
+        sys.exit("usage: python -m patchpilot.meta_client [models | ping <model> | keycheck [meta|baseten] | toolprobe <model>]")

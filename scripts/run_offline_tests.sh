@@ -13,6 +13,7 @@ for e in np126 np2 pd23 pd30; do
 done
 tests=(
   "patchpilot.local_test"
+  "patchpilot.hosted_test"
   "patchpilot.tools_test"
   "patchpilot.make_case_test"
   "patchpilot.repair_test"
