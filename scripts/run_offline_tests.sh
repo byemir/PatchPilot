@@ -31,6 +31,7 @@ tests=(
   "patchpilot.isolation_test"
   "patchpilot.landlock_test"
   "patchpilot.gen2_test"
+  "patchpilot.gate_matrix_test"
   "patchpilot.negative_test benchmarks/n8_string_to_bool"
 )
 fail=0; rows=()

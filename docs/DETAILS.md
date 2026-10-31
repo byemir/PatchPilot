@@ -33,7 +33,7 @@ The repository was created on 2026-10-27 (first commit 12:26, UTC+3, after the k
 
 ## For judges: three ways to check it
 
-1. **No model, no key:** build the pinned environments once (`PYTHON312=/path/to/python3.12 ./scripts/setup_envs.sh`), then `bash scripts/run_offline_tests.sh` (twenty tests; about four minutes: the test times add up to 265 s in the latest run on the Mac, twelve tests in 124 to 163 s in three earlier runs). Or read `docs/RESULTS.md` and `examples/` (recorded patches with the gate outcome per attempt) without running anything.
+1. **No model, no key:** build the pinned environments once (`PYTHON312=/path/to/python3.12 ./scripts/setup_envs.sh`), then `bash scripts/run_offline_tests.sh` (twenty-one tests; about five minutes: the test times add up to 265 s in the latest run on the Mac, twelve tests in 124 to 163 s in three earlier runs). Or read `docs/RESULTS.md` and `examples/` (recorded patches with the gate outcome per attempt) without running anything.
 2. **Hosted Meta models:** put a Meta Model API key in the key file described under "Run the agent" and run the agent on a case.
 3. **Open weights on your own machine:** serve Muse Glimmer with llama.cpp as described under "How the local model is run" and run `bash scripts/demo_repair.sh`.
 
@@ -342,6 +342,10 @@ These three cases were written so that an incomplete fix passes the visible test
 | muse-wonder-1.0 | q1 / q2 / q3 | 5 each | 5 / 5 / 5 | 5 / 3 / 5 | 1453 / 3763 / 1242 | 0 / 2 / 0 |
 
 Files: `bench_20261029-210614_muse-glimmer_local.json`, `bench_20261029-215819_muse-spark-1.3.json`, `bench_20261029-220335_muse-wonder-1.0.json`. All 72 solved runs passed the re-scored differential. The three Glimmer runs that were not solved ended after three attempts without an accepted patch (one on q2, two on q3). Across the 75 runs, 29 attempts passed the visible check and were rejected by the hidden check (Glimmer 27, Wonder 2); no attempt was rejected at the visible check or at the differential. A workflow with visible tests only would have accepted those 29 patches. For example, one Glimmer attempt on q3 turned the integer maxima into floats (`count=3.0` where the old library gives `count=3`). The per-attempt counts come from the local attempt files under `runs/`, which are not tracked, so they can be reproduced only on the machine that made them; the solved and first-try counts are in the result files. Reasons were not examined beyond the gate that rejected each attempt. Hosted models solved everything at the first or second attempt, so these cases separate the models only weakly; they show what the hidden gate catches.
+
+## Gate matrix (no model)
+
+`python -m patchpilot.gate_matrix --out results/gate_matrix.json --md docs/GATE_MATRIX.md` (about ten minutes, pinned environments, no model, no network) runs every patch of the 17 benchmark cases through the three gates, each judged on its own: the known-good patch, the hand-written known-bad patches, and one generated "overfit" patch per case (the original code plus a wrapper that returns the recorded golden outputs when `run_case.py` reads `inputs.json` and calls the original code for every other input). Result, 2026-10-31, one run: all 17 correct patches accepted; of 35 wrong hand-written patches 12 pass the visible tests, 1 passes visible plus hidden, none passes all three; all 17 overfit patches pass the visible tests and none passes the hidden tests. The differential gate was the only stop for one patch (`n8_string_to_bool`, `not_zero_string`: it compares the strings with "0", so "00" counts as on, while the old code reads it as off); with 60 generated inputs instead of 200 it let that patch through, so its strength depends on the number of generated inputs. The wrong patches are ours: the table shows what the gates stop, not how often a model writes such a patch. Check: `python -m patchpilot.gate_matrix_test`.
 
 ## Differential generator 2
 
