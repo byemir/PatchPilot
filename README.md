@@ -46,7 +46,7 @@ If `python3.12` is not on your PATH (Python 3.13 or newer will not work: the pin
 
 Open `127.0.0.1:8765`, pick `shop/scan.json`, press **Check**: of 15 functions we wrote, 5 are unaffected, 3 fail loudly, 7 differ silently.
 
-**3. Offline tests (no model, no key; sixteen tests, about five minutes):**
+**3. Offline tests (no model, no key; seventeen tests, about five minutes):**
 
     bash scripts/run_offline_tests.sh
 
@@ -58,7 +58,7 @@ Open `127.0.0.1:8765`, pick `shop/scan.json`, press **Check**: of 15 functions w
 
 Then press **Repair** in the app, or run `bash scripts/demo_repair.sh` (one function, one command, your file untouched). **Hosted models:** put a Meta Model API key in the key file described in `docs/DETAILS.md` ("Run the agent") and the app offers Muse Spark and Muse Wonder; a Baseten key in `~/.config/patchpilot/baseten_key` adds Muse Spark Open, a Fireworks key in `~/.config/patchpilot/fireworks_key` adds the same model on Fireworks. Each key is sent only to its own service.
 
-**Your own code:** `python -m patchpilot.repair my_module.py my_function --inputs probes.json --lib pandas --endpoint http://127.0.0.1:8080/v1`. `python -m patchpilot.capture` records inputs from your own tests. Functions must be pure, deterministic, with JSON or small DataFrame (`$df`, `$series`) inputs; a function may live in a project folder (`"root"` in the manifest, with its own interpreters via `"old"` and `"new"`).
+**Your own code:** `python -m patchpilot.repair my_module.py my_function --inputs probes.json --lib pandas --endpoint http://127.0.0.1:8080/v1`. `python -m patchpilot.capture` records inputs from your own tests. To find which functions of a folder are worth checking first: `python -m patchpilot.discover SRC_DIR --manifest scan.json --probes-dir probes` lists the functions that contain a pandas-3 pattern and have the shape PatchPilot can run, counts the sites it cannot check (methods, notebooks, module-level code), and writes a draft manifest whose input files are placeholders to fill (it only parses the code). Functions must be pure, deterministic, with JSON or small DataFrame (`$df`, `$series`) inputs; a function may live in a project folder (`"root"` in the manifest, with its own interpreters via `"old"` and `"new"`).
 
 No-run alternative: read `docs/RESULTS.md` and `examples/` (recorded patches with the gate outcome per attempt).
 
@@ -80,7 +80,7 @@ Impact: `docs/IMPACT.md`; a static count of three pandas-3 patterns in 16 librar
 
 ## Limits
 
-- Pure functions with JSON or small-table inputs, one library pair per manifest; you list the functions (capture helps). Python on macOS or Linux, not Windows. Results are compared by values, column names and index, not dtype.
+- Pure functions with JSON or small-table inputs, one library pair per manifest; you list the functions (`discover` suggests candidates; `capture` helps with inputs). Python on macOS or Linux, not Windows. Results are compared by values, column names and index, not dtype.
 - Model code runs on your machine with your user's privileges, inside an OS-level sandbox (macOS `sandbox-exec`, Linux Landlock); this is not a hardened security boundary. The Linux layer was tested on one cloud VM without a model run.
 - All model runs were made on one Apple M2 Ultra Mac. Not tested: Windows, whole real repositories, other quantizations or models, hosted-call cost.
 - The Retry button for a failed row was tested with scripted replies only; per-row Repair was run once with the local model.
