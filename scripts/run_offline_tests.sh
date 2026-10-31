@@ -3,6 +3,14 @@
 #   bash scripts/run_offline_tests.sh
 cd "$(dirname "$0")/.." || exit 1
 if [ -x .venv/bin/python ]; then PY=.venv/bin/python; else PY=$(command -v python3); fi  # no .venv needed: the runner uses only the standard library
+for e in np126 np2 pd23 pd30; do
+  if [ ! -x ".sandboxes/$e/bin/python" ]; then
+    echo "The pinned library environments are missing (.sandboxes/$e)." >&2
+    echo "Build them once (needs Python 3.12 and internet, a few minutes):" >&2
+    echo "  PYTHON312=/path/to/python3.12 ./scripts/setup_envs.sh" >&2
+    exit 2
+  fi
+done
 tests=(
   "patchpilot.local_test"
   "patchpilot.tools_test"
