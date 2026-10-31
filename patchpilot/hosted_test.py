@@ -56,15 +56,17 @@ def write_key(path: Path, text: str, mode=0o600):
     os.chmod(path, mode)
 
 
-saved = (mc.KEY_PATH, mc.BASETEN_KEY_PATH, urllib.request.build_opener)
+saved = (mc.KEY_PATH, mc.BASETEN_KEY_PATH, mc.FIREWORKS_KEY_PATH, urllib.request.build_opener)
 with tempfile.TemporaryDirectory() as t:
     root = Path(t) / "cfg"
     mc.KEY_PATH = root / "meta_key"
     mc.BASETEN_KEY_PATH = root / "baseten_key"
+    mc.FIREWORKS_KEY_PATH = root / "fireworks_key"
     urllib.request.build_opener = fake_build_opener
     try:
         check("the hackathon Baseten model goes to Baseten", mc.provider_of("meta-models/muse-spark-open-1026") == "baseten")
         check("other model names go to the Meta API", mc.provider_of("muse-spark-1.3") == "meta" and mc.provider_of("meta-models/muse-spark-open") == "meta")
+        check("the Fireworks model goes to Fireworks", mc.provider_of("accounts/fireworks/models/muse-spark-open") == "fireworks")
         check("no key file at all is reported as none", mc.any_key_file() is False)
         try:
             mc.chat([{"role": "user", "content": "x"}], "meta-models/muse-spark-open-1026")
@@ -101,7 +103,13 @@ with tempfile.TemporaryDirectory() as t:
             check("an empty key file is refused", False)
         except mc.MetaAuthError as e:
             check("an empty Baseten key file is refused", "empty" in str(e), str(e))
+        write_key(mc.FIREWORKS_KEY_PATH, "FIREWORKS-SECRET")
+        mc.chat([{"role": "user", "content": "x"}], "accounts/fireworks/models/muse-spark-open", reasoning_effort="low")
+        f = seen[-1]
+        check("the Fireworks call goes to the fixed Fireworks URL with the Fireworks key",
+              f["url"] == "https://api.fireworks.ai/inference/v1/chat/completions" and f["auth"] == "Bearer FIREWORKS-SECRET", str(f["url"]))
+        check("the model name is sent as given to Fireworks", f["body"]["model"] == "accounts/fireworks/models/muse-spark-open")
         check("the key text appears in no recorded body", all("SECRET" not in json.dumps(s["body"]) for s in seen))
     finally:
-        mc.KEY_PATH, mc.BASETEN_KEY_PATH, urllib.request.build_opener = saved
+        mc.KEY_PATH, mc.BASETEN_KEY_PATH, mc.FIREWORKS_KEY_PATH, urllib.request.build_opener = saved
 print(f"hosted_test: {passed} checks passed")

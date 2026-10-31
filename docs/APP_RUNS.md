@@ -14,6 +14,7 @@ Each row is one run; the time and tokens are for the whole scan (Check included)
 | ledger (7 silent of 21) | muse-glimmer, local | 7 of 7 | 7 | 12,547 | 338 | `examples/ledger_result/` |
 | ledger | muse-spark-1.3, hosted | 7 of 7 | 7 | 19,376 | 167 | `examples/ledger_result_spark/` |
 | shop | muse-spark-open-1026 (open weights), hosted on Baseten | 7 of 7 | 7 | 9,557 | 76 | `examples/shop_result_spark_open/` |
+| shop | muse-spark-open (open weights), hosted on Fireworks | 7 of 7 | 7 | 9,761 | 229 | `examples/shop_result_spark_open_fireworks/` |
 | frames (3 silent of 6, DataFrame inputs) | muse-glimmer, local | 3 of 3 | 3 | 7,182 | 149 | `examples/frames_result/` |
 | frames | muse-glimmer, local | 3 of 3 | 2 | 10,733 | 204 | `examples/frames_result_run2/` |
 
@@ -38,3 +39,5 @@ Five cases, 5 runs each, effort low, one batch, token count taken from the servi
 | p3 | 5 of 5 | 2,281 |
 
 In all: 21 of 25 solved, 19 on the first attempt, 84,581 tokens. n7 is the weak case for this model; we did not look into why. One batch per case, so these numbers show what happened in this batch, not a success rate.
+
+Shop run with the same open model on Fireworks: tokens per function 868, 1,689, 1,921, 1,063, 1,271, 1,268 and 1,681; one run, seconds are for the whole scan.

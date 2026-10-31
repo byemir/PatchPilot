@@ -1,0 +1,13 @@
+--- a/last_seen_epoch.py
++++ b/last_seen_epoch.py
+@@ -3,4 +3,9 @@
+ 
+ def last_seen_epoch(stamps):
+     ts = pd.to_datetime(pd.Series(stamps))
+-    return int(ts.astype("int64").max() // 10**9)
++    mx = ts.max()
++    # Resolution-independent: subtract epoch and divide by 1 second
++    # Preserve tz if mx is tz-aware to avoid tz-naive/aware mismatch
++    tz = getattr(mx, 'tz', None)
++    epoch = pd.Timestamp("1970-01-01", tz=tz)
++    return int((mx - epoch) // pd.Timedelta(seconds=1))

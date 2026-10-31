@@ -36,11 +36,12 @@ REPO = HERE.parent
 ENDPOINT_RE = re.compile(r"^http://(127\.0\.0\.1|localhost|\[::1\]):\d{1,5}(/[A-Za-z0-9._~/-]*)?$")
 HOSTED = ("muse-spark-1.3", "muse-wonder-1.0")
 BASETEN = tuple(meta_client.BASETEN_MODELS)  # served by Baseten, needs its own key file
+FIREWORKS = tuple(meta_client.FIREWORKS_MODELS)  # served by Fireworks, needs its own key file
 
 
 def hosted_models() -> list[str]:
     """Hosted models whose key file exists."""
-    return (list(HOSTED) if meta_client.KEY_PATH.exists() else []) + (list(BASETEN) if meta_client.BASETEN_KEY_PATH.exists() else [])
+    return (list(HOSTED) if meta_client.KEY_PATH.exists() else []) + (list(BASETEN) if meta_client.BASETEN_KEY_PATH.exists() else []) + (list(FIREWORKS) if meta_client.FIREWORKS_KEY_PATH.exists() else [])
 SKIP_DIRS = {".git", ".venv", ".sandboxes", "node_modules", "__pycache__", "runs", ".patchpilot"}
 CLEAN_ENV_KEYS = ("HOME", "PATH", "TMPDIR", "LANG", "USER", "LOGNAME", "TERM")
 

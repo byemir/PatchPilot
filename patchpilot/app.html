@@ -247,7 +247,7 @@ function sync(){
   const repair = pick.mode === "repair";
   seg("mode", [["check", "Check", "Old vs new library. No model."], ["repair", "Repair", "Check, then fix with a model"]], "mode");
   const hosted = S ? S.hosted : [];
-  const items = [["local", "Local", "Model on this computer"]].concat(hosted.map((m) => [m, m.replace("meta-models/", "").replace("muse-", ""), m.startsWith("meta-models/") ? "Open-weights Meta model, hosted by Baseten" : "Hosted Meta model"]));
+  const items = [["local", "Local", "Model on this computer"]].concat(hosted.map((m) => [m, m.split("/").pop().replace("muse-", ""), m.startsWith("meta-models/") ? "Open-weights Meta model, hosted by Baseten" : m.startsWith("accounts/fireworks/") ? "Open-weights Meta model, hosted by Fireworks" : "Hosted Meta model"]));
   if(!items.some((i) => i[0] === pick.model)) pick.model = "local";
   seg("model", items, "model");
   $("model").hidden = !repair || items.length < 2; $("attwrap").hidden = !repair;

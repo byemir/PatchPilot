@@ -1,0 +1,573 @@
+{
+  "manifest": "/tmp/pp_shop_fw/scan.json",
+  "model": "accounts/fireworks/models/muse-spark-open",
+  "endpoint": null,
+  "effort": "low",
+  "triage_only": false,
+  "applied": false,
+  "seconds": 228.5,
+  "tokens": 9761,
+  "counts": {
+    "healthy": 5,
+    "loud": 3,
+    "repaired": 7
+  },
+  "targets": [
+    {
+      "file": "orders/daily_revenue.py",
+      "function": "daily_revenue",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 3 inputs",
+      "example": null
+    },
+    {
+      "file": "orders/flag_big_orders.py",
+      "function": "flag_big_orders",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 2 of 3 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "rows": [
+            {
+              "amount": 10
+            },
+            {
+              "amount": 120
+            },
+            {
+              "amount": 75
+            }
+          ],
+          "limit": 50
+        },
+        "old": [
+          false,
+          true,
+          true
+        ],
+        "new": [
+          false,
+          false,
+          false
+        ]
+      },
+      "source_sha256": "661e22658c9581d34c67ad0f257163de693f85c33fe4c52928ecf200c7c19c06",
+      "model": "accounts/fireworks/models/muse-spark-open",
+      "effort": "low",
+      "endpoint": null,
+      "seconds": 14.2,
+      "tokens": 868,
+      "run_dir": "/Users/gt.poseidon/dev/PatchPilot/runs/20261031-140609_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "Chained assignment `df[\"big\"][mask]=True` no longer mutates the parent DataFrame under pandas 3.0 Copy-on-Write (now warns/changes to no-op), so all flags stay False; must use `.loc` for single-step assignment.",
+          "tokens": 868,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 145,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "Chained assignment `df[\"big\"][mask]=True` no longer mutates the parent DataFrame under pandas 3.0 Copy-on-Write (now warns/changes to no-op), so all flags stay False; must use `.loc` for single-step assignment.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 145,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "flag_big_orders.flag_big_orders.diff"
+    },
+    {
+      "file": "orders/fill_missing_region.py",
+      "function": "fill_missing_region",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 2 of 3 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "rows": [
+            {
+              "region": "EU"
+            },
+            {
+              "region": null
+            },
+            {
+              "region": "US"
+            }
+          ]
+        },
+        "old": [
+          "EU",
+          "unknown",
+          "US"
+        ],
+        "new": [
+          "EU",
+          NaN,
+          "US"
+        ]
+      },
+      "source_sha256": "00053a3ede7585f72f25d05c370a3ebec321bdab26ee9f2834bbe25b1616bc62",
+      "model": "accounts/fireworks/models/muse-spark-open",
+      "effort": "low",
+      "endpoint": null,
+      "seconds": 43.0,
+      "tokens": 1689,
+      "run_dir": "/Users/gt.poseidon/dev/PatchPilot/runs/20261031-140626_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "pandas 3.0 makes `df[\"region\"].fillna(..., inplace=True)` a no-op (chained-assignment copy) and tightens NA handling, so `NaN`/`None`/`pd.NA` are no longer replaced, leaking NaN/null to JSON.",
+          "tokens": 1689,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 149,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "pandas 3.0 makes `df[\"region\"].fillna(..., inplace=True)` a no-op (chained-assignment copy) and tightens NA handling, so `NaN`/`None`/`pd.NA` are no longer replaced, leaking NaN/null to JSON.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 149,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "fill_missing_region.fill_missing_region.diff"
+    },
+    {
+      "file": "orders/monthly_average.py",
+      "function": "monthly_average",
+      "lib": "pandas",
+      "status": "loud",
+      "detail": "raises ValueError on the new library for 2 of 2 inputs",
+      "example": {
+        "input": {
+          "rows": [
+            {
+              "ts": "2025-01-05",
+              "amount": 10
+            },
+            {
+              "ts": "2025-01-20",
+              "amount": 30
+            },
+            {
+              "ts": "2025-02-03",
+              "amount": 50
+            }
+          ]
+        },
+        "old": {
+          "2025-01": 20.0,
+          "2025-02": 50.0
+        },
+        "new": {
+          "error": "ValueError"
+        }
+      }
+    },
+    {
+      "file": "orders/last_seen_epoch.py",
+      "function": "last_seen_epoch",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 3 of 3 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "stamps": [
+            "2025-03-01 10:00:00",
+            "2025-03-01 12:30:15"
+          ]
+        },
+        "old": 1740832215,
+        "new": 1740832
+      },
+      "source_sha256": "7180053de4a38d5e93e5200c2be1b04a60be4a225d2be2169efa14f2d8407c7d",
+      "model": "accounts/fireworks/models/muse-spark-open",
+      "effort": "low",
+      "endpoint": null,
+      "seconds": 45.7,
+      "tokens": 1921,
+      "run_dir": "/Users/gt.poseidon/dev/PatchPilot/runs/20261031-140713_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "pandas 3 changed astype('int64') from always-nanoseconds to resolution-dependent (ms/us), so //1e9 is off by 1000x; use Timedelta division instead of int64 view.",
+          "tokens": 1921,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 121,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "pandas 3 changed astype('int64') from always-nanoseconds to resolution-dependent (ms/us), so //1e9 is off by 1000x; use Timedelta division instead of int64 view.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 121,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "last_seen_epoch.last_seen_epoch.diff"
+    },
+    {
+      "file": "orders/size_buckets.py",
+      "function": "size_buckets",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 3 inputs",
+      "example": null
+    },
+    {
+      "file": "people/top_customers.py",
+      "function": "top_customers",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 3 inputs",
+      "example": null
+    },
+    {
+      "file": "people/clean_names.py",
+      "function": "clean_names",
+      "lib": "pandas",
+      "status": "repaired",
+      "detail": "the new library differs on 3 of 3 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "names": [
+            "  ana lovelace",
+            "BO PEEP ",
+            "cy  young"
+          ]
+        },
+        "old": [
+          "Ana Lovelace",
+          "Bo Peep",
+          "Cy  Young"
+        ],
+        "new": [
+          "  ana lovelace",
+          "BO PEEP ",
+          "cy  young"
+        ]
+      },
+      "source_sha256": "1d02116269dcd1498c11582827e64dc11ac99164dfa255bbf18c268764867cd6",
+      "model": "accounts/fireworks/models/muse-spark-open",
+      "effort": "low",
+      "endpoint": null,
+      "seconds": 19.1,
+      "tokens": 1063,
+      "run_dir": "/Users/gt.poseidon/dev/PatchPilot/runs/20261031-140802_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "pandas 3.0 changed default Series dtype for strings from object to string/StringDtype, so `s.dtype == object` is False and the strip/title branch is skipped.",
+          "tokens": 1063,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 148,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "pandas 3.0 changed default Series dtype for strings from object to string/StringDtype, so `s.dtype == object` is False and the strip/title branch is skipped.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 148,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "clean_names.clean_names.diff"
+    },
+    {
+      "file": "people/rank_scores.py",
+      "function": "rank_scores",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 3 inputs",
+      "example": null
+    },
+    {
+      "file": "metrics/summary_line.py",
+      "function": "summary_line",
+      "lib": "numpy",
+      "status": "repaired",
+      "detail": "the new library differs on 3 of 3 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "values": [
+            21.5,
+            19.0,
+            23.25
+          ]
+        },
+        "old": "max=23.25 values=[21.5, 19.0, 23.25]",
+        "new": "max=23.25 values=[np.float64(21.5), np.float64(19.0), np.float64(23.25)]"
+      },
+      "source_sha256": "e1486d879e849071f826e5e9124c05c345ea08a9aa758ad9f279640de1985ff2",
+      "model": "accounts/fireworks/models/muse-spark-open",
+      "effort": "low",
+      "endpoint": null,
+      "seconds": 21.4,
+      "tokens": 1271,
+      "run_dir": "/Users/gt.poseidon/dev/PatchPilot/runs/20261031-140822_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "NumPy 2.x changed repr of scalar types so str(list(np_array)) now shows np.float64(x) instead of x; converting scalars to Python float before stringifying restores the old output on both versions.",
+          "tokens": 1271,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 140,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "NumPy 2.x changed repr of scalar types so str(list(np_array)) now shows np.float64(x) instead of x; converting scalars to Python float before stringifying restores the old output on both versions.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 140,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "summary_line.summary_line.diff"
+    },
+    {
+      "file": "metrics/scores_text.py",
+      "function": "scores_text",
+      "lib": "numpy",
+      "status": "repaired",
+      "detail": "the new library differs on 3 of 3 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "teams": [
+            "red",
+            "blue",
+            "green"
+          ],
+          "raw": [
+            3.14159,
+            2.71828,
+            1.41421
+          ]
+        },
+        "old": "{'red': 3.1, 'blue': 2.7, 'green': 1.4}",
+        "new": "{'red': np.float64(3.1), 'blue': np.float64(2.7), 'green': np.float64(1.4)}"
+      },
+      "source_sha256": "69816ce56ecbc3845c54f4afe0324b6ee74e29744a582768c7370d2568400307",
+      "model": "accounts/fireworks/models/muse-spark-open",
+      "effort": "low",
+      "endpoint": null,
+      "seconds": 23.1,
+      "tokens": 1268,
+      "run_dir": "/Users/gt.poseidon/dev/PatchPilot/runs/20261031-140844_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "NumPy 2.0 changed repr/str of np.float64 scalars to include the type prefix `np.float64(...)`. app.py put NumPy scalars directly in a dict so `str(dict)` embed the new repr on 2.5.4 while it looked like plain floats on 1.26.4.",
+          "tokens": 1268,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 148,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "NumPy 2.0 changed repr/str of np.float64 scalars to include the type prefix `np.float64(...)`. app.py put NumPy scalars directly in a dict so `str(dict)` embed the new repr on 2.5.4 while it looked like plain floats on 1.26.4.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 148,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "scores_text.scores_text.diff"
+    },
+    {
+      "file": "metrics/p90_latency.py",
+      "function": "p90_latency",
+      "lib": "numpy",
+      "status": "loud",
+      "detail": "raises TypeError on the new library for 3 of 3 inputs",
+      "example": {
+        "input": {
+          "ms": [
+            12,
+            15,
+            11,
+            40,
+            13,
+            18,
+            22,
+            90,
+            14,
+            16
+          ]
+        },
+        "old": 40.0,
+        "new": {
+          "error": "TypeError"
+        }
+      }
+    },
+    {
+      "file": "metrics/area_under.py",
+      "function": "area_under",
+      "lib": "numpy",
+      "status": "loud",
+      "detail": "raises AttributeError on the new library for 3 of 3 inputs",
+      "example": {
+        "input": {
+          "xs": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "ys": [
+            0,
+            1,
+            4,
+            9
+          ]
+        },
+        "old": 9.5,
+        "new": {
+          "error": "AttributeError"
+        }
+      }
+    },
+    {
+      "file": "metrics/discounted_price.py",
+      "function": "discounted_price",
+      "lib": "numpy",
+      "status": "repaired",
+      "detail": "the new library differs on 2 of 3 inputs and nothing is raised",
+      "example": {
+        "input": {
+          "price": 19.99,
+          "rate": 0.15
+        },
+        "old": 16.991499805450438,
+        "new": 16.991500854492188
+      },
+      "source_sha256": "55b9767829a64e433e99cc57777a9a3cc9e6719e2d401e075cd87f974ceddee9",
+      "model": "accounts/fireworks/models/muse-spark-open",
+      "effort": "low",
+      "endpoint": null,
+      "seconds": 36.6,
+      "tokens": 1681,
+      "run_dir": "/Users/gt.poseidon/dev/PatchPilot/runs/20261031-140909_case",
+      "attempts_detail": [
+        {
+          "attempt": 1,
+          "gates": {
+            "visible": "ok",
+            "hidden": "ok",
+            "differential": "ok",
+            "outcome": "accepted"
+          },
+          "diagnosis": "NumPy 2.0 NEP 50 changed scalar promotion: np.float32 * Python float (float64) now stays float32 (old weak promotion promoted to float64), so p*(1-rate) rounding changed; explicitly promote to float64 before multiply to restore old float64 semantics on both versions.",
+          "tokens": 1681,
+          "differential": {
+            "verdict": "PASS",
+            "generated": 200,
+            "valid": 146,
+            "core_divergences": 0
+          },
+          "counterexample": null
+        }
+      ],
+      "attempts": 1,
+      "diagnosis": "NumPy 2.0 NEP 50 changed scalar promotion: np.float32 * Python float (float64) now stays float32 (old weak promotion promoted to float64), so p*(1-rate) rounding changed; explicitly promote to float64 before multiply to restore old float64 semantics on both versions.",
+      "differential": {
+        "verdict": "PASS",
+        "generated": 200,
+        "valid": 146,
+        "core_divergences": 0,
+        "wide_divergences": 0
+      },
+      "applied": false,
+      "diff_file": "discounted_price.discounted_price.diff"
+    },
+    {
+      "file": "metrics/row_shares.py",
+      "function": "row_shares",
+      "lib": "numpy",
+      "status": "healthy",
+      "detail": "same output on all 3 inputs",
+      "example": null
+    }
+  ]
+}

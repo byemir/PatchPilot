@@ -12,6 +12,8 @@ from urllib.parse import urlparse
 BASE_URL = "https://api.meta.ai/v1"  # fixed on purpose: the key must never be sent elsewhere
 BASETEN_URL = "https://inference.baseten.co/v1"  # fixed too: Muse Spark Open, served by Baseten for the hackathon (its own key file)
 BASETEN_MODELS = ("meta-models/muse-spark-open-1026",)  # the only model the hackathon Baseten key works with
+FIREWORKS_URL = "https://api.fireworks.ai/inference/v1"  # fixed too: the same open-weight model, served by Fireworks (its own key file)
+FIREWORKS_MODELS = ("accounts/fireworks/models/muse-spark-open",)
 
 
 class MetaAPIError(RuntimeError):
@@ -24,20 +26,21 @@ class MetaAuthError(MetaAPIError):
 
 KEY_PATH = Path.home() / ".config" / "patchpilot" / "meta_key"
 BASETEN_KEY_PATH = Path.home() / ".config" / "patchpilot" / "baseten_key"
+FIREWORKS_KEY_PATH = Path.home() / ".config" / "patchpilot" / "fireworks_key"
 
 
 def provider_of(model: str) -> str:
     """Which service a hosted model name goes to; each service has its own fixed URL and its own key file."""
-    return "baseten" if model in BASETEN_MODELS else "meta"
+    return "baseten" if model in BASETEN_MODELS else "fireworks" if model in FIREWORKS_MODELS else "meta"
 
 
 def _key_path(provider: str) -> Path:
-    return BASETEN_KEY_PATH if provider == "baseten" else KEY_PATH
+    return {"baseten": BASETEN_KEY_PATH, "fireworks": FIREWORKS_KEY_PATH}.get(provider, KEY_PATH)
 
 
 def any_key_file() -> bool:
     """True if a key file for any hosted service exists (the isolation guards refuse to be switched off then)."""
-    return KEY_PATH.exists() or BASETEN_KEY_PATH.exists()
+    return KEY_PATH.exists() or BASETEN_KEY_PATH.exists() or FIREWORKS_KEY_PATH.exists()
 
 
 def _key(provider: str = "meta") -> str:
@@ -65,7 +68,7 @@ class _NoRedirect(urllib.request.HTTPRedirectHandler):
 def _request(method: str, path: str, payload: dict | None = None, timeout_s: float = 120.0, provider: str = "meta") -> dict:
     data = json.dumps(payload).encode() if payload is not None else None
     req = urllib.request.Request(
-        (BASETEN_URL if provider == "baseten" else BASE_URL) + path,
+        {"baseten": BASETEN_URL, "fireworks": FIREWORKS_URL}.get(provider, BASE_URL) + path,
         data=data,
         method=method,
         headers={
@@ -247,4 +250,4 @@ if __name__ == "__main__":
             sys.exit("usage: python -m patchpilot.meta_client toolprobe <model>")
         sys.exit(toolprobe(sys.argv[2]))
     else:
-        sys.exit("usage: python -m patchpilot.meta_client [models | ping <model> | keycheck [meta|baseten] | toolprobe <model>]")
+        sys.exit("usage: python -m patchpilot.meta_client [models | ping <model> | keycheck [meta|baseten|fireworks] | toolprobe <model>]")

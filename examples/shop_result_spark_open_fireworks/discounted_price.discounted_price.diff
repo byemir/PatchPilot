@@ -1,0 +1,8 @@
+--- a/discounted_price.py
++++ b/discounted_price.py
+@@ -3,4 +3,4 @@
+ 
+ def discounted_price(price, rate):
+     p = np.float32(price)
+-    return float(p * (1.0 - rate))
++    return float(np.float64(p) * (1.0 - rate))
