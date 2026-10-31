@@ -1,0 +1,52 @@
+{
+ "files": 86,
+ "total_candidates": 1,
+ "candidates": [
+  {
+   "file": "src/pytimetk/core/correlationfunnel.py",
+   "function": "create_recipe",
+   "line": 461,
+   "chained": 0,
+   "inplace": 1,
+   "datetime": 0,
+   "objdtype": 0,
+   "params": [
+    {
+     "name": "data",
+     "annotation": null,
+     "default": null,
+     "has_default": false
+    },
+    {
+     "name": "n_bins",
+     "annotation": null,
+     "default": null,
+     "has_default": false
+    },
+    {
+     "name": "thresh_infreq",
+     "annotation": null,
+     "default": null,
+     "has_default": false
+    },
+    {
+     "name": "name_infreq",
+     "annotation": null,
+     "default": null,
+     "has_default": false
+    },
+    {
+     "name": "one_hot",
+     "annotation": null,
+     "default": null,
+     "has_default": false
+    }
+   ],
+   "decorated": false,
+   "root": "src"
+  }
+ ],
+ "skipped": {
+  "no_args": 2
+ }
+}

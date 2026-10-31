@@ -1,0 +1,1 @@
+propose: heldout/siuba.scan.json is not a scan manifest

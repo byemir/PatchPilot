@@ -1,0 +1,45 @@
+{
+ "files": 108,
+ "total_candidates": 2,
+ "candidates": [
+  {
+   "file": "examples/model_examples/time-series/data_loaders.py",
+   "function": "calendar",
+   "line": 43,
+   "chained": 0,
+   "inplace": 1,
+   "datetime": 0,
+   "objdtype": 0,
+   "params": [
+    {
+     "name": "calendar_path",
+     "annotation": "str",
+     "default": "/kaggle/input/m5-forecasting-accuracy/calendar.csv",
+     "has_default": true
+    }
+   ],
+   "decorated": false,
+   "root": "examples/model_examples/time-series"
+  },
+  {
+   "file": "examples/model_examples/time-series/transforms.py",
+   "function": "week",
+   "line": 132,
+   "chained": 0,
+   "inplace": 0,
+   "datetime": 1,
+   "objdtype": 0,
+   "params": [
+    {
+     "name": "date",
+     "annotation": "pd.Series",
+     "default": null,
+     "has_default": false
+    }
+   ],
+   "decorated": false,
+   "root": "examples/model_examples/time-series"
+  }
+ ],
+ "skipped": {}
+}

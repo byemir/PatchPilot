@@ -1,0 +1,49 @@
+{
+ "files": 299,
+ "total_candidates": 2,
+ "candidates": [
+  {
+   "file": "abupy/MarketBu/ABuSymbolPd.py",
+   "function": "calc_atr",
+   "line": 370,
+   "chained": 0,
+   "inplace": 2,
+   "datetime": 0,
+   "objdtype": 0,
+   "params": [
+    {
+     "name": "kline_df",
+     "annotation": null,
+     "default": null,
+     "has_default": false
+    }
+   ],
+   "decorated": false,
+   "root": "."
+  },
+  {
+   "file": "python/c7.py",
+   "function": "sample_712_3",
+   "line": 135,
+   "chained": 0,
+   "inplace": 1,
+   "datetime": 0,
+   "objdtype": 0,
+   "params": [
+    {
+     "name": "show",
+     "annotation": null,
+     "default": true,
+     "has_default": true
+    }
+   ],
+   "decorated": false,
+   "root": "python"
+  }
+ ],
+ "skipped": {
+  "method": 7,
+  "no_args": 3,
+  "notebook": 4
+ }
+}

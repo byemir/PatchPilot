@@ -1,0 +1,4 @@
+[1/2] hamilton/examples/model_examples/time-series/data_loaders.py:calendar  no valid inputs after 2 tries: raises ModuleNotFoundError on the old library for your inputs (ModuleNotFoundError: No module named 'hamilton')  (3160 tokens); placeholder kept
+[2/2] hamilton/examples/model_examples/time-series/transforms.py:week  no valid inputs after 2 tries: raises ModuleNotFoundError on the old library for your inputs (ModuleNotFoundError: No module named 'sklearn')  (3465 tokens); placeholder kept
+0 of 2 target(s) got inputs, 6625 tokens; the inputs were proposed by meta-models/muse-spark-open-1026
+healthy or silent applies to these inputs only; a model may miss the inputs that separate the libraries. Run `scan` next.

@@ -1,0 +1,159 @@
+{
+ "files": 468,
+ "total_candidates": 6,
+ "candidates": [
+  {
+   "file": "graphistry/compute/gfql/datetime_search_index.py",
+   "function": "_zone_codes",
+   "line": 188,
+   "chained": 0,
+   "inplace": 0,
+   "datetime": 1,
+   "objdtype": 0,
+   "params": [
+    {
+     "name": "localized",
+     "annotation": "SeriesT",
+     "default": null,
+     "has_default": false
+    }
+   ],
+   "decorated": false,
+   "root": "."
+  },
+  {
+   "file": "graphistry/compute/gfql/row/ordering.py",
+   "function": "_native_epoch_ticks",
+   "line": 311,
+   "chained": 0,
+   "inplace": 0,
+   "datetime": 1,
+   "objdtype": 0,
+   "params": [
+    {
+     "name": "value",
+     "annotation": "Any",
+     "default": null,
+     "has_default": false
+    }
+   ],
+   "decorated": false,
+   "root": "."
+  },
+  {
+   "file": "graphistry/compute/gfql/wysiwyg.py",
+   "function": "_tz_abbrev_by_offset",
+   "line": 165,
+   "chained": 0,
+   "inplace": 0,
+   "datetime": 1,
+   "objdtype": 0,
+   "params": [
+    {
+     "name": "loc",
+     "annotation": "SeriesT",
+     "default": null,
+     "has_default": false
+    }
+   ],
+   "decorated": false,
+   "root": "."
+  },
+  {
+   "file": "graphistry/compute/gfql/search_any.py",
+   "function": "_has_string_content",
+   "line": 46,
+   "chained": 0,
+   "inplace": 0,
+   "datetime": 0,
+   "objdtype": 1,
+   "params": [
+    {
+     "name": "df",
+     "annotation": "DataFrameT",
+     "default": null,
+     "has_default": false
+    },
+    {
+     "name": "c",
+     "annotation": "object",
+     "default": null,
+     "has_default": false
+    }
+   ],
+   "decorated": false,
+   "root": "."
+  },
+  {
+   "file": "graphistry/compute/predicates/str.py",
+   "function": "_pandas_handle_na",
+   "line": 134,
+   "chained": 0,
+   "inplace": 0,
+   "datetime": 0,
+   "objdtype": 1,
+   "params": [
+    {
+     "name": "result",
+     "annotation": "pd.Series",
+     "default": null,
+     "has_default": false
+    },
+    {
+     "name": "source",
+     "annotation": "pd.Series",
+     "default": null,
+     "has_default": false
+    },
+    {
+     "name": "na",
+     "annotation": "Optional[bool]",
+     "default": null,
+     "has_default": false
+    }
+   ],
+   "decorated": false,
+   "root": "."
+  },
+  {
+   "file": "graphistry/feature_utils.py",
+   "function": "check_if_textual_column",
+   "line": 425,
+   "chained": 0,
+   "inplace": 0,
+   "datetime": 0,
+   "objdtype": 1,
+   "params": [
+    {
+     "name": "df",
+     "annotation": "pd.DataFrame",
+     "default": null,
+     "has_default": false
+    },
+    {
+     "name": "col",
+     "annotation": "str",
+     "default": null,
+     "has_default": false
+    },
+    {
+     "name": "confidence",
+     "annotation": "float",
+     "default": 0.35,
+     "has_default": true
+    },
+    {
+     "name": "min_words",
+     "annotation": "float",
+     "default": 2.5,
+     "has_default": true
+    }
+   ],
+   "decorated": false,
+   "root": "."
+  }
+ ],
+ "skipped": {
+  "method": 2
+ }
+}

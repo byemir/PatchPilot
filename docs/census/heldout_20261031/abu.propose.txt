@@ -1,0 +1,4 @@
+[1/2] abu/abupy/MarketBu/ABuSymbolPd.py:calc_atr  no valid inputs after 2 tries: raises ModuleNotFoundError on the old library for your inputs (ModuleNotFoundError: No module named 'matplotlib')  (4838 tokens); placeholder kept
+[2/2] abu/python/c7.py:sample_712_3  no valid inputs after 2 tries: raises ModuleNotFoundError on the old library for your inputs (ModuleNotFoundError: No module named 'matplotlib')  (3035 tokens); placeholder kept
+0 of 2 target(s) got inputs, 7873 tokens; the inputs were proposed by meta-models/muse-spark-open-1026
+healthy or silent applies to these inputs only; a model may miss the inputs that separate the libraries. Run `scan` next.
