@@ -6,7 +6,7 @@ Finds Python functions that silently return different results after a library up
 
 ![PatchPilot app after a repair run on the 15-function shop set](docs/img/app-done.png)
 
-*One run with Muse Spark Open hosted on Fireworks: 7 of 7 repaired, one patch rejected by the gates, 12,780 tokens, 168 s. The orange outline was added to the screenshot.*
+*One run with Muse Spark Open hosted on Fireworks: 7 of 7 repaired, one patch rejected by the gates, 12,780 tokens, 168 s.*
 
 *Recorded run (run 2 of three) on `examples/shop/` (15 functions we wrote): 5 unaffected, 3 fail loudly, 7 differ silently; all 7 repaired on the first attempt with local Muse Glimmer, 8,651 tokens, 225 s (`examples/shop_result_run2/`). The same model failed one of the seven in an earlier run on the same set (`examples/shop_result/`): three runs on this set show variation, not a rate (run 3: 7/7 as well, but three patches were rejected by the gates on the way: `examples/shop_result_run3/`).*
 
