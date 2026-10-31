@@ -410,8 +410,10 @@ class App:
 
 
 def make_handler(app: App):
-    page = (HERE / "app.html").read_text()
-    page = page.replace("</head>", f'<meta name="pp-token" content="{app.token}">\n</head>', 1).encode()
+    def render_page() -> bytes:
+        # read on every request, so an edited app.html shows after a reload (the page is small)
+        text = (HERE / "app.html").read_text()
+        return text.replace("</head>", f'<meta name="pp-token" content="{app.token}">\n</head>', 1).encode()
 
     class H(BaseHTTPRequestHandler):
         def _ok(self) -> bool:
@@ -443,6 +445,7 @@ def make_handler(app: App):
                 return
             path, _, query = self.path.partition("?")
             if path in ("/", "/index.html"):
+                page = render_page()
                 self.send_response(200)
                 self.send_header("Content-Type", "text/html; charset=utf-8")
                 self.send_header("Content-Length", str(len(page)))

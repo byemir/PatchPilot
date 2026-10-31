@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PatchPilot</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg width=%2264%22 height=%2264%22 viewBox=%220 0 64 64%22 xmlns=%22http://www.w3.org/2000/svg%22 role=%22img%22 aria-label=%22PatchPilot logo%22%3E%3Cdefs%3E%3ClinearGradient id=%22f%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%231A8CFF%22/%3E%3Cstop offset=%22.55%22 stop-color=%22%237B5CFF%22/%3E%3Cstop offset=%221%22 stop-color=%22%23FF5C9D%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%2264%22 height=%2264%22 rx=%2216%22 fill=%22url(%23f)%22/%3E%3Crect x=%2213%22 y=%2213%22 width=%2238%22 height=%2238%22 rx=%2210%22 fill=%22none%22 stroke=%22%23fff%22 stroke-opacity=%22.85%22 stroke-width=%222.6%22 stroke-dasharray=%224.2 4.2%22 stroke-linecap=%22round%22/%3E%3Cpath d=%22M22.5 33.5l6.8 6.8L42 26.5%22 fill=%22none%22 stroke=%22%23fff%22 stroke-width=%225%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3Cpath d=%22M35 25h7.5v7.5%22 fill=%22none%22 stroke=%22%23fff%22 stroke-width=%223.6%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
 <style>
 :root{
   --bg:#ffffff; --surface:#f5f6f8; --raised:#ffffff; --line:#dadde1; --ink:#1c2b33; --dim:#5d6c7b;
@@ -29,9 +30,10 @@ body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 var(--sans);-w
 button{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--blue);outline-offset:2px;border-radius:6px}
 header{display:flex;align-items:center;gap:14px;padding:14px 32px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:5}
-.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:19px;letter-spacing:-.01em;margin-right:auto}
-.mark{width:28px;height:28px;border-radius:8px;background:var(--blue);display:grid;place-items:center}
-.mark svg{width:16px;height:16px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:22px;letter-spacing:-.02em;margin-right:auto}
+.mark{width:36px;height:36px;border-radius:10px;display:block;box-shadow:0 4px 14px rgba(110,80,255,.35)}
+.mark svg{width:100%;height:100%;display:block}
+.brand .name{background:linear-gradient(90deg,#1a8cff 0%,#7b5cff 55%,#ff5c9d 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
 .btn{border:1px solid var(--line);background:var(--raised);padding:8px 16px;border-radius:999px;cursor:pointer;font-weight:600;font-size:14px}
 .btn:hover{background:var(--surface)}
 .btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
@@ -127,6 +129,91 @@ input[type=text]{width:210px;font-family:var(--mono);font-size:13px}
 .btn.stop{border-color:var(--bad);color:var(--bad)}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
 input.num{width:52px;text-align:center}
+/* toolbar: three groups, each with a caption; one control height */
+.bar{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px 28px;padding:16px 20px}
+.bar .grp{display:flex;flex-direction:column;gap:6px;min-width:0}
+.bar .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.bar .cap{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);line-height:1}
+.bar .brk{flex-basis:100%;height:0}
+.bar .g-file{flex:1 1 260px}.bar .g-file select{width:100%;max-width:none}
+.bar .g-model{flex:1 1 320px}
+.bar .g-run{margin-left:auto}
+.bar select,.bar input[type=text]{height:38px;box-sizing:border-box;padding:0 12px}
+.bar .seg{height:38px;box-sizing:border-box;align-items:stretch}
+.bar .seg button{display:flex;align-items:center;padding:0 16px}
+.bar .seg.auto button{padding:0 14px;font-size:13px}
+.bar .btn{height:38px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;padding:0 16px}
+.bar .btn.go{padding:0 28px;font-size:15px}
+.bar label.hint{display:inline-flex;align-items:center;gap:6px}
+@media(max-width:640px){.bar .grp{flex:1 1 100%}.bar .g-run{margin-left:0}.bar .g-run .row{width:100%}.bar .g-run .btn.go{flex:1}.bar .seg{width:100%}.bar .seg button{flex:1;justify-content:center}}
+/* Meta-style look: gradient buttons; Action = blue, Model = violet to pink, After a repair = teal */
+.bar{align-items:stretch;gap:14px 16px;background:linear-gradient(180deg,var(--raised),var(--bg));border-color:rgba(10,124,255,.28);box-shadow:0 8px 30px rgba(10,60,160,.12)}
+.bar .bpanel{padding:12px 14px 14px;border-radius:14px;border:1px solid var(--pc-line);background:var(--pc-bg)}
+.bar .p-action{--pc-line:rgba(10,124,255,.38);--pc-bg:rgba(10,124,255,.09);--pc-cap:#3b8cff}
+.bar .p-model{--pc-line:rgba(160,100,255,.42);--pc-bg:rgba(160,100,255,.10);--pc-cap:#a877ff}
+.bar .p-auto{--pc-line:rgba(20,184,166,.38);--pc-bg:rgba(20,184,166,.08);--pc-cap:#14b8a6}
+.bar .bpanel .cap{color:var(--pc-cap)}
+.bar .g-file select{border-color:rgba(10,124,255,.35);background:var(--bg);font-weight:600}
+.bar .g-model{flex:1 1 300px}
+.bar .g-run{align-self:flex-end}
+.bar .p-action .seg{border:0;background:rgba(10,124,255,.14);padding:3px;gap:2px}
+.bar .p-action .seg button{border-radius:999px;height:32px;color:var(--ink);opacity:.8}
+.bar .p-action .seg button::before{margin-right:7px;font-weight:700}
+.bar #mode button[data-v="check"]::before{content:"\2713"}
+.bar #mode button[data-v="repair"]::before{content:"\2726"}
+.bar .p-action .seg button[aria-pressed="true"]{background:linear-gradient(135deg,#1a8cff,#0064e0);color:#fff;opacity:1;box-shadow:0 3px 10px rgba(0,100,224,.45)}
+.bar #model{border:0;background:transparent;padding:0;gap:8px;overflow:visible;height:auto;flex-wrap:wrap}
+.bar #model button{height:34px;border:1px solid rgba(160,100,255,.5);border-radius:999px;color:var(--ink);background:rgba(160,100,255,.08);padding:0 14px}
+.bar #model button:hover{background:rgba(160,100,255,.18)}
+.bar #model button[aria-pressed="true"]{border-color:transparent;color:#fff;background:linear-gradient(135deg,#6a5cff,#c04ad9 60%,#ff5c9d);box-shadow:0 3px 12px rgba(170,70,220,.45)}
+.bar .p-model input[type=text],.bar .p-model input.num{border-color:rgba(160,100,255,.4)}
+.bar .p-auto .seg{border:0;background:rgba(20,184,166,.12);padding:3px;gap:2px}
+.bar .p-auto .seg button{border-radius:999px;height:32px;color:var(--ink);opacity:.8}
+.bar .p-auto .seg button[aria-pressed="true"]{background:linear-gradient(135deg,#14b8a6,#0e9f8e);color:#fff;opacity:1;box-shadow:0 3px 10px rgba(14,159,142,.4)}
+.bar .btn.primary{border:0;color:#fff;background:linear-gradient(135deg,#1a8cff 0%,#0064e0 55%,#4a5cff 100%);box-shadow:0 6px 18px rgba(0,100,224,.4);transition:filter .15s,transform .15s}
+.bar .btn.primary:hover:not([disabled]){filter:brightness(1.1);transform:translateY(-1px)}
+.bar .btn.stop{border:0;color:#fff;background:linear-gradient(135deg,#ff6b6b,#e0334c);box-shadow:0 6px 18px rgba(224,51,76,.35)}
+.bar .btn.go{min-width:128px}
+@media(max-width:640px){.bar .bpanel{flex:1 1 100%}}
+/* layout: file picker on its own row; below it Action, Model, After a repair and Run fill the row */
+.bar .brk{display:none}
+.bar .g-file{flex:1 1 100%;order:1}
+.bar .p-action{order:2;flex:0 0 auto}
+.bar .g-model{order:3;flex:1 1 280px}
+.bar .p-auto{order:4;flex:0 0 auto}
+.bar .g-run{order:5;margin-left:auto;align-self:flex-end}
+/* larger controls */
+.bar{gap:16px 18px;padding:18px 22px}
+.bar .cap{font-size:12px}
+.bar select,.bar input[type=text]{height:46px;font-size:16px;padding:0 14px}
+.bar .seg{height:46px}
+.bar .seg button{font-size:16px;padding:0 22px}
+.bar .p-action .seg button,.bar .p-auto .seg button{height:40px}
+.bar .p-auto .seg button{font-size:15px;padding:0 18px}
+.bar #model button{height:40px;font-size:15px;padding:0 18px}
+.bar .btn{height:46px;font-size:16px;padding:0 20px}
+.bar .btn.go{height:50px;font-size:18px;padding:0 36px;min-width:150px;border-radius:14px}
+.bar .hint,.bar label.hint{font-size:14px}
+.bar input.num{width:58px}
+/* larger brand */
+.brand{gap:16px;font-size:34px;letter-spacing:-.03em}
+.mark{width:56px;height:56px;border-radius:15px;box-shadow:0 6px 20px rgba(110,80,255,.4)}
+header{padding-top:16px;padding-bottom:16px}
+@media(max-width:640px){.brand{font-size:26px;gap:12px}.mark{width:44px;height:44px;border-radius:12px}}
+/* model row: one full-width panel, chips on one line, address and status on the same line */
+.bar .g-model{order:2;flex:1 1 100%}
+.bar .p-action{order:3}.bar .p-auto{order:4}.bar .g-run{order:5}
+.bar .g-model .row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.bar #model{flex:0 1 auto;flex-wrap:nowrap;gap:8px}
+.bar #model button{white-space:nowrap}
+.bar .g-model .row > :not(#model){flex:0 0 auto}
+.bar #endpoint{width:250px;margin-left:auto}
+.bar #health{display:inline-flex;align-items:center;white-space:nowrap}
+.bar #attwrap{margin-left:6px}
+.bar #endpoint[hidden] ~ #attwrap{margin-left:auto}
+@media(max-width:900px){.bar #model{flex-wrap:wrap}.bar #endpoint{margin-left:0;width:100%}}
+.bar .btn.resume{border:1px solid rgba(20,184,166,.6);color:#14b8a6;background:rgba(20,184,166,.10);font-weight:700}
+.bar .btn.resume:hover{background:rgba(20,184,166,.20)}
 [hidden]{display:none!important}
 #theme{font-size:18px;padding:4px 12px}
 .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0 10px}
@@ -184,24 +271,35 @@ tr.row td:first-child{border-left:4px solid var(--st,transparent)}
 </head>
 <body>
 <header>
-  <div class="brand"><span class="mark"><svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg></span>PatchPilot</div>
+  <div class="brand"><span class="mark"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PatchPilot logo"><defs><linearGradient id="ppg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1A8CFF"/><stop offset=".55" stop-color="#7B5CFF"/><stop offset="1" stop-color="#FF5C9D"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#ppg)"/><rect x="13" y="13" width="38" height="38" rx="10" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="2.6" stroke-dasharray="4.2 4.2" stroke-linecap="round"/><path d="M22.5 33.5l6.8 6.8L42 26.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M35 25h7.5v7.5" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="name">PatchPilot</span></div>
   <span class="hint" id="rootname"></span>
   <button class="btn" id="theme" title="Light / dark">◐</button>
 </header>
 <main>
   <div class="bar" id="bar">
-    <select id="manifest" aria-label="Scan file"></select>
-    <span class="seg" id="mode"><button data-v="check" aria-pressed="true" title="Compare old and new library. No model.">Check</button><button data-v="repair" aria-pressed="false" title="Check, then repair with a model">Repair</button></span>
-    <span class="seg" id="model" hidden></span>
-    <input type="text" id="endpoint" aria-label="Local model address" hidden>
-    <span class="hint" id="health" hidden><i class="dot" id="hdot"></i><span id="htxt"></span></span>
-    <label class="hint" id="attwrap" hidden>tries <input type="text" class="num" id="attempts" value="3" inputmode="numeric"></label>
-    <span class="seg auto" id="auto"></span>
-    <span class="sp"></span>
-    <button class="btn" id="reset" title="Put every file the app wrote back to its first content">↺ Reset</button>
-    <select id="history" aria-label="Past runs"></select>
-    <button class="btn primary go" id="run">▶ Run</button>
-    <button class="btn stop go" id="stop" hidden>■ Stop</button>
+    <div class="grp g-file"><span class="cap">Scan file</span>
+      <select id="manifest" aria-label="Scan file"></select></div>
+    <div class="brk"></div>
+    <div class="grp bpanel p-action"><span class="cap">Action</span>
+      <span class="seg" id="mode"><button data-v="check" aria-pressed="true" title="Compare old and new library. No model.">Check</button><button data-v="repair" aria-pressed="false" title="Check, then repair with a model">Repair</button></span></div>
+    <div class="grp bpanel p-model g-model" id="modelgrp" hidden><span class="cap">Model</span>
+      <div class="row">
+        <span class="seg" id="model" hidden></span>
+        <input type="text" id="endpoint" aria-label="Local model address" hidden>
+        <span class="hint" id="health" hidden><i class="dot" id="hdot"></i><span id="htxt"></span></span>
+        <label class="hint" id="attwrap" hidden>tries <input type="text" class="num" id="attempts" value="3" inputmode="numeric"></label>
+      </div></div>
+    <div class="brk"></div>
+    <div class="grp bpanel p-auto" id="autogrp" hidden><span class="cap">After a repair</span>
+      <span class="seg auto" id="auto"></span></div>
+    <div class="grp g-run"><span class="cap">&nbsp;</span>
+      <div class="row">
+        <select id="history" aria-label="Past runs"></select>
+        <button class="btn" id="reset" title="Put every file the app wrote back to its first content">↺ Reset</button>
+        <button class="btn resume" id="resume" hidden title="Repair the functions that are not fixed yet. Fixed ones and their Apply buttons stay.">⏯ Resume</button>
+        <button class="btn primary go" id="run">▶ Run</button>
+        <button class="btn stop go" id="stop" hidden>■ Stop</button>
+      </div></div>
   </div>
   <div class="hint scope">ⓘ Pure functions · JSON values or small tables · old vs new library</div>
   <div id="progwrap" hidden><div class="prog"><i id="progfill" style="width:0"></i></div><div class="proglab" id="proglab"></div></div>
@@ -223,7 +321,7 @@ async function api(path, body){
   if(j === null) throw new Error("unreadable answer from the server");
   return j;
 }
-let retain = {}, jobOnly = null, curJob = null, S = null, jobRepair = false, rows = [], running = false, readonly = false, since = 0, poll = null, open = -1, fin = null, pick = {mode: "check", model: "local"}, sumb = {};
+let lastModel = null, retain = {}, jobOnly = null, curJob = null, S = null, jobRepair = false, rows = [], running = false, readonly = false, since = 0, poll = null, open = -1, fin = null, pick = {mode: "check", model: "local"}, sumb = {};
 const STATUS = {
   healthy: ["Same", "var(--blue)", "var(--blue-soft)"], loud: ["Raises", "var(--warn)", "var(--warn-soft)"], silent: ["Differs", "var(--bad)", "var(--bad-soft)"],
   repaired: ["Fixed", "var(--ok)", "var(--ok-soft)"], not_repaired: ["Not fixed", "var(--bad)", "var(--bad-soft)"], error: ["Error", "var(--bad)", "var(--bad-soft)"],
@@ -250,12 +348,12 @@ function sync(){
   const items = [["local", "Local", "Model on this computer"]].concat(hosted.map((m) => [m, m.split("/").pop().replace("muse-", ""), m.startsWith("meta-models/") ? "Open-weights Meta model, hosted by Baseten" : m.startsWith("accounts/fireworks/") ? "Open-weights Meta model, hosted by Fireworks" : "Hosted Meta model"]));
   if(!items.some((i) => i[0] === pick.model)) pick.model = "local";
   seg("model", items, "model");
-  $("model").hidden = !repair || items.length < 2; $("attwrap").hidden = !repair;
+  $("model").hidden = !repair || items.length < 2; $("attwrap").hidden = !repair; $("modelgrp").hidden = !repair; $("autogrp").hidden = !repair;
   const loc = repair && pick.model === "local"; $("endpoint").hidden = !loc; $("health").hidden = !loc;
   $("run").textContent = repair ? "▶ Repair" : "▶ Check";
   $("run").disabled = running || readonly && false || !(S && S.manifests.length);
   $("manifest").disabled = running; $("history").disabled = running;
-  $("stop").hidden = !running; $("run").hidden = running;
+  $("stop").hidden = !running; $("run").hidden = running; resumeUi();
   autoUi();
   if(loc) checkHealth();
 }
@@ -293,7 +391,14 @@ function progress(){
   w.hidden = false; $("progfill").style.width = (units ? 100 * done / units : 0) + "%";
   $("proglab").textContent = tri < n ? "Checking " + tri + " / " + n : "Repairing " + res + " / " + silent;
 }
+// rows still to do after a stop or a failure: not checked yet (no status), or checked and not fixed
+function unfixed(){return rows.map((r, k) => (!r.status || ["not_repaired", "error", "case_failed", "silent"].includes(r.status)) ? k : -1).filter((k) => k >= 0);}
+function resumeUi(){
+  const ks = unfixed(), show = !running && !readonly && jobRepair && ks.length > 0;
+  $("resume").hidden = !show; if(show) $("resume").textContent = "⏯ Resume (" + ks.length + ")";
+}
 function render(){
+  resumeUi();
   progress();
   const b = $("board"); b.textContent = "";
   if(!S || !S.manifests.length){const e = el("div", "empty"); e.appendChild(el("b", null, "∅")); e.appendChild(document.createTextNode("No scan.json in this folder")); b.appendChild(e); return;}
@@ -447,19 +552,21 @@ async function tick(){
 }
 function follow(){running = true; sync(); clearInterval(poll); poll = setInterval(tick, 400); tick();}
 
-async function startJob(mode, only){
+async function startJob(mode, only, model){
   showErr(""); readonly = false; $("history").value = ""; since = 0; open = -1; manual = false; scrollTo = -1;
   retain = {}; jobOnly = only ? new Set(only) : null;
   if(only) rows.forEach((r, k) => {if(only.includes(k)) r.working = true; else retain[k] = JSON.parse(JSON.stringify(r));});
   else rows = [];
   jobRepair = mode === "repair";
-  const body = {manifest: $("manifest").value, mode, model: pick.model, endpoint: $("endpoint").value, effort: "low", max_attempts: parseInt($("attempts").value, 10) || 3};
+  if(jobRepair){pick.mode = "repair"; if(model) pick.model = model; sync();}
+  const body = {manifest: $("manifest").value, mode, model: model || pick.model, endpoint: $("endpoint").value, effort: "low", max_attempts: parseInt($("attempts").value, 10) || 3};
   if(only) body.only = only;
-  try{const r = await api("/api/run", body); curJob = r.id; follow();}
+  try{const r = await api("/api/run", body); curJob = r.id; lastModel = body.model; follow();}
   catch(e){showErr(e.message); rows.forEach((r) => r.working = false); retain = {}; jobOnly = null; render();}
 }
 $("run").onclick = () => startJob(pick.mode, null);
 $("stop").onclick = async () => {try{await api("/api/stop", {});}catch(e){showErr(e.message);}};
+$("resume").onclick = () => {const ks = unfixed(); if(ks.length) startJob("repair", ks, lastModel);};
 $("history").onchange = async () => {
   const id = $("history").value; showErr("");
   if(!id){readonly = false; rows = []; render(); return;}
@@ -481,7 +588,7 @@ async function loadState(keep){
 $("endpoint").oninput = () => {clearTimeout(hTimer); hTimer = setTimeout(checkHealth, 400);};
 let theme = "auto";
 $("theme").onclick = () => {theme = theme === "auto" ? "dark" : theme === "dark" ? "light" : "auto"; if(theme === "auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", theme);};
-loadState(false).then(async () => {const j = await api("/api/job?since=0"); if(j.status){curJob = j.id; jobRepair = !!(j.params && j.params.mode === "repair"); if(j.status === "running" || j.status === "stopping"){running = true; follow();} else {(j.events || []).forEach(onEvent); since = j.n; rows.forEach((r) => r.working = false); render();}}}).catch((e) => showErr(e.message));
+loadState(false).then(async () => {const j = await api("/api/job?since=0"); if(j.status){curJob = j.id; jobRepair = !!(j.params && j.params.mode === "repair"); lastModel = (j.params && j.params.model) || null; if(j.status === "running" || j.status === "stopping"){running = true; follow();} else {(j.events || []).forEach(onEvent); since = j.n; rows.forEach((r) => r.working = false); render();}}}).catch((e) => showErr(e.message));
 </script>
 </body>
 </html>

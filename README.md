@@ -1,5 +1,7 @@
 # PatchPilot
 
+<img src="docs/img/logo.svg" width="72" alt="PatchPilot logo">
+
 Finds Python functions that silently return different results after a library upgrade (pandas 2.3 to 3.0, NumPy 1.26 to 2.x), repairs them with a Meta model, and writes a patch only if three gates agree. A local browser app runs the whole thing; the model can be the open-weight Muse Glimmer on your own machine.
 
 ![PatchPilot app after a repair run on the 15-function shop set](docs/img/app-done.png)
