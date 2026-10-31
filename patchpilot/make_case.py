@@ -174,8 +174,17 @@ def get_fn():
 
 SKIP_DIRS = {".git", ".hg", ".patchpilot", ".sandboxes", ".venv", "venv", "env", "node_modules", "__pycache__", ".pytest_cache",
              ".mypy_cache", ".tox", "build", "dist", "runs", "scan_out"}
-MAX_FILE = 200_000
-MAX_TREE = 20_000_000
+# Per-file and total size limits for the project copy. Both can be raised for one run with PATCHPILOT_MAX_FILE and PATCHPILOT_MAX_TREE
+# (bytes; at most 2 MB per file and 100 MB in all): some projects have one module larger than 200 KB that the function imports.
+def _limit(name: str, default: int, top: int) -> int:
+    try:
+        return min(max(int(os.environ.get(name, default)), default), top)
+    except ValueError:
+        return default
+
+
+MAX_FILE = _limit("PATCHPILOT_MAX_FILE", 200_000, 2_000_000)
+MAX_TREE = _limit("PATCHPILOT_MAX_TREE", 20_000_000, 100_000_000)
 
 
 def copy_project(root: Path, dst: Path) -> int:

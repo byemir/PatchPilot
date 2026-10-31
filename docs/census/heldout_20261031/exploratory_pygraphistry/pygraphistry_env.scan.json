@@ -1,0 +1,65 @@
+{
+ "note": "DRAFT written by `patchpilot.discover`. The input files are placeholders (defaults or null), not real inputs: fill them, for example with `python -m patchpilot.capture`, before running `scan`. Add \"old\" and \"new\" interpreters to a target if the project needs its own dependencies.",
+ "targets": [
+  {
+   "file": "pygraphistry/graphistry/compute/gfql/datetime_search_index.py",
+   "function": "_zone_codes",
+   "lib": "pandas",
+   "inputs": "pygraphistry.probes/graphistry_compute_gfql_datetime_search_index._zone_codes.json",
+   "placeholder": true,
+   "root": "pygraphistry",
+   "old": "pg_old/bin/python",
+   "new": "pg_new/bin/python"
+  },
+  {
+   "file": "pygraphistry/graphistry/compute/gfql/row/ordering.py",
+   "function": "_native_epoch_ticks",
+   "lib": "pandas",
+   "inputs": "pygraphistry.probes/graphistry_compute_gfql_row_ordering._native_epoch_ticks.json",
+   "placeholder": true,
+   "root": "pygraphistry",
+   "old": "pg_old/bin/python",
+   "new": "pg_new/bin/python"
+  },
+  {
+   "file": "pygraphistry/graphistry/compute/gfql/wysiwyg.py",
+   "function": "_tz_abbrev_by_offset",
+   "lib": "pandas",
+   "inputs": "pygraphistry.probes/graphistry_compute_gfql_wysiwyg._tz_abbrev_by_offset.json",
+   "placeholder": true,
+   "root": "pygraphistry",
+   "old": "pg_old/bin/python",
+   "new": "pg_new/bin/python"
+  },
+  {
+   "file": "pygraphistry/graphistry/compute/gfql/search_any.py",
+   "function": "_has_string_content",
+   "lib": "pandas",
+   "inputs": "pygraphistry.probes/graphistry_compute_gfql_search_any._has_string_content.json",
+   "root": "pygraphistry",
+   "old": "pg_old/bin/python",
+   "new": "pg_new/bin/python",
+   "inputs_source": "proposed by meta-models/muse-spark-open-1026"
+  },
+  {
+   "file": "pygraphistry/graphistry/compute/predicates/str.py",
+   "function": "_pandas_handle_na",
+   "lib": "pandas",
+   "inputs": "pygraphistry.probes/graphistry_compute_predicates_str._pandas_handle_na.json",
+   "root": "pygraphistry",
+   "old": "pg_old/bin/python",
+   "new": "pg_new/bin/python",
+   "inputs_source": "proposed by meta-models/muse-spark-open-1026"
+  },
+  {
+   "file": "pygraphistry/graphistry/feature_utils.py",
+   "function": "check_if_textual_column",
+   "lib": "pandas",
+   "inputs": "pygraphistry.probes/graphistry_feature_utils.check_if_textual_column.json",
+   "root": "pygraphistry",
+   "old": "pg_old/bin/python",
+   "new": "pg_new/bin/python",
+   "inputs_source": "proposed by meta-models/muse-spark-open-1026"
+  }
+ ]
+}

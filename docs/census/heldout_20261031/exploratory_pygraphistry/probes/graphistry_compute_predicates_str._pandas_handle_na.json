@@ -1,0 +1,132 @@
+[
+ {
+  "result": {
+   "$series": {
+    "values": [
+     1,
+     0,
+     1
+    ],
+    "index": [
+     0,
+     1,
+     2
+    ]
+   }
+  },
+  "source": {
+   "$series": {
+    "values": [
+     5.0,
+     null,
+     7.0
+    ],
+    "index": [
+     0,
+     1,
+     2
+    ]
+   }
+  },
+  "na": null
+ },
+ {
+  "result": {
+   "$series": {
+    "values": [
+     "2024-03-10 08:30:00",
+     "2024-03-11 09:00:00",
+     "2024-03-12 10:15:00"
+    ],
+    "index": [
+     0,
+     1,
+     2
+    ]
+   }
+  },
+  "source": {
+   "$series": {
+    "values": [
+     "a",
+     "b",
+     "c"
+    ],
+    "index": [
+     0,
+     1,
+     2
+    ]
+   }
+  },
+  "na": null
+ },
+ {
+  "result": {
+   "$series": {
+    "values": [
+     "hello",
+     "world",
+     "test",
+     "data"
+    ],
+    "index": [
+     0,
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  "source": {
+   "$series": {
+    "values": [
+     null,
+     "x",
+     null,
+     "y"
+    ],
+    "index": [
+     0,
+     1,
+     2,
+     3
+    ]
+   }
+  },
+  "na": true
+ },
+ {
+  "result": {
+   "$series": {
+    "values": [
+     10,
+     20,
+     30
+    ],
+    "index": [
+     "2024-03-10 08:30:00",
+     "2024-03-11 08:30:00",
+     "2024-03-12 08:30:00"
+    ],
+    "datetime_index": true
+   }
+  },
+  "source": {
+   "$series": {
+    "values": [
+     1.0,
+     2.0,
+     3.0
+    ],
+    "index": [
+     "2024-03-10 08:30:00",
+     "2024-03-11 08:30:00",
+     "2024-03-12 08:30:00"
+    ],
+    "datetime_index": true
+   }
+  },
+  "na": false
+ }
+]

@@ -1,0 +1,119 @@
+{
+  "manifest": "heldout/pygraphistry_env.scan.json",
+  "model": "meta-models/muse-spark-open-1026",
+  "endpoint": null,
+  "effort": "low",
+  "triage_only": false,
+  "applied": false,
+  "seconds": 10.3,
+  "tokens": 0,
+  "counts": {
+    "healthy": 2,
+    "invalid": 3,
+    "loud": 1
+  },
+  "targets": [
+    {
+      "file": "pygraphistry/graphistry/compute/gfql/datetime_search_index.py",
+      "function": "_zone_codes",
+      "lib": "pandas",
+      "status": "invalid",
+      "detail": "raises TypeError on the old library for your inputs (TypeError: object of type 'NoneType' has no len())",
+      "example": null
+    },
+    {
+      "file": "pygraphistry/graphistry/compute/gfql/row/ordering.py",
+      "function": "_native_epoch_ticks",
+      "lib": "pandas",
+      "status": "invalid",
+      "detail": "raises AttributeError on the old library for your inputs (AttributeError: 'NoneType' object has no attribute 'astype')",
+      "example": null
+    },
+    {
+      "file": "pygraphistry/graphistry/compute/gfql/wysiwyg.py",
+      "function": "_tz_abbrev_by_offset",
+      "lib": "pandas",
+      "status": "invalid",
+      "detail": "raises AttributeError on the old library for your inputs (AttributeError: 'NoneType' object has no attribute 'dt')",
+      "example": null
+    },
+    {
+      "file": "pygraphistry/graphistry/compute/gfql/search_any.py",
+      "function": "_has_string_content",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 4 inputs",
+      "example": null
+    },
+    {
+      "file": "pygraphistry/graphistry/compute/predicates/str.py",
+      "function": "_pandas_handle_na",
+      "lib": "pandas",
+      "status": "loud",
+      "detail": "raises TypeError on the new library for 1 of 4 inputs",
+      "example": {
+        "input": {
+          "result": {
+            "$series": {
+              "values": [
+                "hello",
+                "world",
+                "test",
+                "data"
+              ],
+              "index": [
+                0,
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          "source": {
+            "$series": {
+              "values": [
+                null,
+                "x",
+                null,
+                "y"
+              ],
+              "index": [
+                0,
+                1,
+                2,
+                3
+              ]
+            }
+          },
+          "na": true
+        },
+        "old": {
+          "$series": [
+            true,
+            "world",
+            true,
+            "data"
+          ],
+          "name": null,
+          "index": [
+            0,
+            1,
+            2,
+            3
+          ]
+        },
+        "new": {
+          "error": "TypeError"
+        }
+      }
+    },
+    {
+      "file": "pygraphistry/graphistry/feature_utils.py",
+      "function": "check_if_textual_column",
+      "lib": "pandas",
+      "status": "healthy",
+      "detail": "same output on all 4 inputs",
+      "example": null
+    }
+  ]
+}

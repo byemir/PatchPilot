@@ -82,4 +82,35 @@ with tempfile.TemporaryDirectory() as t:
     make_case.check_source(src, "out")
     check("functions called path and out are fine (the plain runner no longer uses those names)", True)
 
+# the size limit of the project copy: a module above 200 KB is left out by default and can be let in for one run
+import tempfile as _tf
+with _tf.TemporaryDirectory() as _d:
+    _root = Path(_d) / "proj"
+    (_root / "pkg").mkdir(parents=True)
+    (_root / "pkg" / "small.py").write_text("x = 1\n")
+    (_root / "pkg" / "big.py").write_text("y = 2\n" + "#" * 250_000 + "\n")
+    _dst = Path(_d) / "dst"
+    _dst.mkdir()
+    make_case.copy_project(_root, _dst)
+    check("a module above 200 KB is not copied by default", (_dst / "pkg" / "small.py").exists() and not (_dst / "pkg" / "big.py").exists())
+    _old = make_case.MAX_FILE
+    make_case.MAX_FILE = 300_000
+    try:
+        _dst2 = Path(_d) / "dst2"
+        _dst2.mkdir()
+        make_case.copy_project(_root, _dst2)
+        check("with a higher limit the same module is copied", (_dst2 / "pkg" / "big.py").exists())
+    finally:
+        make_case.MAX_FILE = _old
+    check("the limits come from the environment, never below the default and never above the cap",
+          make_case._limit("PATCHPILOT_X", 200_000, 2_000_000) == 200_000)
+    import os as _os
+    _os.environ["PATCHPILOT_X"] = "999999999"
+    check("a value above the cap is cut to the cap", make_case._limit("PATCHPILOT_X", 200_000, 2_000_000) == 2_000_000)
+    _os.environ["PATCHPILOT_X"] = "5"
+    check("a value below the default is raised to the default", make_case._limit("PATCHPILOT_X", 200_000, 2_000_000) == 200_000)
+    _os.environ["PATCHPILOT_X"] = "abc"
+    check("a value that is not a number gives the default", make_case._limit("PATCHPILOT_X", 200_000, 2_000_000) == 200_000)
+    del _os.environ["PATCHPILOT_X"]
+
 print(f"runner_test: {passed} checks passed")
