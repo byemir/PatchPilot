@@ -300,7 +300,7 @@ def write_manifest(result: dict, top: Path, manifest: Path, probes_dir: Path) ->
     targets = []
     for c, pf in planned:
         pf.write_text(json.dumps(placeholder(c), indent=1) + "\n")
-        targets.append({"file": os.path.relpath((top / c["file"]).resolve(), base).replace(os.sep, "/"), "function": c["function"], "lib": "pandas",
+        targets.append({"file": os.path.relpath((top / c["file"]).resolve(), base).replace(os.sep, "/"), "function": c["function"], "lib": c.get("lib", "pandas"),
                         "inputs": os.path.relpath(pf.resolve(), base).replace(os.sep, "/"), "placeholder": True,
                         "root": os.path.relpath((top / c["root"]).resolve(), base).replace(os.sep, "/")})
     note = ("DRAFT written by `patchpilot.discover`. The input files are placeholders (defaults or null), not real inputs: fill them, "

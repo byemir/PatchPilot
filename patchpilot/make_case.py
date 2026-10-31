@@ -23,22 +23,28 @@ from pathlib import Path
 
 from patchpilot import check, differential, sandbox
 
-RUN = '''import json
-import sys
+RESERVED_NAMES = {"dec", "default", "json", "sys", "pd"}  # names the table runner defines or imports at module level
 
-from app import {fn}
+RUN = '''import json as _json
+import sys as _sys
 
-path = sys.argv[1] if len(sys.argv) > 1 else "inputs.json"
-with open(path) as f:
-    probes = json.load(f)
+_real_stdout = _sys.stdout
+_sys.stdout = _sys.stderr  # prints made by the code under test must not mix with the JSON result
 
-out = []
-for probe in probes:
+import app as _app
+
+_path = _sys.argv[1] if len(_sys.argv) > 1 else "inputs.json"
+with open(_path) as _f:
+    _probes = _json.load(_f)
+
+_out = []
+for _probe in _probes:
     try:
-        out.append({fn}(**probe))
-    except Exception as e:
-        out.append({{"error": type(e).__name__}})
-print(json.dumps(out))
+        _out.append(_app.{fn}(**_probe))
+    except Exception as _e:
+        _out.append({{"error": type(_e).__name__}})
+_sys.stdout = _real_stdout
+print(_json.dumps(_out))
 '''
 
 TEST = '''import json
@@ -60,6 +66,10 @@ def test_runs_on_the_recorded_inputs():
 # used whenever no input contains "$df", so earlier cases and recorded runs do not change.
 RUN_DF = '''import json
 import sys
+
+_real_stdout = sys.stdout
+if __name__ == "__main__":
+    sys.stdout = sys.stderr  # prints made by the code under test must not mix with the JSON result
 
 from app import {fn}
 
@@ -96,17 +106,18 @@ def default(o):
 
 
 if __name__ == "__main__":
-    path = sys.argv[1] if len(sys.argv) > 1 else "inputs.json"
-    with open(path) as f:
-        probes = json.load(f)
-    out = []
-    for probe in probes:
+    _path = sys.argv[1] if len(sys.argv) > 1 else "inputs.json"
+    with open(_path) as _f:
+        _probes = json.load(_f)
+    _out = []
+    for _probe in _probes:
         try:
-            out.append(json.loads(json.dumps({fn}(**dec(probe)), default=default)))
-        except Exception as e:
-            out.append({{"error": type(e).__name__}})
-            print(type(e).__name__ + ": " + str(e)[:300], file=sys.stderr)
-    print(json.dumps(out))
+            _out.append(json.loads(json.dumps({fn}(**dec(_probe)), default=default)))
+        except Exception as _e:
+            _out.append({{"error": type(_e).__name__}})
+            print(type(_e).__name__ + ": " + str(_e)[:300], file=sys.stderr)
+    sys.stdout = _real_stdout
+    print(json.dumps(_out))
 '''
 
 TEST_DF = '''import json
@@ -117,9 +128,9 @@ from run_case import dec, default
 
 
 def test_runs_on_the_recorded_inputs():
-    probes = json.loads((Path(__file__).resolve().parent.parent / "inputs.json").read_text())
-    for probe in probes:
-        json.dumps({fn}(**dec(probe)), default=default)
+    _probes = json.loads((Path(__file__).resolve().parent.parent / "inputs.json").read_text())
+    for _probe in _probes:
+        json.dumps({fn}(**dec(_probe)), default=default)
 '''
 
 
@@ -202,9 +213,9 @@ def build_runner(fn: str, probes, module: str | None = None) -> tuple[str, str]:
         run_t, test_t = templates(fn, probes)
         return run_t.format(fn=fn), test_t.format(fn=fn)
     load = PROJ_LOAD.replace("__MODULE__", module).replace("__FN__", fn)
-    run = RUN_DF.format(fn=fn).replace(f"from app import {fn}\n", load, 1).replace(f"{fn}(**dec(probe))", "get_fn()(**dec(probe))")
+    run = RUN_DF.format(fn=fn).replace(f"from app import {fn}\n", load, 1).replace(f"{fn}(**dec(_probe))", "get_fn()(**dec(_probe))")
     test = TEST_DF.format(fn=fn).replace(f"from app import {fn}\nfrom run_case import dec, default", "from run_case import dec, default, get_fn")
-    test = test.replace(f"{fn}(**dec(probe))", "get_fn()(**dec(probe))")
+    test = test.replace(f"{fn}(**dec(_probe))", "get_fn()(**dec(_probe))")
     return run, test
 
 
@@ -238,6 +249,8 @@ def check_source(src: Path, fn: str, project: bool = False) -> None:
         fail(f"{src} is not valid Python: {e}")
     if fn not in {n.name for n in tree.body if isinstance(n, ast.FunctionDef)}:
         fail(f"no top-level function named {fn} in {src}")
+    if not project and fn in RESERVED_NAMES:
+        fail(f"the function name {fn} is also used by the case runner; rename the function or call it through a wrapper with another name")
     for n in ast.walk(tree):
         if isinstance(n, ast.ImportFrom) and n.level and not project:
             fail("the file uses a relative import; the function must live in a self-contained file")
