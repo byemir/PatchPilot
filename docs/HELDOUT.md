@@ -33,11 +33,11 @@ Written after the pre-registered result above was known, so it is not part of th
 |---|---|---|
 | `graphistry/compute/gfql/search_any.py:_has_string_content` | 4 | healthy (same output on all 4) |
 | `graphistry/feature_utils.py:check_if_textual_column` | 4 | healthy (same output on all 4) |
-| `graphistry/compute/predicates/str.py:_pandas_handle_na` | 4 | loud: raises TypeError on pandas 3 for 1 of 4 inputs |
+| `graphistry/compute/predicates/str.py:_pandas_handle_na` | 4 | loud: raises TypeError on pandas 3 for 1 of 4 inputs (see below: probably an input the function does not receive) |
 | `graphistry/compute/gfql/datetime_search_index.py:_zone_codes` | none | invalid: the model's inputs raised on the old library (a module-level cache registered twice, then a `None` argument) |
 | `graphistry/compute/gfql/row/ordering.py:_native_epoch_ticks` | none | invalid: the model gave strings where the function needs integers, then `None` |
 | `graphistry/compute/gfql/wysiwyg.py:_tz_abbrev_by_offset` | none | invalid: the model gave inputs without a datetime column, then `None` |
 
 20,211 tokens for `propose`; no function was silent, so `scan` made no repair call. Raw files: `docs/census/heldout_20261031/exploratory_pygraphistry/`.
 
-What it shows: with the environment and the size limit solved, 3 of the 6 candidates could be run and classified, none silently different on these inputs. What it does not show: that the three invalid functions are safe (nothing was run on them), that `healthy` means safe (four model-written inputs each), or that the `loud` result is a real defect: it raises for 1 of 4 inputs and we have not read why. One project, one run.
+What it shows: with the environment and the size limit solved, 3 of the 6 candidates could be run and classified, none silently different on these inputs. What it does not show: that the three invalid functions are safe (nothing was run on them), that `healthy` means safe (four model-written inputs each), or that the `loud` result is a real defect. We read it: the failing input gives `result` as a Series of strings and `na=True`; the function then assigns a boolean into it, which the new pandas string dtype refuses (`TypeError`), while the old library accepted it. `result` is meant to be the boolean outcome of a string predicate, so the model's input is probably not one the function receives; we did not read the callers, so we call it an input artefact, not a confirmed break, and report nothing upstream. One project, one run.
