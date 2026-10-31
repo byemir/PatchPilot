@@ -1,0 +1,9 @@
+--- a/last_seen_epoch.py
++++ b/last_seen_epoch.py
+@@ -3,4 +3,5 @@
+ 
+ def last_seen_epoch(stamps):
+     ts = pd.to_datetime(pd.Series(stamps))
+-    return int(ts.astype("int64").max() // 10**9)
++    # Explicit second resolution ensures the same epoch seconds on pandas 2.x and 3.x
++    return int(ts.astype('datetime64[s]').astype('int64').max())

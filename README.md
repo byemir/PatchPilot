@@ -11,7 +11,7 @@ Meta Global AI Developer Hackathon (Oct 26 to Nov 4, 2026). Track: Indie Develop
 ## At a glance
 
 - **What it does:** lists functions whose result changes silently after a pandas 3 or NumPy 2 upgrade, has a Meta model propose a patch, and accepts it only if the visible, hidden and differential gates agree. Your files change only on Apply.
-- **Shop set (15 functions we wrote, 7 silent breaks):** Muse Spark Open on Baseten repaired 7 of 7 on the first attempt (9,557 tokens, 76 s); local Muse Glimmer repaired 6, 7 and 7 in three runs.
+- **Shop set (15 functions we wrote, 7 silent breaks):** Muse Spark Open on Baseten repaired 7 of 7 on the first attempt (9,557 tokens, 76 s); local Muse Glimmer repaired 6, 7, 7 and 6 in four runs (`discounted_price` was rejected by the gates in both runs where it failed).
 - **The gates matter:** on cases where a half-fix passes the visible tests, hidden and differential checks rejected patches that a visible-tests-only workflow would have accepted; on the real traceml function, all six patches of two runs at effort low (three attempts each) were rejected by the gates, and the third patch of a run at effort medium passed.
 - **Real projects:** one function each in indsl and traceml repaired behind the gates; the projects' own tests pass with and without the patch and did not catch the break; the traceml finding was reported upstream (issue 33).
 - **Independent test, honest result:** a pre-registered run on eight projects we had not tuned on classified none of 11 candidate functions, because they need libraries outside the pinned environments (`docs/HELDOUT.md`).
@@ -82,7 +82,7 @@ All runs are small samples on code we wrote (17 benchmark cases, the shop set, t
 
 | what | result |
 |---|---|
-| Shop set (15 functions, 7 silent breaks), app, local Glimmer, 3 runs | 6, 7 and 7 repaired; failures stopped by the gates (`examples/shop_result*/`) |
+| Shop set (15 functions, 7 silent breaks), app, local Glimmer, 4 runs | 6, 7, 7 and 6 repaired; failures stopped by the gates; in the fourth run the float32 function `discounted_price` was rejected at the visible tests in all three attempts, and again in a retry (`examples/shop_result*/`) |
 | Ledger project (22 functions, inputs recorded from its own tests) | local Glimmer and hosted Spark: 7 of 7 repaired on the first attempt (`docs/APP_RUNS.md`) |
 | DataFrame module (6 functions) | local Glimmer: 3 of 3 repaired in both runs, one wrong patch blocked in run 2 |
 | Benchmark, hosted Spark and Wonder, five cases | 125 of 125 runs solved; on the hardest case (p4): Spark 0 of 5, Wonder 3 of 5 |

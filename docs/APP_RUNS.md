@@ -11,6 +11,7 @@ Each row is one run; the time and tokens are for the whole scan (Check included)
 | shop (7 silent of 15) | muse-glimmer, local | 6 of 7 | 6 | 13,097 | 334 | `examples/shop_result/` |
 | shop | muse-glimmer, local | 7 of 7 | 7 | 8,651 | 225 | `examples/shop_result_run2/` |
 | shop | muse-glimmer, local | 7 of 7 | 5 | 13,117 | 327 | `examples/shop_result_run3/` |
+| shop (recorded 2026-10-31 evening, after the interface update) | muse-glimmer, local | 6 of 7 | 6 | 14,148 | 355 | `examples/shop_result_run4/` |
 | ledger (7 silent of 21) | muse-glimmer, local | 7 of 7 | 7 | 12,547 | 338 | `examples/ledger_result/` |
 | ledger | muse-spark-1.3, hosted | 7 of 7 | 7 | 19,376 | 167 | `examples/ledger_result_spark/` |
 | shop | muse-spark-open-1026 (open weights), hosted on Baseten | 7 of 7 | 7 | 9,557 | 76 | `examples/shop_result_spark_open/` |

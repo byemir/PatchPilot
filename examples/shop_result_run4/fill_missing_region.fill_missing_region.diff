@@ -1,0 +1,9 @@
+--- a/fill_missing_region.py
++++ b/fill_missing_region.py
+@@ -3,5 +3,5 @@
+ 
+ def fill_missing_region(rows):
+     df = pd.DataFrame(rows)
+-    df["region"].fillna("unknown", inplace=True)
++    df["region"] = df["region"].fillna("unknown")
+     return df["region"].tolist()
