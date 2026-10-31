@@ -4,9 +4,9 @@
 
 Finds Python functions that silently return different results after a library upgrade (pandas 2.3 to 3.0, NumPy 1.26 to 2.x), repairs them with a Meta model, and writes a patch only if three gates agree. A local browser app runs the whole thing; the model can be the open-weight Muse Glimmer on your own machine.
 
-![PatchPilot app after a repair run on the 15-function shop set: Muse Spark Open on Fireworks, 7 of 7 fixed, one bad patch blocked](docs/img/app-done.png)
+![PatchPilot app after a repair run on the 15-function shop set: Muse Spark Open on Fireworks, 7 of 7 fixed, one bad patch blocked; the two partner-host model chips are outlined](docs/img/app-done.png)
 
-*The app after one run on the shop set (Muse Spark Open, hosted on Fireworks): 7 of 7 repaired, one patch rejected by the gates and the next accepted, 15,542 tokens, 231 s. One run, not a rate (`examples/shop_result_spark_open_fireworks_run2/`). The model chips in current versions also name the host.*
+*The app after one run on the shop set with Muse Spark Open hosted on Fireworks: 7 of 7 repaired, one patch rejected by the gates, 12,780 tokens, 168 s. One run, not a rate. The orange outline and label were added to the screenshot; the model chips name the two partner hosts, Baseten and Fireworks. Run records of two other runs of the same model: `examples/shop_result_spark_open_fireworks/` and `examples/shop_result_spark_open_fireworks_run2/`.*
 
 Meta Global AI Developer Hackathon (Oct 26 to Nov 4, 2026). Track: Indie Developer. Problem statement: Push the Frontier (software). Solo entry. The repository was created on 2026-10-27 (first commit after the kickoff) and holds only work from the event. License: PolyForm Strict 1.0.0 (`LICENSE`), public repository; the organizers confirmed that this meets the rules.
 
