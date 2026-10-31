@@ -1,0 +1,65 @@
+[
+ {
+  "df": {
+   "$df": {
+    "review": [
+     "this is a great product indeed",
+     "absolutely loved the quality and design",
+     "would buy again definitely recommended",
+     null,
+     "excellent value for money and fast shipping"
+    ]
+   }
+  },
+  "col": "review",
+  "confidence": 0.35,
+  "min_words": 2.5
+ },
+ {
+  "df": {
+   "$df": {
+    "comment": [
+     "hi",
+     "ok",
+     "yes",
+     null,
+     "no"
+    ]
+   }
+  },
+  "col": "comment",
+  "confidence": 0.35,
+  "min_words": 2.5
+ },
+ {
+  "df": {
+   "$df": {
+    "mixed": [
+     "2024-03-10 08:30:00",
+     12345,
+     null,
+     3.14,
+     999
+    ]
+   }
+  },
+  "col": "mixed",
+  "confidence": 0.5,
+  "min_words": 2.5
+ },
+ {
+  "df": {
+   "$df": {
+    "forced": [
+     "a",
+     null,
+     42,
+     "2024-03-11 09:00:00"
+    ]
+   }
+  },
+  "col": "forced",
+  "confidence": 0.35,
+  "min_words": 0
+ }
+]
