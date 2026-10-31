@@ -16,6 +16,7 @@ Each row is one run; the time and tokens are for the whole scan (Check included)
 | ledger | muse-spark-1.3, hosted | 7 of 7 | 7 | 19,376 | 167 | `examples/ledger_result_spark/` |
 | shop | muse-spark-open-1026 (open weights), hosted on Baseten | 7 of 7 | 7 | 9,557 | 76 | `examples/shop_result_spark_open/` |
 | shop | muse-spark-open (open weights), hosted on Fireworks | 7 of 7 | 7 | 9,761 | 229 | `examples/shop_result_spark_open_fireworks/` |
+| shop (recorded 2026-10-31 evening, two app copies side by side) | muse-spark-open (open weights), hosted on Fireworks | 7 of 7 | 6 | 15,542 | 231 | `examples/shop_result_spark_open_fireworks_run2/` |
 | frames (3 silent of 6, DataFrame inputs) | muse-glimmer, local | 3 of 3 | 3 | 7,182 | 149 | `examples/frames_result/` |
 | frames | muse-glimmer, local | 3 of 3 | 2 | 10,733 | 204 | `examples/frames_result_run2/` |
 

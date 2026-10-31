@@ -1,0 +1,10 @@
+--- a/fill_missing_region.py
++++ b/fill_missing_region.py
+@@ -3,5 +3,6 @@
+ 
+ def fill_missing_region(rows):
+     df = pd.DataFrame(rows)
+-    df["region"].fillna("unknown", inplace=True)
++    # Compatible with pandas 2.x and 3.x: avoid chained inplace fillna and handle both NaN and None via isna
++    df["region"] = df["region"].apply(lambda x: "unknown" if pd.isna(x) else x)
+     return df["region"].tolist()

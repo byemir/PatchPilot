@@ -1,0 +1,12 @@
+--- a/clean_names.py
++++ b/clean_names.py
+@@ -2,7 +2,6 @@
+ import pandas as pd
+ 
+ def clean_names(names):
+-    s = pd.Series(names)
+-    if s.dtype == object:
+-        s = s.str.strip().str.title()
++    s = pd.Series(names, dtype=object)
++    s = s.str.strip().str.title()
+     return s.tolist()

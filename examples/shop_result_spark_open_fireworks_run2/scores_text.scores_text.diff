@@ -1,0 +1,19 @@
+--- a/scores_text.py
++++ b/scores_text.py
+@@ -3,4 +3,15 @@
+ 
+ def scores_text(teams, raw):
+     rounded = np.round(np.asarray(raw, dtype=np.float64), 1)
+-    return str(dict(zip(teams, rounded)))
++    # Convert numpy scalars to Python floats for stable str() output on numpy 1.x and 2.x
++    try:
++        py_vals = rounded.tolist()
++    except Exception:
++        py_vals = [float(x) for x in rounded]
++    # tolist may return nested structures or single value; ensure list of floats
++    if isinstance(py_vals, float):
++        py_vals = [py_vals]
++    else:
++        # ensure each element is Python float (tolist already does, but be safe)
++        py_vals = [float(v) if isinstance(v, (np.floating, np.integer)) else v for v in py_vals]
++    return str(dict(zip(teams, py_vals)))
