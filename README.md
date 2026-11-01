@@ -4,7 +4,7 @@
 
 Finds Python functions that silently return different results after a library upgrade (pandas 2.3 to 3.0, NumPy 1.26 to 2.x), repairs them with a Meta model, and writes a patch only if three gates agree. A local browser app runs the whole thing; the model can be the open-weight Muse Glimmer on your own machine.
 
-![PatchPilot app after a repair run on the 15-function shop set: Muse Spark Open on Fireworks, 7 of 7 fixed, one bad patch blocked](docs/img/app-done.png)
+![PatchPilot app after a repair run on the 15-function shop set: Muse Spark Open on Fireworks, 7 of 7 fixed, one bad patch blocked](docs/img/app-interface.png)
 
 *The current interface after one run on the shop set with Muse Spark Open hosted on Fireworks: 7 of 7 repaired, one patch rejected by the gates, 11,801 tokens, 251 s. One run, not a rate. The model chips name the two partner hosts, Baseten and Fireworks. The "Compared with saved races" block in the model card sets the run against the fastest model of the newest saved race of each function (here: as fast as the fastest on 0 of 7 functions, +130 s on the 6 functions Baseten had won); hosts differ in latency, so the gaps are not a quality ranking. Run records of two other runs of the same model: `examples/shop_result_spark_open_fireworks/` and `examples/shop_result_spark_open_fireworks_run2/`.*
 
