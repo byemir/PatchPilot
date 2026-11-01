@@ -271,7 +271,7 @@ tr.row td:first-child{border-left:4px solid var(--st,transparent)}
 .mcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:10px 0 6px}
 .mcard{border:1px solid var(--line);border-radius:14px;background:var(--raised);padding:14px 16px}
 .mhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:8px}
-.mhead b{font-size:14px;word-break:break-all}
+.mhead b{font-size:14px;overflow-wrap:anywhere;word-break:normal}
 .mbig{font-size:30px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;color:var(--ok);white-space:nowrap}.mbig small{font-size:13px;color:var(--dim);font-weight:600}
 .mstack{display:flex;height:10px;border-radius:6px;overflow:hidden;background:var(--line);margin-bottom:10px}.mstack i.g{background:var(--ok)}.mstack i.r{background:var(--bad)}
 .mrow{display:grid;grid-template-columns:130px 1fr auto;align-items:center;gap:8px;font-size:12.5px;margin:4px 0}
@@ -285,6 +285,41 @@ tr.row.applied td{background:rgba(60,200,120,.09)}
 .wbadge{margin-top:5px;font-size:12px;font-weight:700;color:var(--ok)}.wbadge.undone{color:var(--warn)}
 #toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--ok);color:var(--bg);font-weight:700;font-size:15px;padding:12px 20px;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.35);transition:opacity .25s,transform .25s;z-index:50;max-width:90vw}
 #toast.show{opacity:1;transform:translate(-50%,0)}#toast.warn{background:var(--warn)}
+.bulk{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0 12px}.bulk::before{content:"All fixed functions";color:var(--dim);font-size:13px;font-weight:600;margin-right:4px}
+.mact{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.bulk .btn:disabled,.mact .btn:disabled{opacity:.45;cursor:default}
+#autogrp{flex:0 0 100% !important;display:flex;align-items:center;gap:10px}#autogrp[hidden]{display:none}
+#autogrp .seg{border:0;background:rgba(20,184,166,.12);padding:3px;gap:2px}
+#autogrp .seg button{border-radius:999px;height:32px;color:var(--ink);opacity:.8}
+#autogrp .seg button[aria-pressed="true"]{background:linear-gradient(135deg,#14b8a6,#0e9f8e);color:#fff;opacity:1;box-shadow:0 3px 10px rgba(14,159,142,.4)}
+.why{margin-top:3px;font-size:12px;color:var(--warn);line-height:1.35;max-width:46ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.intro{border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:12px;background:var(--raised);padding:14px 18px;margin:14px 0 12px}.intro b{display:block;font-size:17px;margin-bottom:4px}.intro p{margin:0;color:var(--dim);font-size:14.5px}
+#cmp{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:40;display:flex;align-items:center;justify-content:center;padding:20px}#cmp[hidden]{display:none}
+#race{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:40;display:flex;align-items:center;justify-content:center;padding:20px}#race[hidden]{display:none}
+.cmpbox{background:var(--bg);border:1px solid var(--line);border-radius:16px;max-width:1100px;width:100%;max-height:90vh;overflow:auto;padding:18px}
+.cmphead{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}.cmphead b{font-size:17px;margin-right:auto}
+.cmpsum{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}.cmpcard{border:1px solid var(--line);border-radius:14px;background:var(--raised);padding:12px 16px}.cmpcard .mbig{margin:6px 0 2px}
+.cmptab{width:100%;border-collapse:collapse}.cmptab th,.cmptab td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}.cmptab th{color:var(--dim);font-weight:600}.cmptab tr.cmpdiff td{background:rgba(76,154,255,.09)}
+.racelist{display:flex;flex-direction:column;gap:6px;margin:10px 0 14px}.racepick{display:flex;align-items:center;gap:10px;font-size:14.5px}.racepick small{color:var(--dim)}
+.raceagg{margin:10px 0;font-size:13.5px;color:var(--dim)}.raceagg b{display:block;color:var(--ink);margin-bottom:4px}
+.mtrack i.g{background:var(--ok)}
+.rboard{border:1px solid var(--line);border-radius:14px;background:var(--raised);padding:14px 16px;margin:10px 0}.rboard>b{display:block;margin-bottom:8px}
+.rrow{display:grid;grid-template-columns:54px minmax(160px,1.2fr) minmax(120px,2fr) 80px;grid-template-areas:"p n t v" ". s s s";align-items:center;gap:2px 10px;margin:8px 0}
+.rpos{grid-area:p;font-weight:700}.rname{grid-area:n;font-weight:600;overflow-wrap:anywhere}.rrow .mtrack{grid-area:t;height:10px}.rval{grid-area:v;font-variant-numeric:tabular-nums;font-weight:700;text-align:right}.rsub{grid-area:s;font-size:12.5px;color:var(--dim)}
+.mtrack i.r{background:var(--bad)}
+.rexp{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 0}
+.pstrip{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:8px 0}
+.pchip{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--raised)}.pchip .ph{display:flex;gap:8px;align-items:center;margin-bottom:6px}.pchip .ph b{font-size:13.5px;overflow-wrap:anywhere}.pchip small{color:var(--dim);font-size:12.5px;display:block;margin-top:5px}
+.pchip.running{border-color:var(--blue);box-shadow:0 0 0 2px rgba(76,154,255,.22)}.pchip.done{border-color:var(--ok)}
+.rticker{font-size:13px;color:var(--dim);margin:2px 0 8px}.rticker div:first-child{color:var(--ink);font-weight:600}
+@keyframes cellpop{0%{background:rgba(60,200,120,.5)}100%{background:transparent}}.pop2{animation:cellpop 1.5s ease-out}
+.rrow{will-change:transform}
+@media(prefers-reduced-motion:reduce){.pop2{animation:none}}
+.tscroll{overflow-x:auto;max-width:100%}
+#autogrp{flex-wrap:wrap}#autogrp .seg{flex-wrap:wrap;height:auto;overflow:visible}#autogrp .seg button{white-space:nowrap}
+td.wincell{box-shadow:inset 0 0 0 2px var(--ok);background:rgba(60,200,120,.10)}
+.cmptab .wincol{border-left:2px solid var(--line)}.cmptab td.wincol b{color:var(--ok)}.cmptab td.nowin b{color:var(--bad)}
+.cmptab td:first-child .fn{white-space:nowrap}.cmptab td:first-child{min-width:150px}
 </style>
 </head>
 <body>
@@ -306,18 +341,22 @@ tr.row.applied td{background:rgba(60,200,120,.09)}
         <input type="text" id="endpoint" aria-label="Local model address" hidden>
         <span class="hint" id="health" hidden><i class="dot" id="hdot"></i><span id="htxt"></span></span>
         <label class="hint" id="attwrap" hidden>tries <input type="text" class="num" id="attempts" value="3" inputmode="numeric"></label>
+        <button class="btn small" id="fastbtn" hidden title="Select the model that was fastest in your saved races"></button>
+        <div id="autogrp" hidden><span class="hint" id="autolab"></span><span class="seg auto" id="auto"></span></div>
       </div></div>
     <div class="brk"></div>
-    <div class="grp bpanel p-auto" id="autogrp" hidden><span class="cap">After a repair</span>
-      <span class="seg auto" id="auto"></span></div>
     <div class="grp g-run"><span class="cap">&nbsp;</span>
       <div class="row">
         <select id="history" aria-label="Past runs"></select>
+        <button class="btn" id="racefile" hidden title="Check the file once, then repair every function with every model you tick and compare them">⚡ Race file</button>
+        <button class="btn" id="rep-html" hidden title="Download the results as one HTML file: models, fixed functions, blocked patches, patches">⬇ Report</button>
+        <button class="btn" id="rep-md" hidden title="Same report as Markdown">⬇ .md</button>
+        <button class="btn" id="cmp-btn" hidden title="Put two runs side by side, function by function">⇄ Compare</button>
         <button class="btn" id="clear" hidden title="Empty the table and the Resume state. Files are not touched.">✕ Clear results</button>
         <button class="btn" id="reset" title="Put every file the app wrote back to its first content">↺ Reset</button>
         <button class="btn resume" id="resume" hidden title="Repair the functions that are not fixed yet, with the model selected above. Fixed ones and their Apply buttons stay.">⏯ Resume</button>
-        <button class="btn primary go" id="run">▶ Run</button>
-        <button class="btn stop go" id="stop" hidden>■ Stop</button>
+        <button class="btn primary go" id="run" title="Check the file, then let the selected model fix every function that differs">▶ Run</button>
+        <button class="btn stop go" id="stop" hidden title="Stop after the current model call; finished results stay">■ Stop</button>
       </div></div>
   </div>
   <div class="hint scope">ⓘ Pure functions · JSON values or small tables · old vs new library</div>
@@ -325,6 +364,8 @@ tr.row.applied td{background:rgba(60,200,120,.09)}
   <div id="err" class="err" hidden></div>
   <div id="board"></div>
 </main>
+<div id="cmp" hidden role="dialog" aria-modal="true" aria-label="Compare runs"><div class="cmpbox"><div class="cmphead"><b>Compare runs</b><select id="cmpA" aria-label="Run A"></select><span class="hint">vs</span><select id="cmpB" aria-label="Run B"></select><button class="btn small" id="cmpx" title="Close (Esc)">✕</button></div><div id="cmpbody"></div></div></div>
+<div id="race" hidden role="dialog" aria-modal="true" aria-label="Model race"><div class="cmpbox"><div class="cmphead"><b id="racetitle">Model race</b><button class="btn small" id="racex" title="Close (the race keeps running)">✕</button></div><div id="racebody"></div></div></div>
 <div id="toast" role="status" aria-live="polite"></div>
 <script>
 "use strict";
@@ -340,6 +381,441 @@ async function api(path, body){
   if(!r.ok) throw new Error((j && j.error) || ("HTTP " + r.status));
   if(j === null) throw new Error("unreadable answer from the server");
   return j;
+}
+
+/* ---------- reasons, local model guard, report, compare ---------- */
+let localOk = null, localWhy = "";
+const sh = (x, n) => short(x === undefined ? "" : x, n);
+function localDown(){return pick.mode === "repair" && pick.model === "local" && localOk === false;}
+function localMsg(){return "The local model is not running (" + (localWhy || "no answer") + "). Start llama-server, or pick a hosted model.";}
+function runState(){const b = $("run"); b.disabled = running || racing || !(S && S.manifests.length) || localDown(); b.title = localDown() ? localMsg() : "Check the file, then let the selected model fix every function that differs";}
+function whyRejected(r){
+  const a = att(r).filter((x) => x.gates && x.gates.outcome !== "accepted"); if(!a.length) return "";
+  const x = a[a.length - 1], ce = x.counterexample;
+  let t = (r.status === "repaired" ? "earlier " : "last ") + "try " + (x.attempt || att(r).indexOf(x) + 1) + " " + x.gates.outcome;
+  if(ce) t += " · input " + sh(ce.input, 36) + " · expected " + sh(ce.expected, 28) + " · got " + sh(ce.got, 28);
+  else if(x.diagnosis) t += " · " + sh(x.diagnosis, 80);
+  return t;
+}
+function reportData(){
+  const c = counts(), ms = modelStats();
+  const rs = rows.filter((r) => r.status).map((r) => ({fn: r.function || "", file: r.file || "", status: (STATUS[r.status] || [r.status])[0], fixed: r.status === "repaired", model: r.ran_by ? mname(r.ran_by) : "", tries: att(r).length, applied: !!r.applied, why: whyRejected(r), diff: r.diff || "",
+    blocked: att(r).filter((x) => x.gates && x.gates.outcome !== "accepted").map((x) => "try " + (x.attempt || "?") + " " + x.gates.outcome + (x.counterexample ? " · input " + sh(x.counterexample.input, 60) + " · expected " + sh(x.counterexample.expected, 40) + " · got " + sh(x.counterexample.got, 40) : ""))}));
+  return {when: new Date().toISOString().slice(0, 16).replace("T", " "), root: S ? S.root : "", c, rows: rs, models: Object.keys(ms).map((k) => Object.assign({name: mname(k), id: k}, ms[k]))};
+}
+const mdc = (x) => String(x == null ? "" : x).replace(/\|/g, "\\|").replace(/\n/g, " ");
+const esc = (x) => String(x == null ? "" : x).replace(/[&<>"]/g, (ch) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[ch]));
+function reportMd(d){
+  const L = ["# PatchPilot report", "", "Project `" + d.root + "` · " + d.when + " UTC · " + d.c.n + " functions, " + d.c.differs + " differ, " + d.c.fixed + " fixed, " + d.c.blocked + " bad patches blocked", ""];
+  if(d.models.length){
+    L.push("## Models", "", "| model | fixed / tried | patch tries | bad patches blocked | tokens | time | functions it fixed |", "|---|---|---|---|---|---|---|");
+    d.models.forEach((m) => L.push("| " + [m.id, m.fixed + " / " + m.n, m.tries, m.blocked, m.tok ? m.tok.toLocaleString("en-US") : "", m.sec ? Math.round(m.sec) + " s" : "", m.names.join(", ")].map(mdc).join(" | ") + " |"));
+    L.push("", "Each function is counted under the model that worked on it last. One run on this set, not a success rate.", "");
+  }
+  L.push("## Functions", "", "| function | file | result | model | tries | note |", "|---|---|---|---|---|---|");
+  d.rows.forEach((r) => L.push("| " + [r.fn, r.file, r.status + (r.applied ? " (written)" : ""), r.model, r.tries || "", r.why].map(mdc).join(" | ") + " |"));
+  const bl = d.rows.filter((r) => r.blocked.length);
+  if(bl.length){L.push("", "## Patches the gates blocked", ""); bl.forEach((r) => L.push("- **" + r.fn + "**: " + r.blocked.join("; ")));}
+  const fx = d.rows.filter((r) => r.diff);
+  if(fx.length){L.push("", "## Patches", ""); fx.forEach((r) => L.push("### " + r.fn, "", "```diff", r.diff.trimEnd(), "```", ""));}
+  return L.join("\n") + "\n";
+}
+function reportHtml(d){
+  const rowsH = d.rows.map((r) => "<tr class=\"" + (r.fixed ? "ok" : "bad") + "\"><td>" + esc(r.fn) + "<br><small>" + esc(r.file) + "</small></td><td>" + esc(r.status) + (r.applied ? " (written)" : "") + "</td><td>" + esc(r.model) + "</td><td>" + (r.tries || "") + "</td><td>" + esc(r.why) + "</td></tr>").join("");
+  const modH = d.models.map((m) => "<tr><td>" + esc(m.id) + "</td><td><b>" + m.fixed + " / " + m.n + "</b></td><td>" + m.tries + "</td><td>" + m.blocked + "</td><td>" + (m.tok ? m.tok.toLocaleString("en-US") : "") + "</td><td>" + (m.sec ? Math.round(m.sec) + " s" : "") + "</td><td>" + esc(m.names.join(", ")) + "</td></tr>").join("");
+  const blH = d.rows.filter((r) => r.blocked.length).map((r) => "<li><b>" + esc(r.fn) + "</b>: " + esc(r.blocked.join("; ")) + "</li>").join("");
+  const dfH = d.rows.filter((r) => r.diff).map((r) => "<h3>" + esc(r.fn) + "</h3><pre>" + esc(r.diff) + "</pre>").join("");
+  return "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>PatchPilot report</title><style>"
+    + "body{font:15px/1.5 system-ui,sans-serif;max-width:980px;margin:32px auto;padding:0 16px;color:#1c2b33}table{border-collapse:collapse;width:100%;margin:10px 0}th,td{text-align:left;padding:7px 10px;border-bottom:1px solid #dadde1;vertical-align:top}th{color:#5d6c7b;font-weight:600}"
+    + "tr.ok td:nth-child(2){color:#1a8f4c;font-weight:700}tr.bad td:nth-child(2){color:#d4243a;font-weight:700}small{color:#5d6c7b}pre{background:#f5f6f8;padding:12px;border-radius:8px;overflow:auto;font-size:13px}.n{color:#5d6c7b;font-size:13px}"
+    + "<\/style></head><body><h1>PatchPilot report</h1><p>Project <b>" + esc(d.root) + "</b> · " + esc(d.when) + " UTC<br>" + d.c.n + " functions · " + d.c.differs + " differ · <b>" + d.c.fixed + " fixed</b> · " + d.c.blocked + " bad patches blocked</p>"
+    + (modH ? "<h2>Models</h2><table><tr><th>model</th><th>fixed / tried</th><th>patch tries</th><th>bad patches blocked</th><th>tokens</th><th>time</th><th>functions it fixed</th></tr>" + modH + "</table><p class=\"n\">Each function is counted under the model that worked on it last. One run on this set, not a success rate.</p>" : "")
+    + "<h2>Functions</h2><table><tr><th>function</th><th>result</th><th>model</th><th>tries</th><th>note</th></tr>" + rowsH + "</table>"
+    + (blH ? "<h2>Patches the gates blocked</h2><ul>" + blH + "</ul>" : "") + (dfH ? "<h2>Patches</h2>" + dfH : "") + "</body></html>";
+}
+function download(name, text, type){const u = URL.createObjectURL(new Blob([text], {type})), a = document.createElement("a"); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 1500);}
+function stamp(){const d = new Date(), z = (n) => String(n).padStart(2, "0"); return d.getFullYear() + z(d.getMonth() + 1) + z(d.getDate()) + "-" + z(d.getHours()) + z(d.getMinutes());}
+$("rep-html").onclick = () => {download("patchpilot-report-" + stamp() + ".html", reportHtml(reportData()), "text/html"); toast("✓ Report downloaded (.html)");};
+$("rep-md").onclick = () => {download("patchpilot-report-" + stamp() + ".md", reportMd(reportData()), "text/markdown"); toast("✓ Report downloaded (.md)");};
+
+async function cmpLoad(v){
+  if(v === "cur") return {label: "Current table", model: lastModel, rows: rows.filter((r) => r.status)};
+  const d = await api("/api/report?id=" + encodeURIComponent(v));
+  return {label: v, model: d.summary && d.summary.model, rows: d.targets.map((t) => Object.assign({}, t, {att: Array.isArray(t.attempts) ? t.attempts : []}))};
+}
+async function cmpRender(){
+  const body = $("cmpbody"); body.textContent = "";
+  try{
+    const A = await cmpLoad($("cmpA").value), B = await cmpLoad($("cmpB").value), key = (r) => (r.file || "") + "::" + (r.function || "");
+    const keys = [], seen = {}; A.rows.concat(B.rows).forEach((r) => {if(!seen[key(r)]){seen[key(r)] = 1; keys.push(key(r));}});
+    const get = (X, k) => X.rows.find((r) => key(r) === k);
+    const fx = (X) => X.rows.filter((r) => r.status === "repaired").length, df = (X) => X.rows.filter((r) => ["silent", "repaired", "not_repaired", "error", "case_failed"].includes(r.status)).length;
+    const head = el("div", "cmpsum");
+    [[A, "A"], [B, "B"]].forEach(([X, n]) => {const c = el("div", "cmpcard"); c.appendChild(el("b", null, n + " · " + X.label)); c.appendChild(el("div", "file", X.model ? mname(X.model) : "model unknown")); c.appendChild(el("div", "mbig", fx(X) + " / " + df(X))); c.appendChild(el("small", null, "fixed of the functions that differ")); head.appendChild(c);});
+    body.appendChild(head);
+    const only = (P, Q) => keys.filter((k) => get(P, k) && get(P, k).status === "repaired" && !(get(Q, k) && get(Q, k).status === "repaired")).map((k) => (get(P, k).function || k));
+    const oa = only(A, B), ob = only(B, A);
+    if(oa.length || ob.length) body.appendChild(el("div", "wstrip on", "Fixed only in A: " + (oa.join(", ") || "–") + "  ·  Fixed only in B: " + (ob.join(", ") || "–")));
+    const tb = el("table", "cmptab"), hr = el("tr"); ["Function", "A", "B"].forEach((x) => hr.appendChild(el("th", null, x))); tb.appendChild(hr);
+    const cell = (r) => {const td = el("td"); if(!r){td.appendChild(el("span", "hint", "–")); return td;}
+      const [lab, fg, bg] = STATUS[r.status] || [r.status || "–", "var(--dim)", "var(--surface)"], p = el("span", "pill", lab); p.style.color = fg; p.style.background = bg; td.appendChild(p);
+      const n = att(r).length || (typeof r.attempts === "number" ? r.attempts : 0), bits = []; if(n) bits.push(n + (n > 1 ? " tries" : " try")); if(r.tokens) bits.push(r.tokens.toLocaleString("en-US") + " tok");
+      if(bits.length) td.appendChild(el("div", "file", bits.join(" · "))); const w = whyRejected(r); if(w){const d2 = el("div", "why", w); d2.title = w; td.appendChild(d2);} return td;};
+    keys.forEach((k) => {const ra = get(A, k), rb = get(B, k), tr = el("tr", (ra && ra.status) !== (rb && rb.status) ? "cmpdiff" : ""), c1 = el("td"); c1.appendChild(el("div", "fn", (ra || rb).function || k)); c1.appendChild(el("div", "file", (ra || rb).file || "")); tr.appendChild(c1); tr.appendChild(cell(ra)); tr.appendChild(cell(rb)); tb.appendChild(tr);});
+    body.appendChild(tb);
+  }catch(e){body.appendChild(el("div", "err", e.message));}
+}
+function cmpOpen(){
+  const ids = (S && S.previous ? S.previous.map((p) => p.id) : []), opts = (rows.some((r) => r.status) ? ["cur"] : []).concat(ids);
+  ["cmpA", "cmpB"].forEach((id) => {const sel = $(id); sel.textContent = ""; opts.forEach((o) => sel.appendChild(new Option(o === "cur" ? "Current table" : o, o)));});
+  $("cmpA").value = opts[1] !== undefined ? opts[1] : opts[0]; $("cmpB").value = opts[0];
+  $("cmp").hidden = false; cmpRender();
+}
+$("cmp-btn").onclick = cmpOpen; $("cmpx").onclick = () => {$("cmp").hidden = true;}; $("cmpA").onchange = cmpRender; $("cmpB").onchange = cmpRender;
+$("cmp").onclick = (e) => {if(e.target === $("cmp")) $("cmp").hidden = true;};
+document.addEventListener("keydown", (e) => {if(e.key !== "Escape") return; if(!$("cmp").hidden) $("cmp").hidden = true; else if(!$("race").hidden) $("race").hidden = true;});
+
+/* ---------- model race: the same function, every model, one after the other ---------- */
+let racing = false, raceAbort = false, raceState = null, raceLog = loadRace();
+function loadRace(){try{const d = JSON.parse(localStorage.getItem("pp_race") || "{}"); return d && Array.isArray(d.records) ? d : {records: []};}catch(e){return {records: []};}}
+function saveRace(){try{localStorage.setItem("pp_race", JSON.stringify({records: raceLog.records.slice(-30)}));}catch(e){}}
+function raceAgg(){
+  const m = {};
+  raceLog.records.forEach((rec) => {
+    const dn = rec.results.filter((x) => x.state === "done"), M = dn.length;
+    dn.forEach((x) => {const a = m[x.model] || (m[x.model] = {model: x.model, n: 0, fixed: 0, secs: [], ranks: []}); a.n++; if(x.fixed){a.fixed++; a.secs.push(x.sec);}
+      a.ranks.push(x.fixed ? 1 + dn.filter((y) => y.fixed && y.sec < x.sec).length : M);});
+  });
+  return Object.values(m).map((a) => Object.assign(a, {avg: a.secs.length ? a.secs.reduce((p, c) => p + c, 0) / a.secs.length : null, avgRank: a.ranks.reduce((p, c) => p + c, 0) / a.ranks.length}))
+    .sort((p, c) => (c.fixed / c.n - p.fixed / p.n) || ((p.avg == null ? 1e9 : p.avg) - (c.avg == null ? 1e9 : c.avg)));
+}
+function fastest(){return raceAgg().filter((x) => x.fixed > 0)[0] || null;}
+function fastUi(){
+  const b = $("fastbtn"), f = fastest(), avail = f && (f.model === "local" || (S && S.hosted && S.hosted.indexOf(f.model) >= 0));
+  b.hidden = !avail || f.model === pick.model || running || racing;
+  if(avail){b.textContent = "⚡ Use fastest: " + mname(f.model) + " (" + Math.round(f.avg) + " s)"; b.title = "Fastest model in your saved races: fixed " + f.fixed + " of " + f.n + ", " + Math.round(f.avg) + " s on average. Not a success rate.";}
+}
+$("fastbtn").onclick = () => {const f = fastest(); if(f){pick.model = f.model; sync();}};
+const waitIdle = async () => {while(running) await sleep(300);};
+function racePanel(show){$("race").hidden = !show;}
+function raceModels(){return ["local"].concat(S ? S.hosted : []);}
+async function raceOpen(k){
+  raceState = {k, stage: "setup", res: [], fn: rows[k].function, file: rows[k].file || "", health: null};
+  racePanel(true); raceDraw();
+  try{const h = await api("/api/health?endpoint=" + encodeURIComponent($("endpoint").value)); raceState.health = h;}catch(e){raceState.health = {ok: false, reason: "no answer"};}
+  if(raceState && raceState.stage === "setup") raceDraw();
+}
+const barPrev = {};
+function animBar(f, key, pct){const p = barPrev[key] !== undefined ? barPrev[key] : 0; f.style.width = p + "%"; f.style.transition = "width .7s ease"; barPrev[key] = pct; requestAnimationFrame(() => requestAnimationFrame(() => {f.style.width = pct + "%";}));}
+const fmtT = (sec) => Math.floor(sec / 60) + ":" + String(Math.floor(sec % 60)).padStart(2, "0");
+// redraw the race window; rows that changed place slide to the new place
+function raceDraw(){
+  const body = $("racebody"), box = body.parentNode, prev = {}, sc = box.scrollTop;
+  body.querySelectorAll("[data-flip]").forEach((e) => {prev[e.dataset.flip] = e.getBoundingClientRect().top;});
+  raceDraw1();
+  box.scrollTop = sc;
+  body.querySelectorAll("[data-flip]").forEach((e) => {const d = prev[e.dataset.flip]; if(d === undefined) return; const dy = d - e.getBoundingClientRect().top; if(Math.abs(dy) < 2) return;
+    e.style.transition = "none"; e.style.transform = "translateY(" + dy + "px)"; requestAnimationFrame(() => requestAnimationFrame(() => {e.style.transition = "transform .7s ease"; e.style.transform = "";}));});
+}
+function raceDraw1(){
+  const rs = raceState, body = $("racebody"); body.textContent = ""; if(!rs) return;
+  $("racetitle").textContent = "Model race · " + rs.fn;
+  if(rs.mode === "file" && rs.stage !== "setup") return fileDraw(rs, body);
+  if(rs.stage === "setup"){
+    body.appendChild(el("p", "hint", rs.mode === "file" ? "The file is checked once (no model). Then every model you tick repairs every function that differs, one model after the other. The table is replaced by the result. Nothing is written to your files. Hosted models use API credit, one call set per function." : "Every model you tick gets the same function once, one after the other. Nothing is written to your files. Hosted models use API credit."));
+    const list = el("div", "racelist");
+    raceModels().forEach((m) => {
+      const lab = el("label", "racepick"), cb = el("input"); cb.type = "checkbox"; cb.value = m;
+      const down = m === "local" && rs.health && !rs.health.ok; cb.checked = !down; cb.disabled = !!down || (m === "local" && !rs.health);
+      lab.appendChild(cb); lab.appendChild(el("span", null, mname(m)));
+      if(m === "local") lab.appendChild(el("small", null, !rs.health ? "checking…" : rs.health.ok ? "ready" : (rs.health.reason || "not running") + " · start llama-server"));
+      list.appendChild(lab);
+    });
+    body.appendChild(list);
+    const go = el("button", "btn primary", "⚡ Start race"); go.title = "Run the race now. Nothing is written to your files."; go.onclick = () => {const ms = Array.from(list.querySelectorAll("input:checked")).map((c) => c.value); if(!ms.length) return; raceFile(ms, null, rs.mode === "file" ? null : [rs.k]);}; body.appendChild(go);
+  }
+}
+$("racex").onclick = () => racePanel(false);
+$("race").onclick = (e) => {if(e.target === $("race") && !racing) racePanel(false);};
+
+/* ---------- model race on the whole file: Check once, then every model repairs every function that differs ---------- */
+const FINAL = ["repaired", "not_repaired", "error", "case_failed"];
+function raceOpenFile(){
+  raceState = {mode: "file", stage: "setup", fn: "whole file", file: "", health: null};
+  racePanel(true); raceDraw();
+  api("/api/health?endpoint=" + encodeURIComponent($("endpoint").value)).then((h) => {raceState && raceState.stage === "setup" && (raceState.health = h, raceDraw());}).catch(() => {raceState && raceState.stage === "setup" && (raceState.health = {ok: false, reason: "no answer"}, raceDraw());});
+}
+/* ---------- race engine: pause, continue and survive a page reload ---------- */
+const RACE_KEY = "pp_race_run";
+let racePause = false;
+function raceSnapSave(fr, stage){
+  try{localStorage.setItem(RACE_KEY, JSON.stringify({v: 1, stage, manifest: $("manifest").value, root: S ? S.root : "", fr: {models: fr.models, keys: fr.keys, fns: fr.fns, cells: fr.cells, snaps: fr.snaps, part: fr.part, psnap: fr.psnap, state: fr.state}}));}catch(e){}
+}
+function raceSnapClear(){try{localStorage.removeItem(RACE_KEY);}catch(e){}}
+function raceSnapLoad(){try{const d = JSON.parse(localStorage.getItem(RACE_KEY) || "null"); return d && d.v === 1 && d.fr && Array.isArray(d.fr.models) ? d : null;}catch(e){return null;}}
+// copy the finished rows of model m from the table into the race state (they survive a pause and a reload)
+function capturePart(fr, m){
+  const c = fr.part[m] || (fr.part[m] = {}), sn = fr.psnap[m] || (fr.psnap[m] = {}); let n = 0;
+  fr.keys.forEach((k) => {const r = rows[k];
+    if(!c[k] && r && r.ran_by === m && !r.working && FINAL.indexOf(r.status) >= 0){
+      c[k] = {status: r.status, fixed: r.status === "repaired", tries: att(r).length, sec: r.seconds || (fr.t0 && fr.t0[m] ? (Date.now() - fr.t0[m]) / 1000 / Math.max(1, fr.keys.length) : 0), tok: r.tokens || 0};
+      sn[k] = JSON.parse(JSON.stringify(r)); n++;}});
+  return n;
+}
+function raceIncomplete(fr){return fr.models.some((m) => !fr.cells[m] && fr.state[m] !== "skipped" && fr.state[m] !== "nostart");}
+async function raceFile(models, saved, presetKeys){
+  const pm = pick.model, fr = saved || {models, keys: presetKeys ? presetKeys.slice() : [], fns: null, cells: {}, snaps: {}, part: {}, psnap: {}, state: {}};
+  Object.assign(fr, {phase: "check", error: "", t0: {}, live: {}, seen: fr.seen || {}, fresh: {}, log: fr.log || []});
+  racing = true; raceAbort = false; racePause = false; Object.keys(barPrev).forEach((q) => delete barPrev[q]);
+  raceState = {mode: "file", stage: "run", fn: "", file: "", fr}; sync(); render(); raceDraw(); raceSnapSave(fr, "run");
+  const iv = setInterval(() => {const rm = fr.models.find((m) => fr.state[m] === "running"); if(rm && capturePart(fr, rm)) raceSnapSave(fr, "run"); raceDraw();}, 1000);
+  try{
+    if(running){fr.phase = "wait"; raceDraw(); await waitIdle();}           // a job from before a reload may still be running
+    fr.models.forEach((m) => {if(!fr.cells[m]) capturePart(fr, m);});        // rows it finished while the page was away
+    if(!raceAbort && !racePause){
+      fr.phase = "check";
+      let before = curJob; await startJob("check", null, undefined, true);   // rebuilds the table; on a continue it also proves the file still has the same functions
+      if(curJob === before){fr.error = "The check could not start."; throw 0;}
+      await waitIdle();
+      if(!raceAbort && !racePause){
+        if(!fr.keys.length) fr.keys = rows.map((r, k) => ["silent"].concat(FINAL).includes(r.status) ? k : -1).filter((k) => k >= 0);
+        if(!fr.keys.length){fr.error = "No function differs between the two library versions, so there is nothing to repair."; throw 0;}
+        const names = fr.keys.map((k) => ({name: rows[k] ? rows[k].function || "" : "", file: rows[k] ? rows[k].file || "" : ""}));
+        if(!fr.fns) fr.fns = names;
+        else if(JSON.stringify(names) !== JSON.stringify(fr.fns)){fr.error = "The file has changed since this race started (the functions are not the same). Discard it and start a new race."; throw 0;}
+        fr.phase = "repair"; models.forEach((m) => {if(!fr.cells[m]) fr.state[m] = "waiting";}); raceDraw();
+        for(const m of models){
+          if(fr.cells[m]) continue;
+          if(raceAbort){fr.state[m] = "skipped"; continue;}
+          if(racePause) break;
+          const todo = fr.keys.filter((k) => !(fr.part[m] && fr.part[m][k]));
+          fr.state[m] = "running"; fr.t0[m] = Date.now(); raceDraw(); raceSnapSave(fr, "run");
+          if(todo.length){
+            before = curJob; await startJob("repair", todo, m, true);
+            if(curJob === before){fr.state[m] = "nostart"; raceDraw(); continue;}
+            await waitIdle();
+          }
+          capturePart(fr, m);
+          if(raceAbort){fr.state[m] = "skipped"; raceDraw(); continue;}
+          const c = fr.part[m] || {};
+          if(racePause && fr.keys.some((k) => !c[k])){fr.state[m] = "paused"; break;}
+          fr.keys.forEach((k) => {if(!c[k]) c[k] = {status: "error", fixed: false, tries: 0, sec: 0, tok: 0};});
+          fr.cells[m] = c; fr.snaps[m] = fr.psnap[m] || {}; delete fr.part[m]; delete fr.psnap[m]; fr.state[m] = "done"; raceSnapSave(fr, "run"); raceDraw();
+        }
+      }
+    }
+  }catch(e){if(e !== 0) fr.error = String(e && e.message || e);}
+  clearInterval(iv);
+  if(racePause && !raceAbort && !fr.error && raceIncomplete(fr)){
+    racing = false; raceState.stage = "paused"; pick.model = pm; raceSnapSave(fr, "paused"); sync(); render(); raceDraw(); return;
+  }
+  // the table keeps the fastest fixing patch of every function, ready to Apply
+  const done = fr.models.filter((m) => fr.cells[m]);
+  fr.keys.forEach((k, idx) => {
+    let best = null; done.forEach((m) => {const x = fr.cells[m][k]; if(x && x.fixed && (best === null || x.sec < fr.cells[best][k].sec)) best = m;});
+    const m = best || done[0]; if(m && fr.snaps[m] && fr.snaps[m][k]){rows[k] = JSON.parse(JSON.stringify(fr.snaps[m][k])); rows[k].working = false;}
+    const f = fr.fns ? fr.fns[idx] : {name: "", file: ""};
+    if(done.length) raceLog.records.push({key: (f.file || "") + "::" + f.name, fn: f.name, when: new Date().toISOString(), results: fr.models.map((mm) => fr.cells[mm] && fr.cells[mm][k] ? Object.assign({model: mm, state: "done"}, fr.cells[mm][k]) : {model: mm, state: "skipped"})});
+  });
+  if(done.length) saveRace();
+  raceSnapClear(); racing = false; raceState.stage = "done"; pick.model = pm; sync(); render(); raceDraw(); loadState(true);
+}
+// after a page reload: bring a paused or interrupted race back; the person decides to continue or discard
+function raceRestore(){
+  const sv = raceSnapLoad(); if(!sv || !S || sv.root !== S.root || S.manifests.indexOf(sv.manifest) < 0) return;
+  const fr = sv.fr; fr.part = fr.part || {}; fr.psnap = fr.psnap || {}; fr.cells = fr.cells || {}; fr.snaps = fr.snaps || {}; fr.state = fr.state || {};
+  fr.models.forEach((m) => {fr.state[m] = fr.cells[m] ? "done" : "waiting";});
+  Object.assign(fr, {phase: "repair", error: "", t0: {}, live: {}, seen: {}, fresh: {}, log: []});
+  Object.keys(fr.cells).concat(Object.keys(fr.part)).forEach((m) => fr.keys.forEach((k, i) => {if((fr.cells[m] && fr.cells[m][k]) || (fr.part[m] && fr.part[m][k])) fr.seen[m + "|" + i] = 1;}));
+  $("manifest").value = sv.manifest; raceState = {mode: "file", stage: "paused", fn: "", file: "", fr, restored: true};
+  racePanel(true); raceDraw(); resumeUi(); toast("A paused model race was restored. Press Continue.", "warn");
+}
+
+/* ---------- race ranking, charts, export ---------- */
+const MEDAL = {1: "🥇", 2: "🥈", 3: "🥉"};
+const ordinal = (n) => n === 1 ? "1st" : n === 2 ? "2nd" : n === 3 ? "3rd" : n + "th";
+function raceNorm(rs){
+  if(rs.mode === "file"){const fr = rs.fr; const has = (m) => fr.cells[m] || (fr.live && fr.live[m] && Object.keys(fr.live[m]).length); return {models: fr.models.filter(has), fns: fr.fns || fr.keys.map((k) => ({name: rows[k] ? rows[k].function || "" : "", file: rows[k] ? rows[k].file || "" : ""})), cell: (m, i) => (fr.cells[m] || (fr.live && fr.live[m]) || {})[fr.keys[i]]};}
+  const done = (rs.res || []).filter((x) => x.state === "done");
+  return {models: done.map((x) => x.model), fns: [{name: rs.fn, file: rs.file}], cell: (m) => done.find((x) => x.model === m)};
+}
+// rank 1 = fastest fix of that function. A model that did not fix it counts as last place (rank = number of models).
+function raceRanks(n){
+  const M = n.models.length, rank = {}, st = {}, bestSec = [], maxSec = [];
+  n.models.forEach((m) => {rank[m] = []; st[m] = {fixed: 0, of: 0, sec: 0, tok: 0, tries: 0, firsts: 0};});
+  n.fns.forEach((f, i) => {
+    const xs = n.models.map((m) => [m, n.cell(m, i)]).filter((p) => p[1]), fx = xs.filter((p) => p[1].fixed);
+    bestSec[i] = fx.length ? Math.min(...fx.map((p) => p[1].sec)) : null; maxSec[i] = Math.max(1, ...xs.map((p) => p[1].sec || 0));
+    xs.forEach(([m, x]) => {
+      rank[m][i] = x.fixed ? 1 + fx.filter((q) => q[1].sec < x.sec).length : M;
+      const s = st[m]; s.of++; s.sec += x.sec || 0; s.tok += x.tok || 0; s.tries += x.tries || 0; if(x.fixed) s.fixed++; if(x.fixed && rank[m][i] === 1) s.firsts++;});
+  });
+  const avg = {}; n.models.forEach((m) => {const r = rank[m].filter((v) => v !== undefined); avg[m] = r.length ? r.reduce((a, v) => a + v, 0) / r.length : M;});
+  const order = n.models.slice().sort((a, b) => (avg[a] - avg[b]) || (st[b].fixed - st[a].fixed) || (st[a].sec - st[b].sec));
+  return {M, rank, avg, st, order, bestSec, maxSec};
+}
+// who fixed function i fastest, and by how much ahead of the next one
+function raceWinner(n, R, i){
+  const fx = n.models.map((m) => [m, n.cell(m, i)]).filter((p) => p[1] && p[1].fixed).sort((a, b) => a[1].sec - b[1].sec);
+  if(!fx.length) return {none: true, models: [], sec: null, ahead: null};
+  const best = fx[0][1].sec, top = fx.filter((p) => p[1].sec === best), next = fx.find((p) => p[1].sec > best);
+  return {none: false, models: top.map((p) => p[0]), sec: best, ahead: next ? next[1].sec - best : null, tries: fx[0][1].tries};
+}
+function rankBoard(body, n, R){
+  const box = el("div", "rboard"); box.appendChild(el("b", null, "Overall ranking · average rank over " + n.fns.length + " function" + (n.fns.length > 1 ? "s" : "")));
+  const lead = R.order[0];
+  R.order.forEach((m, i) => {
+    const s = R.st[m], row = el("div", "rrow"); row.dataset.flip = "rb|" + m; const pos = el("span", "rpos", (MEDAL[i + 1] || "") + " " + (i + 1) + "."), nm = el("span", "rname", mname(m)); nm.title = m;
+    const tr = el("div", "mtrack"), f = el("i", i === 0 ? "g" : ""); animBar(f, "rb|" + m, Math.max(4, R.M > 1 ? 100 * (R.M - R.avg[m]) / (R.M - 1) : 100)); tr.appendChild(f);
+    const gap = i === 0 ? "leader" : "+" + (R.avg[m] - R.avg[lead]).toFixed(2) + " rank" + (s.sec - R.st[lead].sec > 0 ? " · +" + Math.round(s.sec - R.st[lead].sec) + " s" : "");
+    row.appendChild(pos); row.appendChild(nm); row.appendChild(tr); row.appendChild(el("span", "rval", "avg " + R.avg[m].toFixed(2))); row.appendChild(el("span", "rsub", "fixed " + s.fixed + "/" + s.of + " · " + Math.round(s.sec) + " s total · " + gap)); box.appendChild(row);
+  });
+  box.appendChild(el("div", "hint", "Rank 1 is the fastest fix of a function. A model that did not fix a function counts as last place (rank " + R.M + "). The bar is longer for a better average rank. Ties are broken by functions fixed, then total time."));
+  body.appendChild(box);
+}
+function rankMatrix(body, n, R, fr){
+  const cols = fr ? fr.models : n.models, tb = el("table", "cmptab"), hr = el("tr"); hr.appendChild(el("th", null, "Function")); cols.forEach((m) => hr.appendChild(el("th", null, mname(m)))); if(n.models.length) hr.appendChild(el("th", "wincol", "🥇 Fastest fix")); tb.appendChild(hr);
+  n.fns.forEach((f, i) => {
+    const tr = el("tr"), c1 = el("td"); c1.appendChild(el("div", "fn", f.name)); if(f.file) c1.appendChild(el("div", "file", f.file)); tr.appendChild(c1);
+    cols.forEach((m) => {
+      const td = el("td"), x = n.cell(m, i);
+      if(!x){const r0 = fr && fr.state[m] === "running" && fr.keys[i] !== undefined ? rows[fr.keys[i]] : null;
+        if(r0 && r0.working){const p0 = el("span", "pill"); p0.appendChild(el("i", "spin")); p0.appendChild(document.createTextNode("Working")); p0.style.color = "var(--blue)"; p0.style.background = "var(--blue-soft)"; td.appendChild(p0); if(r0.ran_by === m && att(r0).length) td.appendChild(el("div", "file", att(r0).length + (att(r0).length === 1 ? " try so far" : " tries so far")));}
+        else td.appendChild(el("span", "hint", fr && fr.state[m] === "running" ? "queued" : "–")); tr.appendChild(td); return;}
+      if(fr && fr.fresh[m + "|" + i] && Date.now() - fr.fresh[m + "|" + i] < 1600) td.classList.add("pop2");
+      const rk = R.rank[m][i], [lab, fg, bg] = STATUS[x.status] || [x.status, "var(--dim)", "var(--surface)"], p = el("span", "pill", x.fixed ? (MEDAL[rk] || "") + " " + ordinal(rk) : lab); p.style.color = fg; p.style.background = bg; td.appendChild(p);
+      td.appendChild(el("div", "file", x.tries + (x.tries === 1 ? " try · " : " tries · ") + Math.round(x.sec) + " s"));
+      if(x.fixed && rk === 1) td.classList.add("wincell");
+      const t = el("div", "mtrack"), b = el("i", x.fixed ? (rk === 1 ? "g" : "t") : "r"); animBar(b, "mx|" + m + "|" + i, Math.max(4, 100 * (x.sec || 0) / R.maxSec[i])); t.appendChild(b); td.appendChild(t);
+      if(x.fixed) td.appendChild(el("div", "file", rk === 1 ? "fastest" : "+" + Math.round(x.sec - R.bestSec[i]) + " s vs 1st"));
+      tr.appendChild(td);});
+    if(n.models.length){
+      const w = raceWinner(n, R, i), td = el("td", "wincol");
+      if(w.none){td.appendChild(el("b", null, "nobody")); td.appendChild(el("div", "file", "no model fixed it")); td.classList.add("nowin");}
+      else {td.appendChild(el("b", null, w.models.map((m) => (MEDAL[1] + " " + mname(m))).join(" = "))); td.appendChild(el("div", "file", Math.round(w.sec) + " s" + (w.ahead !== null ? " · " + Math.round(w.ahead) + " s ahead of 2nd" : " · only one fixed it")));}
+      tr.appendChild(td);
+    }
+    tb.appendChild(tr);});
+  body.appendChild(tb);
+}
+function raceExportData(rs){
+  const n = raceNorm(rs), R = raceRanks(n);
+  return {when: new Date().toISOString().slice(0, 16).replace("T", " "), root: S ? S.root : "", scope: n.fns.length === 1 ? "one function (" + n.fns[0].name + ")" : "whole file", n: n.fns.length, rm: R.M,
+    models: R.order.map((m, i) => ({pos: i + 1, id: m, name: mname(m), avg: R.avg[m], fixed: R.st[m].fixed, of: R.st[m].of, sec: R.st[m].sec, tok: R.st[m].tok, tries: R.st[m].tries, firsts: R.st[m].firsts})),
+    fns: n.fns.map((f, i) => ({fn: f.name, file: f.file, winner: (() => {const w = raceWinner(n, R, i); return w.none ? null : {names: w.models.map(mname), sec: Math.round(w.sec * 10) / 10, ahead: w.ahead === null ? null : Math.round(w.ahead * 10) / 10};})(), results: R.order.map((m) => {const x = n.cell(m, i); return x ? {model: m, name: mname(m), status: (STATUS[x.status] || [x.status])[0], fixed: x.fixed, rank: x.fixed ? R.rank[m][i] : null, tries: x.tries, sec: Math.round(x.sec * 10) / 10, tok: x.tok || 0, delta: x.fixed ? Math.round((x.sec - R.bestSec[i]) * 10) / 10 : null} : null;}).filter(Boolean)}))};
+}
+const RACE_NOTE = "Rank 1 is the fastest fix of a function; a model that did not fix it counts as last place. One run per model per function: this is not a success rate, and times change from run to run.";
+function raceMd(d){
+  const L = ["# PatchPilot model race", "", "Project `" + d.root + "` · " + d.when + " UTC · " + d.scope + " · " + d.n + " function" + (d.n > 1 ? "s" : "") + ", " + d.rm + " models", "", "## Overall ranking (by average rank)", "", "| # | model | avg rank | fixed | total time | tokens | patch tries | first places |", "|---|---|---|---|---|---|---|---|"];
+  d.models.forEach((m) => L.push("| " + [m.pos, m.id, m.avg.toFixed(2), m.fixed + " / " + m.of, Math.round(m.sec) + " s", m.tok ? m.tok.toLocaleString("en-US") : "", m.tries, m.firsts].map(mdc).join(" | ") + " |"));
+  L.push("", "## Per function", "", "| function | " + d.models.map((m) => mdc(m.id)).join(" | ") + " | fastest fix |", "|---|" + d.models.map(() => "---").join("|") + "|---|");
+  d.fns.forEach((f) => L.push("| " + [f.fn].concat(d.models.map((m) => {const x = f.results.find((r) => r.model === m.id); return !x ? "–" : x.fixed ? ordinal(x.rank) + " · " + x.sec + " s" + (x.rank > 1 ? " (+" + x.delta + " s)" : "") + " · " + x.tries + (x.tries === 1 ? " try" : " tries") : "not fixed · " + x.tries + (x.tries === 1 ? " try" : " tries") + " · " + x.sec + " s";}), f.winner ? "**" + f.winner.names.join(" = ") + "** " + f.winner.sec + " s" + (f.winner.ahead !== null ? " (" + f.winner.ahead + " s ahead)" : " (only one fixed it)") : "nobody").map(mdc).join(" | ") + " |"));
+  return L.join("\n") + "\n\n" + RACE_NOTE + "\n";
+}
+function raceCsv(d){
+  const q = (x) => '"' + String(x == null ? "" : x).replace(/"/g, '""') + '"', L = [["function", "file", "model", "status", "rank", "tries", "seconds", "tokens", "seconds_behind_first", "fastest_fix_for_function"].join(",")];
+  d.fns.forEach((f) => f.results.forEach((x) => L.push([f.fn, f.file, x.model, x.status, x.rank === null ? "" : x.rank, x.tries, x.sec, x.tok, x.delta === null ? "" : x.delta, x.rank === 1 ? "yes" : ""].map(q).join(","))));
+  return L.join("\n") + "\n";
+}
+function raceHtml(d){
+  const medal = (r) => MEDAL[r] || "";
+  const rk = d.models.map((m) => "<tr><td>" + m.pos + "</td><td>" + medal(m.pos) + " " + esc(m.id) + "</td><td><div class=\"bar\"><i style=\"width:" + Math.max(4, d.rm > 1 ? 100 * (d.rm - m.avg) / (d.rm - 1) : 100) + "%\"></i></div></td><td><b>" + m.avg.toFixed(2) + "</b></td><td>" + m.fixed + " / " + m.of + "</td><td>" + Math.round(m.sec) + " s</td><td>" + (m.tok ? m.tok.toLocaleString("en-US") : "") + "</td><td>" + m.tries + "</td><td>" + m.firsts + "</td></tr>").join("");
+  const head = "<tr><th>function</th>" + d.models.map((m) => "<th>" + esc(m.id) + "</th>").join("") + "<th>🥇 fastest fix</th></tr>";
+  const body = d.fns.map((f) => "<tr><td><b>" + esc(f.fn) + "</b><br><small>" + esc(f.file) + "</small></td>" + d.models.map((m) => {const x = f.results.find((r) => r.model === m.id); return "<td class=\"" + (!x ? "" : x.fixed ? (x.rank === 1 ? "first" : "ok") : "bad") + "\">" + (!x ? "–" : x.fixed ? "<b>" + medal(x.rank) + " " + ordinal(x.rank) + "</b><br>" + x.sec + " s" + (x.rank > 1 ? " <small>(+" + x.delta + " s)</small>" : "") + "<br><small>" + x.tries + (x.tries === 1 ? " try" : " tries") + "</small>" : "<b>not fixed</b><br><small>" + x.tries + (x.tries === 1 ? " try · " : " tries · ") + x.sec + " s</small>") + "</td>";}).join("") + "<td><b>" + (f.winner ? "🥇 " + esc(f.winner.names.join(" = ")) + "</b><br>" + f.winner.sec + " s" + (f.winner.ahead !== null ? " <small>(" + f.winner.ahead + " s ahead of 2nd)</small>" : " <small>(only one fixed it)</small>") : "nobody</b>") + "</td></tr>").join("");
+  return "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>PatchPilot model race</title><style>"
+    + "body{font:15px/1.5 system-ui,sans-serif;max-width:1040px;margin:32px auto;padding:0 16px;color:#1c2b33}table{border-collapse:collapse;width:100%;margin:10px 0}th,td{text-align:left;padding:7px 10px;border-bottom:1px solid #dadde1;vertical-align:top}th{color:#5d6c7b;font-weight:600}"
+    + ".bar{height:9px;border-radius:5px;background:#e6e9ee;min-width:140px}.bar i{display:block;height:100%;border-radius:5px;background:#1a8f4c}td.first{background:#e3f5ea}td.bad{background:#fde8eb;color:#d4243a}small,.n{color:#5d6c7b;font-size:13px}"
+    + "<\/style></head><body><h1>PatchPilot model race</h1><p>Project <b>" + esc(d.root) + "</b> · " + esc(d.when) + " UTC · " + esc(d.scope) + " · " + d.n + " function" + (d.n > 1 ? "s" : "") + ", " + d.rm + " models</p>"
+    + "<h2>Overall ranking (by average rank)</h2><table><tr><th>#</th><th>model</th><th></th><th>avg rank</th><th>fixed</th><th>total time</th><th>tokens</th><th>patch tries</th><th>first places</th></tr>" + rk + "</table>"
+    + "<h2>Per function</h2><table>" + head + body + "</table><p class=\"n\">" + esc(RACE_NOTE) + "</p></body></html>";
+}
+function raceExportButtons(body, rs){
+  const w = el("div", "rexp");
+  [["⬇ Race report (.html)", () => download("patchpilot-race-" + stamp() + ".html", raceHtml(raceExportData(rs)), "text/html")], ["⬇ .md", () => download("patchpilot-race-" + stamp() + ".md", raceMd(raceExportData(rs)), "text/markdown")], ["⬇ .csv", () => download("patchpilot-race-" + stamp() + ".csv", raceCsv(raceExportData(rs)), "text/csv")]].forEach(([lab, fn]) => {const b = el("button", "btn small", lab); b.onclick = () => {fn(); toast("✓ Race exported");}; w.appendChild(b);});
+  body.appendChild(w);
+}
+function fileDraw(rs, body){
+  const fr = rs.fr, ms = fr.models, nK = fr.keys.length;
+  $("racetitle").textContent = nK === 1 && fr.fns ? "Model race · " + fr.fns[0].name : "Model race · whole file";
+  const run = ms.find((m) => fr.state[m] === "running");
+  fr.live = {}; ms.forEach((m) => {if(!fr.cells[m] && fr.part && fr.part[m] && Object.keys(fr.part[m]).length) fr.live[m] = fr.part[m];});
+  if(rs.stage === "run" || rs.stage === "paused"){
+    const ctl = el("div", "rexp"); ctl.style.margin = "0 0 10px";
+    if(rs.stage === "run"){const pb = el("button", "btn small", racePause ? "Pausing…" : "⏸ Pause"); pb.disabled = racePause; pb.title = "Stop after the current step and keep every finished result; Continue picks up from there"; pb.onclick = () => {racePause = true; api("/api/stop", {}).catch(() => {}); raceDraw();}; ctl.appendChild(pb);}
+    else {
+      const cb = el("button", "btn primary", "▶ Continue"); cb.title = "Carry on from the saved results; only unfinished work runs"; cb.onclick = () => raceFile(fr.models, fr); ctl.appendChild(cb);
+      const db = el("button", "btn small", "✕ Discard this race"); db.title = "Delete this saved race"; db.onclick = () => {raceSnapClear(); raceState = null; racePanel(false); render();}; ctl.appendChild(db);
+      ctl.appendChild(el("span", "hint", (rs.restored ? "Restored after a page reload. " : "Paused. ") + ms.filter((m) => fr.cells[m]).length + " of " + ms.length + " models finished" + (running ? " · a job from before the reload is still running, Continue waits for it" : "")));
+    }
+    body.appendChild(ctl);
+  }
+  const n = raceNorm(rs), R = raceRanks(n);
+  // news: every function a model has just finished goes into the live feed
+  n.models.forEach((m) => n.fns.forEach((f, i) => {const x = n.cell(m, i), key = m + "|" + i; if(x && !fr.seen[key]){fr.seen[key] = 1; fr.fresh[key] = Date.now(); fr.log.unshift((x.fixed ? "✓ " : "✕ ") + mname(m) + (x.fixed ? " fixed " : " did not fix ") + f.name + " · " + Math.round(x.sec) + " s · " + x.tries + (x.tries === 1 ? " try" : " tries"));}}));
+  if(rs.stage !== "setup" && nK){
+    const strip = el("div", "pstrip");
+    ms.forEach((m) => {const stt = fr.state[m] || "waiting", dn = fr.cells[m] ? nK : (fr.live[m] ? Object.keys(fr.live[m]).length : 0), c = el("div", "pchip " + stt), h = el("div", "ph");
+      if(stt === "running") h.appendChild(el("i", "spin")); h.appendChild(el("b", null, mname(m))); c.appendChild(h);
+      const tr = el("div", "mtrack"), f = el("i", stt === "done" ? "g" : "t"); animBar(f, "pg|" + m, 100 * dn / nK); tr.appendChild(f); c.appendChild(tr);
+      c.appendChild(el("small", null, (stt === "done" ? "done" : stt === "running" ? "running" : stt === "paused" ? "paused" : stt === "skipped" ? "skipped" : stt === "nostart" ? "could not start" : "waiting") + " · " + dn + " / " + nK + (stt === "running" && fr.t0[m] ? " · " + fmtT((Date.now() - fr.t0[m]) / 1000) : "")));
+      strip.appendChild(c);});
+    body.appendChild(strip);
+    if(fr.log.length){const tk = el("div", "rticker"); fr.log.slice(0, 5).forEach((l) => tk.appendChild(el("div", null, l))); body.appendChild(tk);}
+  }
+  let line = fr.error; if(!line && rs.stage === "run") line = fr.phase === "wait" ? "Waiting for the job that was running before the reload to end…" : fr.phase === "check" ? "Checking the file (no model)…" : run ? "Repairing with " + mname(run) + " · " + rows.filter((r, k) => fr.keys.indexOf(k) >= 0 && r.ran_by === run && !r.working && FINAL.indexOf(r.status) >= 0).length + " / " + nK + " functions" : "";
+  if(line) body.appendChild(el("p", "hint", line));
+  const waiting = ms.filter((m) => !fr.cells[m] && !(fr.live[m] && Object.keys(fr.live[m]).length)).map((m) => mname(m) + " (" + (fr.state[m] === "running" ? "running…" : fr.state[m] === "skipped" ? "skipped" : fr.state[m] === "nostart" ? "could not start" : "waiting") + ")");
+  if(n.models.length && nK){
+    if(rs.stage === "done" && R.st[R.order[0]].fixed){const w = R.order[0]; body.appendChild(el("div", "wstrip on", "✓ " + MEDAL[1] + " " + mname(w) + " · average rank " + R.avg[w].toFixed(2) + " · fixed " + R.st[w].fixed + " of " + nK + " in " + Math.round(R.st[w].sec) + " s. The table now holds the fastest fixing patch of each function, ready to Apply."));}
+    else if(rs.stage === "done") body.appendChild(el("div", "wstrip", "No model fixed a function in this race."));
+    rankBoard(body, n, R); rankMatrix(body, n, R, fr);
+  }
+  if(waiting.length) body.appendChild(el("div", "hint", "Not in the table yet: " + waiting.join(", ")));
+  body.appendChild(el("div", "hint", "One run per model per function. Times include the model call and the three gates and change from run to run. This is not a success rate."));
+  if(rs.stage === "done" && n.models.length){
+    raceExportButtons(body, rs);
+    const agg = raceAgg();
+    if(agg.length){
+      const ag = el("div", "raceagg"); ag.appendChild(el("b", null, "Across " + raceLog.records.length + " saved function race" + (raceLog.records.length > 1 ? "s" : "") + " (ranked by fixes, then average time to a fix)"));
+      agg.forEach((a) => ag.appendChild(el("div", null, mname(a.model) + " · fixed " + a.fixed + " of " + a.n + (a.avg != null ? " · " + Math.round(a.avg) + " s average" : "") + " · average rank " + a.avgRank.toFixed(2))));
+      body.appendChild(ag);
+      const f = fastest(); if(f){const ub = el("button", "btn primary", "⚡ Use " + mname(f.model) + " from now on"); ub.title = "Select this model in the Model panel"; ub.onclick = () => {pick.model = f.model; sync(); racePanel(false);}; body.appendChild(ub);}
+    }
+  }
+}
+$("racefile").onclick = () => {if(racing || (raceState && raceState.stage === "paused")) racePanel(true); else raceOpenFile();};
+let bulkBusy = false;
+// kind: apply = stage the fix (nothing written), write = save staged fixes to the files, undo = restore the written files
+function loadAuto(){try{return JSON.parse(localStorage.getItem("pp_auto") || "{}") || {};}catch(e){return {};}}
+function autoFor(m){if(racing) return {apply: false, write: false}; return (autoBy.__all ? autoBy["*"] : autoBy[m]) || {apply: false, write: false};}
+function saveAuto(){try{localStorage.setItem("pp_auto", JSON.stringify(autoBy));}catch(e){}}
+function bulkRows(kind, m){
+  return rows.map((r, i) => [r, i]).filter(([r]) => (!m || r.ran_by === m) && (kind === "apply" ? r.status === "repaired" && r.diff && !r.applied && !r.armed : kind === "write" ? r.armed && !r.applied : r.applied && r.job));
+}
+async function bulk(kind, m){
+  if(bulkBusy || running || readonly) return;
+  const list = bulkRows(kind, m); if(!list.length) return;
+  const w = list.length + " function" + (list.length > 1 ? "s" : "");
+  if(kind === "apply"){list.forEach(([r]) => {r.armed = true; r.undone = false;}); toast("Staged " + w + ". Press Write to save them to the files.", "warn"); render(); return;}
+  bulkBusy = true; render(); let ok = 0; const bad = [];
+  for(const [r, i] of list){
+    try{
+      if(kind === "write"){await api("/api/apply", {index: i, job: r.job}); r.applied = true; r.armed = false; r.undone = false;}
+      else {await api("/api/undo", {index: i, job: r.job}); r.applied = false; r.undone = true;}
+      ok++;
+    }catch(e){bad.push((r.function || "?") + ": " + e.message);}
+  }
+  bulkBusy = false; showErr(bad.join(" · "));
+  if(ok) toast((kind === "write" ? "✓ Written: " : "↶ Restored: ") + ok + " function" + (ok > 1 ? "s" : ""), kind === "write" ? "" : "warn");
+  render(); loadState(true);
+}
+function bulkBar(m, cls){
+  const w = el("div", cls || "bulk"), dis = running || readonly || bulkBusy;
+  [["apply", "Apply", "Stage the fixes. Nothing is written to the files yet."], ["write", "Write", "Save the staged fixes to the files"], ["undo", "Undo", "Restore the original of the files written"]].forEach(([k, lab, tip], n) => {
+    const c = bulkRows(k, m).length, b2 = el("button", "btn small" + (k === "write" ? " primary" : ""), (n + 1) + " · " + lab + (m ? "" : " all") + " (" + c + ")");
+    b2.disabled = dis || !c; b2.title = tip; b2.onclick = (e) => {e.stopPropagation(); bulk(k, m);}; w.appendChild(b2);
+  });
+  return w;
 }
 let toastT = null;
 function toast(msg, cls){const t = $("toast"); if(!t) return; t.textContent = msg; t.className = "show" + (cls ? " " + cls : ""); clearTimeout(toastT); toastT = setTimeout(() => {t.className = "";}, 3200);}
@@ -372,7 +848,7 @@ function seg(id, items, key){
   items.forEach(([v, label, tip]) => {const b = el("button", null, label); b.dataset.v = v; if(tip) b.title = tip; b.setAttribute("aria-pressed", String(pick[key] === v));
     b.onclick = () => {pick[key] = v; sync();}; s.appendChild(b);});
 }
-let manual = false, scrollTo = -1, autoApply = false, autoWrite = false, autoQ = [], autoBusy = false, resetArmed = false, stopping = false;
+let manual = false, scrollTo = -1, autoBy = loadAuto(), autoQ = [], autoBusy = false, resetArmed = false, stopping = false;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 function sync(){
   const repair = pick.mode === "repair";
@@ -384,7 +860,7 @@ function sync(){
   $("model").hidden = !repair || items.length < 2; $("attwrap").hidden = !repair; $("modelgrp").hidden = !repair; $("autogrp").hidden = !repair;
   const loc = repair && pick.model === "local"; $("endpoint").hidden = !loc; $("health").hidden = !loc;
   $("run").textContent = repair ? "▶ Repair" : "▶ Check";
-  $("run").disabled = running || readonly && false || !(S && S.manifests.length);
+  runState();
   $("manifest").disabled = running; $("history").disabled = running;
   $("stop").hidden = !running; $("run").hidden = running;
   $("stop").textContent = stopping ? "Stopping…" : "■ Stop"; $("stop").disabled = stopping;
@@ -394,11 +870,17 @@ function sync(){
   if(loc) checkHealth();
 }
 function autoUi(){
-  const a = $("auto"); a.textContent = "";
-  [["apply", "Auto-apply", "Press Apply for each fixed function", autoApply], ["write", "Auto-write", "Also confirm and write the file", autoWrite]].forEach(([v, label, tip, on]) => {
+  const a = $("auto"); a.textContent = ""; const cur = autoFor(pick.model), key = autoBy.__all ? "*" : pick.model;
+  $("autolab").textContent = autoBy.__all ? "When any model fixes a function:" : "When " + mname(pick.model) + " fixes a function:";
+  [["apply", "Auto-apply", "Press Apply for each function the model fixes", cur.apply], ["write", "Auto-write", "Also confirm and write the file", cur.write]].forEach(([v, label, tip, on]) => {
     const b = el("button", null, label); b.title = tip; b.setAttribute("aria-pressed", String(on));
-    b.onclick = () => {if(v === "apply"){autoApply = !autoApply; if(!autoApply) autoWrite = false;} else {autoWrite = !autoWrite; if(autoWrite) autoApply = true;} autoUi();};
+    b.onclick = () => {const n2 = {apply: cur.apply, write: cur.write}; if(v === "apply"){n2.apply = !n2.apply; if(!n2.apply) n2.write = false;} else {n2.write = !n2.write; if(n2.write) n2.apply = true;}
+      autoBy[key] = n2; saveAuto(); autoUi();};
     a.appendChild(b);});
+  const ab = el("button", null, "All models"); ab.title = "Use one setting for every model, whichever is selected"; ab.setAttribute("aria-pressed", String(!!autoBy.__all));
+  ab.onclick = () => {if(!autoBy.__all){autoBy["*"] = {apply: cur.apply, write: cur.write};} autoBy.__all = !autoBy.__all; saveAuto(); autoUi();};
+  a.appendChild(ab);
+  fastUi();
   const n = S ? S.changed || 0 : 0, rb = $("reset");
   rb.textContent = resetArmed ? "Reset files?" : "↺ Reset" + (n ? " (" + n + ")" : "");
   rb.className = "btn" + (resetArmed ? " warn" : ""); rb.disabled = running || !n;
@@ -407,8 +889,9 @@ function autoUi(){
 let hTimer = null;
 async function checkHealth(){
   clearTimeout(hTimer); if($("health").hidden) return;
-  try{const r = await api("/api/health?endpoint=" + encodeURIComponent($("endpoint").value)); $("hdot").className = "dot " + (r.ok ? "ok" : "bad"); $("htxt").textContent = r.ok ? "model ready" : (r.reason || "no model");}
-  catch(e){$("hdot").className = "dot bad"; $("htxt").textContent = "no model";}
+  try{const r = await api("/api/health?endpoint=" + encodeURIComponent($("endpoint").value)); $("hdot").className = "dot " + (r.ok ? "ok" : "bad"); $("htxt").textContent = r.ok ? "model ready" : (r.reason || "no model") + " · start llama-server"; localOk = !!r.ok; localWhy = r.reason || "";}
+  catch(e){$("hdot").className = "dot bad"; $("htxt").textContent = "no model"; localOk = false; localWhy = "no answer";}
+  runState();
   hTimer = setTimeout(checkHealth, 4000);
 }
 
@@ -432,14 +915,18 @@ function progress(){
 function unfixed(){return rows.map((r, k) => (!r.status || ["not_repaired", "error", "case_failed", "silent"].includes(r.status)) ? k : -1).filter((k) => k >= 0);}
 function resumeUi(){
   const ks = unfixed(), show = !running && !readonly && jobRepair && ks.length > 0;
-  $("clear").hidden = running || !rows.length; $("resume").hidden = !show; if(show) $("resume").textContent = "⏯ Resume (" + ks.length + ")";
+  const rpaused = !!(raceState && raceState.stage === "paused"); $("racefile").hidden = (!racing && !rpaused && (running || readonly)) || !(S && S.manifests.length); $("racefile").textContent = racing ? "⚡ Race running…" : rpaused ? "⚡ Race paused · continue" : "⚡ Race file"; $("clear").hidden = running || !rows.length; $("rep-html").hidden = $("rep-md").hidden = running || !rows.some((r) => r.status); $("cmp-btn").hidden = running || !(S && S.previous && (S.previous.length > 1 || (S.previous.length && rows.some((r) => r.status)))); $("resume").hidden = !show; if(show) $("resume").textContent = "⏯ Resume (" + ks.length + ")";
 }
 function render(){
   resumeUi();
   progress();
   const b = $("board"); b.textContent = "";
   if(!S || !S.manifests.length){const e = el("div", "empty"); e.appendChild(el("b", null, "∅")); e.appendChild(document.createTextNode("No scan.json in this folder")); b.appendChild(e); return;}
-  if(!rows.length){const e = el("div", "empty"); e.appendChild(el("b", null, "▶")); e.appendChild(document.createTextNode("Pick a file, press Run")); b.appendChild(e); return;}
+  if(!rows.length){
+    const it = el("div", "intro"); it.appendChild(el("b", null, "A library upgrade can silently change what a function returns, and its tests still pass."));
+    it.appendChild(el("p", null, "PatchPilot compares the old and the new library, asks a model for a fix, and accepts a patch only when it passes three gates: the visible tests, hidden tests, and a differential check against the original code. The model never decides the verdict."));
+    b.appendChild(it);
+    const e = el("div", "empty"); e.appendChild(el("b", null, "▶")); e.appendChild(document.createTextNode("Pick a file, press Run")); b.appendChild(e); return;}
   const c = counts();
   const tiles = el("div", "tiles");
   [["", c.n, "functions"], ["bad", c.differs, "differ"], ["ok", c.fixed, "fixed"], ["blue", c.blocked, "bad patches blocked"], ["wr", rows.filter((r) => r.applied).length, "written to files"]].forEach(([cls, v, l]) => {
@@ -468,6 +955,7 @@ function render(){
       if(v.sec) c2.appendChild(mrow("Time", v.sec, mx("sec"), Math.round(v.sec) + " s", "t"));
       const ch = el("div", "mchips");
       v.names.forEach((n) => ch.appendChild(el("span", "mchip g", "✓ " + n))); v.failed.forEach((n) => ch.appendChild(el("span", "mchip r", "✕ " + n))); c2.appendChild(ch);
+      if(v.fixed) c2.appendChild(bulkBar(k2, "mact"));
       grid.appendChild(c2);
     });
     b.appendChild(grid);
@@ -483,12 +971,13 @@ function render(){
       st.appendChild(document.createTextNode(t)); b.appendChild(st);
     }
   }
+  if(rows.some((r) => r.status === "repaired" && r.diff)) b.appendChild(bulkBar(null));
   const tb = el("table"), th = el("thead"), hr = el("tr");
   [["Function"], ["Old lib"], ["New lib"], ["Result"], ["Tries"], [""]].forEach(([x], i) => hr.appendChild(el("th", i === 5 ? "r" : null, x))); th.appendChild(hr); tb.appendChild(th);
   const body = el("tbody");
   rows.forEach((r, i) => {
     const tr = el("tr", "row" + (r.applied ? " applied" : "")); tr.style.setProperty("--st", r.working ? "var(--blue)" : (STATUS[r.status] || [0, "transparent"])[1]); tr.tabIndex = 0; tr.setAttribute("aria-expanded", String(open === i));
-    const c1 = el("td"); const f = el("div", "fn"); f.appendChild(el("span", "chev", "▸")); f.appendChild(document.createTextNode(r.function || "")); c1.appendChild(f); c1.appendChild(el("div", "file", r.file || "")); tr.appendChild(c1);
+    const c1 = el("td"); const f = el("div", "fn"); f.appendChild(el("span", "chev", "▸")); f.appendChild(document.createTextNode(r.function || "")); c1.appendChild(f); c1.appendChild(el("div", "file", r.file || "")); const why = r.working ? "" : whyRejected(r); if(why){const wl = el("div", "why", why); wl.title = why; c1.appendChild(wl);} tr.appendChild(c1);
     if(r.example){tr.appendChild(el("td", "out", short(r.example.old, 60))); tr.appendChild(el("td", "out bad", short(r.example.new, 60)));}
     else {const x = el("td", "file", r.status ? (r.detail || "") : ""); x.colSpan = 2; tr.appendChild(x);}
     const c4 = el("td");
@@ -497,6 +986,7 @@ function render(){
     else if(r.status){const [lab, fg, bg] = STATUS[r.status] || [r.status, "var(--dim)", "var(--surface)"]; const p = el("span", "pill", lab); p.style.color = fg; p.style.background = bg; c4.appendChild(p);}
     else c4.appendChild(el("span", "hint", "…"));
     if(r.ran_by && r.status && !["silent", "healthy", "loud"].includes(r.status)){const mn = el("div", "file", mname(r.ran_by)); mn.title = r.ran_by; c4.appendChild(mn);}
+    if(["error", "case_failed"].includes(r.status) && r.detail){const d2 = el("div", "file", short(r.detail, 90)); d2.title = r.detail; c4.appendChild(d2);}
     if(r.applied) c4.appendChild(el("div", "wbadge", "✓ written to disk"));
     else if(r.undone) c4.appendChild(el("div", "wbadge undone", "↶ restored original"));
     tr.appendChild(c4);
@@ -509,19 +999,21 @@ function render(){
     if(r.applied){
       c6.appendChild(el("span", "wrote" + (r.flash ? " pop" : ""), "✓ written"));
       if(!readonly && r.job){
-        const ub = el("button", "btn small", "Undo");
+        const ub = el("button", "btn small", "Undo"); ub.title = "Put the original file content back";
         ub.onclick = async (e) => {e.stopPropagation(); try{await api("/api/undo", {index: i, job: r.job}); r.applied = false; r.undone = true; showErr(""); toast("↶ Restored " + (r.file || "file") + " · " + r.function, "warn");}catch(er){showErr(er.message);} render(); loadState(true);};
         c6.appendChild(ub);
       }
     }
     else if(!running && !readonly && ["not_repaired", "error", "case_failed", "silent"].includes(r.status)){
-      const rb = el("button", "btn small", r.status === "silent" ? "Repair" : "Retry");
+      const rb = el("button", "btn small", r.status === "silent" ? "Repair" : "Retry"); rb.title = "Try this function again with the selected model";
       rb.onclick = (e) => {e.stopPropagation(); startJob("repair", [i]);};
       c6.appendChild(rb);
+      if(!racing){const rc = el("button", "btn small", "⚡ Race"); rc.title = "Run this function with every model and see which fixes it fastest"; rc.onclick = (e) => {e.stopPropagation(); raceOpen(i);}; c6.appendChild(rc);}
     }
     else if(r.status === "repaired" && !readonly && r.diff) {
       const writing = r.anim === "writing";
       const bt = el("button", "btn small " + (r.armed || writing ? "warn" : "primary") + (r.anim === "press" ? " press" : "") + (writing ? " writing" : ""), writing ? "" : r.armed ? "Write file?" : "Apply");
+      bt.title = r.armed ? "Click to write the patch into the file" : "Stage the patch. Press again to write it.";
       if(writing){bt.appendChild(el("i", "spin")); bt.appendChild(document.createTextNode("Writing…")); bt.disabled = true;}
       bt.onclick = async (e) => {e.stopPropagation();
         if(!r.armed){r.armed = true; setTimeout(() => {r.armed = false; render();}, 4000); render(); return;}
@@ -534,7 +1026,7 @@ function render(){
     body.appendChild(tr);
     if(open === i){const d = el("tr", "detail"), dc = el("td"); dc.colSpan = 6; fill(dc, r); d.appendChild(dc); body.appendChild(d);}
   });
-  tb.appendChild(body); b.appendChild(tb);
+  tb.appendChild(body); const ts = el("div", "tscroll"); ts.appendChild(tb); b.appendChild(ts);
   if(scrollTo >= 0){scrollTo = -1; const d = document.querySelector("tr.detail"); if(d) d.scrollIntoView({block: "center", behavior: "instant"});}
 }
 function diffView(text, applied){
@@ -580,7 +1072,7 @@ function onEvent(ev){
   const k = ev.index;
   if(ev.event === "start"){rows = Array.from({length: ev.total}, (_, i) => retain[i] || {}); sumb = {}; autoQ = []; return;}
   if(k !== undefined && retain[k]) return;
-  if(ev.event === "triage" || ev.event === "result"){Object.assign(rows[k], ev.row); if(ev.event === "result" && jobRepair && lastModel) rows[k].ran_by = lastModel; rows[k].job = curJob; rows[k].working = false; if(ev.event === "result" && ev.row.diff){if(!manual && !readonly){open = k; scrollTo = k;} if(running && !readonly && autoApply){autoQ.push(k); pump();}}}
+  if(ev.event === "triage" || ev.event === "result"){Object.assign(rows[k], ev.row); if(ev.event === "result" && jobRepair && lastModel) rows[k].ran_by = lastModel; rows[k].job = curJob; rows[k].working = false; if(ev.event === "result" && ev.row.diff){if(!manual && !readonly){open = k; scrollTo = k;} if(running && !readonly && autoFor(lastModel).apply){autoQ.push(k); pump();}}}
   else if(ev.event === "repairing"){rows[k].working = true; if(lastModel) rows[k].ran_by = lastModel; if(!manual && !readonly){open = k; scrollTo = k;}}
   else if(ev.event === "attempt"){rows[k].att = (rows[k].att || []).concat([ev.attempt]);}
   else if(ev.event === "applied"){rows[k].applied = true;}
@@ -597,7 +1089,7 @@ async function pump(){
     r.anim = "press"; render(); await sleep(800);
     if(rows[k] !== r) continue;
     r.anim = ""; r.armed = true; render();
-    if(!autoWrite) continue;  // stays at "Write file?" until you confirm
+    if(!autoFor(r.ran_by).write) continue;  // stays at "Write file?" until you confirm
     await sleep(900);
     if(rows[k] !== r) continue;
     r.armed = false; r.anim = "writing"; render(); await sleep(700);
@@ -622,7 +1114,9 @@ async function tick(){
 }
 function follow(){running = true; sync(); clearInterval(poll); poll = setInterval(tick, 400); tick();}
 
-async function startJob(mode, only, model){
+async function startJob(mode, only, model, fromRace){
+  if(racing && !fromRace){showErr("A model race is running. Stop it first."); return;}
+  if(mode === "repair" && (model || pick.model) === "local" && localOk === false){showErr(localMsg()); return;}
   showErr(""); readonly = false; $("history").value = ""; since = 0; open = -1; manual = false; scrollTo = -1;
   retain = {}; jobOnly = only ? new Set(only) : null;
   if(only) rows.forEach((r, k) => {if(only.includes(k)) r.working = true; else retain[k] = JSON.parse(JSON.stringify(r));});
@@ -635,13 +1129,14 @@ async function startJob(mode, only, model){
   catch(e){showErr(e.message); rows.forEach((r) => r.working = false); retain = {}; jobOnly = null; render();}
 }
 $("run").onclick = () => startJob(pick.mode, null);
-$("stop").onclick = async () => {stopping = true; sync(); autoUi(); try{await api("/api/stop", {});}catch(e){stopping = false; sync(); autoUi(); showErr(e.message);}};
+$("stop").onclick = async () => {raceAbort = true; stopping = true; sync(); autoUi(); try{await api("/api/stop", {});}catch(e){stopping = false; sync(); autoUi(); showErr(e.message);}};
 $("clear").onclick = () => {rows = []; retain = {}; jobOnly = null; jobRepair = false; readonly = false; open = -1; manual = false; sumb = {}; $("history").value = ""; showErr(""); sync(); render(); autoUi();};
 $("resume").onclick = () => {const ks = unfixed(); if(ks.length) startJob("repair", ks, pick.model);};
 $("history").onchange = async () => {
   const id = $("history").value; showErr("");
   if(!id){readonly = false; rows = []; render(); return;}
   try{const d = await api("/api/report?id=" + id); readonly = true; open = -1; rows = d.targets.map((t) => Object.assign({}, t, {att: Array.isArray(t.attempts) ? t.attempts : []}));
+    if(d.summary && d.summary.model) rows.forEach((r) => {if(["repaired", "not_repaired", "error", "case_failed"].includes(r.status)) r.ran_by = d.summary.model;});
     sumb = {line: d.summary && d.summary.seconds ? Math.round(d.summary.seconds) + " s" + (d.summary.tokens ? " · " + d.summary.tokens.toLocaleString("en-US") + " tokens" : "") : ""}; render();}
   catch(e){showErr(e.message);}
 };
@@ -659,7 +1154,7 @@ async function loadState(keep){
 $("endpoint").oninput = () => {clearTimeout(hTimer); hTimer = setTimeout(checkHealth, 400);};
 let theme = "auto";
 $("theme").onclick = () => {theme = theme === "auto" ? "dark" : theme === "dark" ? "light" : "auto"; if(theme === "auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", theme);};
-loadState(false).then(async () => {const j = await api("/api/job?since=0"); if(j.status){curJob = j.id; jobRepair = !!(j.params && j.params.mode === "repair"); lastModel = (j.params && j.params.model) || null; if(jobRepair){pick.mode = "repair"; if(lastModel) pick.model = lastModel; sync();} if(j.status === "running" || j.status === "stopping"){running = true; follow();} else {(j.events || []).forEach(onEvent); since = j.n; rows.forEach((r) => r.working = false); render();}}}).catch((e) => showErr(e.message));
+loadState(false).then(async () => {const j = await api("/api/job?since=0"); if(j.status){curJob = j.id; jobRepair = !!(j.params && j.params.mode === "repair"); lastModel = (j.params && j.params.model) || null; if(jobRepair){pick.mode = "repair"; if(lastModel) pick.model = lastModel; sync();} if(j.status === "running" || j.status === "stopping"){running = true; follow();} else {(j.events || []).forEach(onEvent); since = j.n; rows.forEach((r) => r.working = false); render();}}raceRestore();}).catch((e) => showErr(e.message));
 </script>
 </body>
 </html>

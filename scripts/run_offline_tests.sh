@@ -20,6 +20,7 @@ tests=(
   "patchpilot.scan_test"
   "patchpilot.view_test"
   "patchpilot.app_test"
+  "patchpilot.app_html_test"
   "patchpilot.capture_test"
   "patchpilot.census_test"
   "patchpilot.discover_test"
