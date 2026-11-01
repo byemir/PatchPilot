@@ -33,7 +33,7 @@ header{display:flex;align-items:center;gap:14px;padding:14px 32px;border-bottom:
 .brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:22px;letter-spacing:-.02em;margin-right:auto}
 .mark{width:36px;height:36px;border-radius:10px;display:block;box-shadow:0 4px 14px rgba(110,80,255,.35)}
 .mark svg{width:100%;height:100%;display:block}
-.brand .bt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;line-height:1.15}.soc{display:flex;gap:8px;line-height:0}.soc a{color:var(--dim);display:inline-flex;transition:color .15s,transform .15s}.soc a:hover,.soc a:focus-visible{color:var(--blue);transform:translateY(-1px)}.soc svg{width:16px;height:16px}
+.brand .bt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;line-height:1.15}.soc{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}.soc a{display:inline-flex;align-items:center;gap:7px;padding:5px 12px 5px 8px;border-radius:999px;border:1px solid var(--line);background:var(--raised);color:var(--ink);font-size:14px;font-weight:600;letter-spacing:0;text-decoration:none;line-height:1;transition:border-color .15s,transform .15s,color .15s}.soc a:hover,.soc a:focus-visible{color:var(--blue);border-color:var(--blue);transform:translateY(-1px)}.soc svg{width:22px;height:22px;flex:none}
 .brand .name{background:linear-gradient(90deg,#1a8cff 0%,#7b5cff 55%,#ff5c9d 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
 .btn{border:1px solid var(--line);background:var(--raised);padding:8px 16px;border-radius:999px;cursor:pointer;font-weight:600;font-size:14px}
 .btn:hover{background:var(--surface)}
@@ -133,6 +133,10 @@ input.num{width:52px;text-align:center}
 .dchip{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:700;margin:2px 5px 2px 0;white-space:nowrap;line-height:1.5;border:0;font-family:inherit}
 .dchip.ok{color:var(--ok);background:var(--ok-soft)}.dchip.warn{color:var(--warn);background:var(--warn-soft)}.dchip.bad{color:var(--bad);background:var(--bad-soft)}.dchip.nu{color:var(--dim);background:var(--surface)}
 button.dchip{cursor:pointer}button.dchip:hover,button.dchip:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+.hcmp{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}.hcmp .hh{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-weight:700;font-size:13px;margin-bottom:6px}
+.hcmp .hr{display:grid;grid-template-columns:minmax(110px,1.1fr) 2fr auto;gap:4px 10px;align-items:center;padding:6px 8px;margin:2px -8px;border-radius:10px;cursor:pointer}.hcmp .hr:hover,.hcmp .hr:focus-visible{background:var(--blue-soft);outline:0}
+.hcmp .hn{font-size:12.5px;overflow-wrap:anywhere}.hcmp .hn small{display:block;color:var(--dim)}.hcmp .hb{display:grid;gap:3px}.hcmp .hb div{display:grid;grid-template-columns:1fr 48px;gap:6px;align-items:center;font-size:11.5px;color:var(--dim)}
+.hcmp .hb .mtrack{height:8px}
 #pop{position:fixed;z-index:2000;max-width:360px;min-width:250px;padding:12px 14px;border-radius:12px;background:var(--bg);color:var(--ink);border:1px solid var(--line);box-shadow:0 10px 34px rgba(0,0,0,.4);font-size:13px;pointer-events:none}
 #pop b{display:block;font-size:13px}#pop .ps{color:var(--dim);font-size:12px;margin:2px 0 8px}
 #pop .pr{display:grid;grid-template-columns:62px 1fr auto;gap:6px;align-items:center;padding:3px 0}#pop .pr.me{background:var(--blue-soft);border-radius:6px;padding:3px 4px}
@@ -205,10 +209,10 @@ button.dchip{cursor:pointer}button.dchip:hover,button.dchip:focus-visible{outlin
 .bar .hint,.bar label.hint{font-size:14px}
 .bar input.num{width:58px}
 /* larger brand */
-.brand{gap:16px;font-size:34px;letter-spacing:-.03em}
-.mark{width:56px;height:56px;border-radius:15px;box-shadow:0 6px 20px rgba(110,80,255,.4)}
+.brand{gap:18px;font-size:44px;letter-spacing:-.03em}
+.mark{width:76px;height:76px;border-radius:20px;box-shadow:0 6px 20px rgba(110,80,255,.4)}
 header{padding-top:16px;padding-bottom:16px}
-@media(max-width:640px){.brand{font-size:26px;gap:12px}.mark{width:44px;height:44px;border-radius:12px}}
+@media(max-width:640px){.brand{font-size:30px;gap:12px}.mark{width:52px;height:52px;border-radius:14px}}
 /* model row: one full-width panel, chips on one line, address and status on the same line */
 .bar .g-model{order:2;flex:1 1 100%}
 .bar .p-action{order:3}.bar .p-auto{order:4}.bar .g-run{order:5}
@@ -334,8 +338,9 @@ td.wincell{box-shadow:inset 0 0 0 2px var(--ok);background:rgba(60,200,120,.10)}
 <body>
 <header>
   <div class="brand"><span class="mark"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PatchPilot logo"><defs><linearGradient id="ppg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1A8CFF"/><stop offset=".55" stop-color="#7B5CFF"/><stop offset="1" stop-color="#FF5C9D"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#ppg)"/><rect x="13" y="13" width="38" height="38" rx="10" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="2.6" stroke-dasharray="4.2 4.2" stroke-linecap="round"/><path d="M22.5 33.5l6.8 6.8L42 26.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M35 25h7.5v7.5" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="bt"><span class="name">PatchPilot</span><span class="soc">
-    <a href="https://www.linkedin.com/in/emirhancam%C3%A7%C4%B1/" target="_blank" rel="noopener noreferrer" title="LinkedIn" aria-label="LinkedIn"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4" fill="currentColor"/><circle cx="7.6" cy="7.7" r="1.5" fill="var(--bg)"/><rect x="6.2" y="10" width="2.8" height="7.6" rx=".5" fill="var(--bg)"/><path d="M11 10h2.6v1.1c.5-.8 1.4-1.3 2.6-1.3 2.2 0 3 1.4 3 3.6v4.2h-2.8v-3.8c0-1-.3-1.6-1.2-1.6-.9 0-1.4.7-1.4 1.7v3.7H11z" fill="var(--bg)"/></svg></a>
-    <a href="https://x.com/emirhancamci3" target="_blank" rel="noopener noreferrer" title="X" aria-label="X"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4" fill="currentColor"/><path d="M6.8 6.8l10.4 10.4M17.2 6.8L6.8 17.2" stroke="var(--bg)" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg></a>
+    <a href="https://www.linkedin.com/in/emirhancam%C3%A7%C4%B1/" target="_blank" rel="noopener noreferrer" title="LinkedIn" aria-label="LinkedIn"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4" fill="#0a66c2"/><circle cx="7.6" cy="7.7" r="1.5" fill="#fff"/><rect x="6.2" y="10" width="2.8" height="7.6" rx=".5" fill="#fff"/><path d="M11 10h2.6v1.1c.5-.8 1.4-1.3 2.6-1.3 2.2 0 3 1.4 3 3.6v4.2h-2.8v-3.8c0-1-.3-1.6-1.2-1.6-.9 0-1.4.7-1.4 1.7v3.7H11z" fill="#fff"/></svg><span>LinkedIn</span></a>
+    <a href="https://x.com/emirhancamci3" target="_blank" rel="noopener noreferrer" title="X" aria-label="X"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4" fill="currentColor"/><path d="M6.8 6.8l10.4 10.4M17.2 6.8L6.8 17.2" stroke="var(--raised)" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg><span>X</span></a>
+    <a href="https://github.com/byemir/PatchPilot" target="_blank" rel="noopener noreferrer" title="Source code on GitHub" aria-label="GitHub"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M8.4 9.2V6.8l2.1 1.5a6.2 6.2 0 0 1 3 0l2.1-1.5v2.4a3.7 3.7 0 0 1 .9 2.5c0 2.8-1.6 3.9-3.6 4.1.4.4.6 1 .6 1.6v1.9M10.2 17.4c-1.7.5-2.6-.4-3.2-1.5" stroke="var(--raised)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><span>GitHub</span></a>
   </span></span></div>
   <span class="hint" id="rootname"></span>
   <button class="btn" id="theme" title="Light / dark">◐</button>
@@ -821,6 +826,29 @@ function recRows(rec){
 }
 let popEl = null;
 function hidePop(){if(popEl) popEl.hidden = true;}
+// model card: how this model's fixed functions compare with the fastest model of the newest saved race of each function
+function histCompare(model){
+  const items = [];
+  rows.forEach((r) => {if(r.ran_by !== model || r.status !== "repaired") return; const rec = histFn(r); if(!rec) return;
+    const rr = recRows(rec), best = rr.find((x) => x.rank === 1); if(!best) return; const th = rr.find((x) => x.model === model && x.fixed), sec = r.seconds || (th ? th.sec : 0); if(!sec) return;
+    items.push({fn: r.function, sec, best, rec, win: best.model === model || sec <= best.sec});});
+  if(!items.length) return null;
+  const box = el("div", "hcmp"), hh = el("div", "hh"), wins = items.filter((x) => x.win).length;
+  hh.appendChild(el("span", null, "Compared with saved races")); hh.appendChild(dchip(wins === items.length ? "ok" : wins ? "warn" : "bad", "🥇 " + wins + " of " + items.length, "Functions where this model was at least as fast as the fastest model in the newest saved race")); box.appendChild(hh);
+  const g = {}; items.filter((x) => !x.win).forEach((x) => {const q = g[x.best.model] || (g[x.best.model] = {m: x.best.model, n: 0, mine: 0, theirs: 0, recs: []}); q.n++; q.mine += x.sec; q.theirs += x.best.sec; q.recs.push(x.rec);});
+  const list = Object.values(g).sort((a, b) => b.n - a.n).slice(0, 3);
+  if(!list.length) box.appendChild(el("div", "hint", "As fast as the fastest model on every function with a saved race."));
+  list.forEach((q) => {
+    const row = el("div", "hr"), nm = el("div", "hn"), when = q.recs.map((r) => r.when).sort(), mx = Math.max(q.mine, q.theirs), d = Math.round(q.mine - q.theirs);
+    nm.appendChild(document.createTextNode("vs 🥇 " + mname(q.m))); nm.appendChild(el("small", null, "fastest on " + q.n + " function" + (q.n > 1 ? "s" : "")));
+    const bars = el("div", "hb");
+    [["this run", q.mine, "t"], ["🥇", q.theirs, "g"]].forEach(([lab, v, c]) => {const line = el("div"), t = el("div", "mtrack"), f = el("i", c); f.style.width = Math.max(4, 100 * v / mx) + "%"; t.appendChild(f); line.appendChild(t); line.appendChild(el("span", null, Math.round(v) + " s")); bars.appendChild(line);});
+    row.appendChild(nm); row.appendChild(bars); row.appendChild(dchip(d > 0 ? "warn" : "ok", (d > 0 ? "+" : "−") + Math.abs(d) + " s", "Same functions: this run against the fastest model of the saved race" + (q.mine > 0 && q.theirs > 0 ? " (x" + (q.mine / q.theirs).toFixed(1) + ")" : "")));
+    row.tabIndex = 0; row.title = "Saved race of " + new Date(when[when.length - 1]).toLocaleString() + (when.length > 1 ? " (and " + (when.length - 1) + " earlier)" : "") + ". Click to open the Race history.";
+    row.onclick = () => histOpenAt(q.recs[q.recs.length - 1]); row.onkeydown = (e) => {if(e.key === "Enter") row.onclick();}; box.appendChild(row);});
+  box.appendChild(el("div", "hint", "One run each time. Times change from run to run, so small gaps mean little."));
+  return box;
+}
 function showPop(chip, rec, me){
   if(!popEl){popEl = el("div"); popEl.id = "pop"; popEl.setAttribute("role", "tooltip"); document.body.appendChild(popEl);}
   popEl.textContent = ""; popEl.hidden = false;
@@ -1074,6 +1102,7 @@ function render(){
       if(v.sec) c2.appendChild(mrow("Time", v.sec, mx("sec"), Math.round(v.sec) + " s", "t"));
       const ch = el("div", "mchips");
       v.names.forEach((n) => ch.appendChild(el("span", "mchip g", "✓ " + n))); v.failed.forEach((n) => ch.appendChild(el("span", "mchip r", "✕ " + n))); c2.appendChild(ch);
+      const hcv = histCompare(k2); if(hcv) c2.appendChild(hcv);
       if(v.fixed) c2.appendChild(bulkBar(k2, "mact"));
       grid.appendChild(c2);
     });
