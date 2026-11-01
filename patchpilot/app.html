@@ -267,6 +267,7 @@ tr.row td:first-child{border-left:4px solid var(--st,transparent)}
 .seg.auto button{padding:8px 12px;font-size:13px}
 @media(prefers-reduced-motion:reduce){.btn.press,.wrote.pop{animation:none}}
 @media(max-width:900px){.tiles{grid-template-columns:1fr 1fr}input[type=text]{width:150px}}
+.mstats{width:100%;border-collapse:collapse;margin:10px 0 2px;font-size:13px}.mstats th,.mstats td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line)}.mstats th{color:var(--dim);font-weight:500}
 </style>
 </head>
 <body>
@@ -297,7 +298,7 @@ tr.row td:first-child{border-left:4px solid var(--st,transparent)}
         <select id="history" aria-label="Past runs"></select>
         <button class="btn" id="clear" hidden title="Empty the table and the Resume state. Files are not touched.">✕ Clear results</button>
         <button class="btn" id="reset" title="Put every file the app wrote back to its first content">↺ Reset</button>
-        <button class="btn resume" id="resume" hidden title="Repair the functions that are not fixed yet. Fixed ones and their Apply buttons stay.">⏯ Resume</button>
+        <button class="btn resume" id="resume" hidden title="Repair the functions that are not fixed yet, with the model selected above. Fixed ones and their Apply buttons stay.">⏯ Resume</button>
         <button class="btn primary go" id="run">▶ Run</button>
         <button class="btn stop go" id="stop" hidden>■ Stop</button>
       </div></div>
@@ -321,6 +322,17 @@ async function api(path, body){
   if(!r.ok) throw new Error((j && j.error) || ("HTTP " + r.status));
   if(j === null) throw new Error("unreadable answer from the server");
   return j;
+}
+function mname(m){return m === "local" ? "Local" : m.startsWith("meta-models/") ? m.split("/").pop() + " · Baseten" : m.startsWith("accounts/fireworks/") ? m.split("/").pop() + " · Fireworks" : m.split("/").pop();}
+function modelStats(){
+  const m = {};
+  rows.forEach((r) => {
+    if(!r.ran_by || r.working || !["repaired", "not_repaired", "error", "case_failed"].includes(r.status)) return;
+    const s = m[r.ran_by] || (m[r.ran_by] = {n: 0, fixed: 0, tries: 0, blocked: 0, tok: 0, sec: 0, names: []}), a = att(r);
+    s.n++; if(r.status === "repaired"){s.fixed++; s.names.push(r.function);}
+    s.tries += a.length; s.blocked += a.filter((x) => x.gates.outcome !== "accepted").length; s.tok += r.tokens || 0; s.sec += r.seconds || 0;
+  });
+  return m;
 }
 let lastModel = null, retain = {}, jobOnly = null, curJob = null, S = null, jobRepair = false, rows = [], running = false, readonly = false, since = 0, poll = null, open = -1, fin = null, pick = {mode: "check", model: "local"}, sumb = {};
 const STATUS = {
@@ -346,7 +358,7 @@ function sync(){
   const repair = pick.mode === "repair";
   seg("mode", [["check", "Check", "Old vs new library. No model."], ["repair", "Repair", "Check, then fix with a model"]], "mode");
   const hosted = S ? S.hosted : [];
-  const items = [["local", "Local", "Model on this computer"]].concat(hosted.map((m) => [m, m.startsWith("meta-models/") ? "spark-open · Baseten" : m.startsWith("accounts/fireworks/") ? "spark-open · Fireworks" : m.split("/").pop().replace("muse-", ""), m.startsWith("meta-models/") ? "Open-weights Meta model, hosted by Baseten" : m.startsWith("accounts/fireworks/") ? "Open-weights Meta model, hosted by Fireworks" : "Hosted Meta model"]));
+  const items = [["local", "Local", "Model on this computer"]].concat(hosted.map((m) => [m, mname(m), m + (m.startsWith("meta-models/") ? " (hosted by Baseten)" : m.startsWith("accounts/fireworks/") ? " (hosted by Fireworks)" : " (Meta API)")]));
   if(!items.some((i) => i[0] === pick.model)) pick.model = "local";
   seg("model", items, "model");
   $("model").hidden = !repair || items.length < 2; $("attwrap").hidden = !repair; $("modelgrp").hidden = !repair; $("autogrp").hidden = !repair;
@@ -422,6 +434,16 @@ function render(){
   const lg = el("div", "legend"); segs.forEach(([col, k, name]) => {if(!k && name === "Waiting") return; const sp = el("span"); const sw = el("i"); sw.style.background = col; sp.appendChild(sw); sp.appendChild(document.createTextNode(name)); sp.appendChild(el("b", null, String(k))); lg.appendChild(sp);});
   const col = el("div", "sumcol"); col.appendChild(tiles); col.appendChild(lg); sr.appendChild(col); b.appendChild(sr);
   if(sumb.line) b.appendChild(el("div", "hint", sumb.line));
+  const ms = modelStats(), mk = Object.keys(ms);
+  if(mk.length){
+    const mt = el("table", "mstats"), mh = el("tr");
+    ["Model", "Tried", "Fixed", "Patch tries", "Bad patches blocked", "Tokens", "Time", "Functions it fixed"].forEach((x) => mh.appendChild(el("th", null, x))); const mth = el("thead"); mth.appendChild(mh); mt.appendChild(mth);
+    const mb = el("tbody");
+    mk.forEach((k2) => {const v = ms[k2], tr2 = el("tr"), nm = el("td", null, mname(k2)); nm.title = k2; tr2.appendChild(nm);
+      [v.n, v.fixed + " / " + v.n, v.tries, v.blocked, v.tok ? v.tok.toLocaleString("en-US") : "–", v.sec ? Math.round(v.sec) + " s" : "–", v.names.join(", ") || "–"].forEach((x) => tr2.appendChild(el("td", null, String(x)))); mb.appendChild(tr2);});
+    mt.appendChild(mb); b.appendChild(mt);
+    b.appendChild(el("div", "hint", "Each function is counted under the model that worked on it last. This is one run on this set, not a success rate."));
+  }
   const tb = el("table"), th = el("thead"), hr = el("tr");
   [["Function"], ["Old lib"], ["New lib"], ["Result"], ["Tries"], [""]].forEach(([x], i) => hr.appendChild(el("th", i === 5 ? "r" : null, x))); th.appendChild(hr); tb.appendChild(th);
   const body = el("tbody");
@@ -435,6 +457,7 @@ function render(){
     else if(r.status === "silent" && running && jobRepair && (!jobOnly || jobOnly.has(i))){const p = el("span", "pill", "Queued"); p.style.color = "var(--dim)"; p.style.background = "var(--surface)"; c4.appendChild(p);}
     else if(r.status){const [lab, fg, bg] = STATUS[r.status] || [r.status, "var(--dim)", "var(--surface)"]; const p = el("span", "pill", lab); p.style.color = fg; p.style.background = bg; c4.appendChild(p);}
     else c4.appendChild(el("span", "hint", "…"));
+    if(r.ran_by && r.status && !["silent", "healthy", "loud"].includes(r.status)){const mn = el("div", "file", mname(r.ran_by)); mn.title = r.ran_by; c4.appendChild(mn);}
     tr.appendChild(c4);
     const c5 = el("td", "att");
     att(r).forEach((a) => {const d = el("span", "gdots" + (a.gates.outcome === "accepted" ? " acc" : "")); GATES.forEach(([g]) => d.appendChild(el("i", a.gates[g] === "ok" ? "ok" : a.gates[g] === "fail" ? "fail" : ""))); d.title = GATES.map(([g, n]) => n + " " + (ICON[a.gates[g]] || "–")).join("   "); c5.appendChild(d);});
@@ -516,8 +539,8 @@ function onEvent(ev){
   const k = ev.index;
   if(ev.event === "start"){rows = Array.from({length: ev.total}, (_, i) => retain[i] || {}); sumb = {}; autoQ = []; return;}
   if(k !== undefined && retain[k]) return;
-  if(ev.event === "triage" || ev.event === "result"){Object.assign(rows[k], ev.row); rows[k].job = curJob; rows[k].working = false; if(ev.event === "result" && ev.row.diff){if(!manual && !readonly){open = k; scrollTo = k;} if(running && !readonly && autoApply){autoQ.push(k); pump();}}}
-  else if(ev.event === "repairing"){rows[k].working = true; if(!manual && !readonly){open = k; scrollTo = k;}}
+  if(ev.event === "triage" || ev.event === "result"){Object.assign(rows[k], ev.row); if(ev.event === "result" && jobRepair && lastModel) rows[k].ran_by = lastModel; rows[k].job = curJob; rows[k].working = false; if(ev.event === "result" && ev.row.diff){if(!manual && !readonly){open = k; scrollTo = k;} if(running && !readonly && autoApply){autoQ.push(k); pump();}}}
+  else if(ev.event === "repairing"){rows[k].working = true; if(lastModel) rows[k].ran_by = lastModel; if(!manual && !readonly){open = k; scrollTo = k;}}
   else if(ev.event === "attempt"){rows[k].att = (rows[k].att || []).concat([ev.attempt]);}
   else if(ev.event === "applied"){rows[k].applied = true;}
   else if(ev.event === "undone"){rows[k].applied = false;}
@@ -573,7 +596,7 @@ async function startJob(mode, only, model){
 $("run").onclick = () => startJob(pick.mode, null);
 $("stop").onclick = async () => {stopping = true; sync(); autoUi(); try{await api("/api/stop", {});}catch(e){stopping = false; sync(); autoUi(); showErr(e.message);}};
 $("clear").onclick = () => {rows = []; retain = {}; jobOnly = null; jobRepair = false; readonly = false; open = -1; manual = false; sumb = {}; $("history").value = ""; showErr(""); sync(); render(); autoUi();};
-$("resume").onclick = () => {const ks = unfixed(); if(ks.length) startJob("repair", ks, lastModel);};
+$("resume").onclick = () => {const ks = unfixed(); if(ks.length) startJob("repair", ks, pick.model);};
 $("history").onchange = async () => {
   const id = $("history").value; showErr("");
   if(!id){readonly = false; rows = []; render(); return;}
@@ -595,7 +618,7 @@ async function loadState(keep){
 $("endpoint").oninput = () => {clearTimeout(hTimer); hTimer = setTimeout(checkHealth, 400);};
 let theme = "auto";
 $("theme").onclick = () => {theme = theme === "auto" ? "dark" : theme === "dark" ? "light" : "auto"; if(theme === "auto") document.documentElement.removeAttribute("data-theme"); else document.documentElement.setAttribute("data-theme", theme);};
-loadState(false).then(async () => {const j = await api("/api/job?since=0"); if(j.status){curJob = j.id; jobRepair = !!(j.params && j.params.mode === "repair"); lastModel = (j.params && j.params.model) || null; if(j.status === "running" || j.status === "stopping"){running = true; follow();} else {(j.events || []).forEach(onEvent); since = j.n; rows.forEach((r) => r.working = false); render();}}}).catch((e) => showErr(e.message));
+loadState(false).then(async () => {const j = await api("/api/job?since=0"); if(j.status){curJob = j.id; jobRepair = !!(j.params && j.params.mode === "repair"); lastModel = (j.params && j.params.model) || null; if(jobRepair){pick.mode = "repair"; if(lastModel) pick.model = lastModel; sync();} if(j.status === "running" || j.status === "stopping"){running = true; follow();} else {(j.events || []).forEach(onEvent); since = j.n; rows.forEach((r) => r.working = false); render();}}}).catch((e) => showErr(e.message));
 </script>
 </body>
 </html>
