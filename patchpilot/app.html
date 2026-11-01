@@ -216,7 +216,7 @@ header{padding-top:16px;padding-bottom:16px}
 .bar .btn.resume:hover{background:rgba(20,184,166,.20)}
 [hidden]{display:none!important}
 #theme{font-size:18px;padding:4px 12px}
-.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0 10px}
+.tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:18px 0 10px}
 .tile{border:1px solid var(--line);border-radius:14px;background:var(--raised);padding:14px 18px}
 .tile .v{font-size:40px;line-height:1;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 .tile .l{margin-top:6px;font-size:14px;color:var(--dim);font-weight:600}
@@ -268,6 +268,23 @@ tr.row td:first-child{border-left:4px solid var(--st,transparent)}
 @media(prefers-reduced-motion:reduce){.btn.press,.wrote.pop{animation:none}}
 @media(max-width:900px){.tiles{grid-template-columns:1fr 1fr}input[type=text]{width:150px}}
 .mstats{width:100%;border-collapse:collapse;margin:10px 0 2px;font-size:13px}.mstats th,.mstats td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line)}.mstats th{color:var(--dim);font-weight:500}
+.mcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:10px 0 6px}
+.mcard{border:1px solid var(--line);border-radius:14px;background:var(--raised);padding:14px 16px}
+.mhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:8px}
+.mhead b{font-size:14px;word-break:break-all}
+.mbig{font-size:30px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;color:var(--ok);white-space:nowrap}.mbig small{font-size:13px;color:var(--dim);font-weight:600}
+.mstack{display:flex;height:10px;border-radius:6px;overflow:hidden;background:var(--line);margin-bottom:10px}.mstack i.g{background:var(--ok)}.mstack i.r{background:var(--bad)}
+.mrow{display:grid;grid-template-columns:130px 1fr auto;align-items:center;gap:8px;font-size:12.5px;margin:4px 0}
+.mrow .ml{color:var(--dim)}.mrow .mv{font-variant-numeric:tabular-nums;font-weight:600}
+.mtrack{height:7px;border-radius:4px;background:var(--line);overflow:hidden}.mtrack i{display:block;height:100%;background:var(--dim);border-radius:4px}.mtrack i.b{background:var(--blue)}.mtrack i.t{background:#a877ff}
+.mchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.mchip{font-size:12px;padding:2px 9px;border-radius:999px;font-weight:600}.mchip.g{color:var(--ok);background:rgba(60,200,120,.12)}.mchip.r{color:var(--bad);background:rgba(240,90,90,.12)}
+.wstrip{margin:10px 0;padding:10px 14px;border-radius:12px;border:1px dashed var(--line);color:var(--dim);font-size:14px}.wstrip b{color:var(--ink)}
+.wstrip.on{border:1px solid var(--ok);background:rgba(60,200,120,.10)}.wstrip.on b{color:var(--ok)}
+tr.row.applied td{background:rgba(60,200,120,.09)}
+.wbadge{margin-top:5px;font-size:12px;font-weight:700;color:var(--ok)}.wbadge.undone{color:var(--warn)}
+#toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--ok);color:var(--bg);font-weight:700;font-size:15px;padding:12px 20px;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.35);transition:opacity .25s,transform .25s;z-index:50;max-width:90vw}
+#toast.show{opacity:1;transform:translate(-50%,0)}#toast.warn{background:var(--warn)}
 </style>
 </head>
 <body>
@@ -308,6 +325,7 @@ tr.row td:first-child{border-left:4px solid var(--st,transparent)}
   <div id="err" class="err" hidden></div>
   <div id="board"></div>
 </main>
+<div id="toast" role="status" aria-live="polite"></div>
 <script>
 "use strict";
 const TOKEN = (document.querySelector('meta[name="pp-token"]') || {}).content || "";
@@ -323,13 +341,15 @@ async function api(path, body){
   if(j === null) throw new Error("unreadable answer from the server");
   return j;
 }
+let toastT = null;
+function toast(msg, cls){const t = $("toast"); if(!t) return; t.textContent = msg; t.className = "show" + (cls ? " " + cls : ""); clearTimeout(toastT); toastT = setTimeout(() => {t.className = "";}, 3200);}
 function mname(m){return m === "local" ? "Local" : m.startsWith("meta-models/") ? m.split("/").pop() + " · Baseten" : m.startsWith("accounts/fireworks/") ? m.split("/").pop() + " · Fireworks" : m.split("/").pop();}
 function modelStats(){
   const m = {};
   rows.forEach((r) => {
     if(!r.ran_by || r.working || !["repaired", "not_repaired", "error", "case_failed"].includes(r.status)) return;
-    const s = m[r.ran_by] || (m[r.ran_by] = {n: 0, fixed: 0, tries: 0, blocked: 0, tok: 0, sec: 0, names: []}), a = att(r);
-    s.n++; if(r.status === "repaired"){s.fixed++; s.names.push(r.function);}
+    const s = m[r.ran_by] || (m[r.ran_by] = {n: 0, fixed: 0, tries: 0, blocked: 0, tok: 0, sec: 0, names: [], failed: []}), a = att(r);
+    s.n++; if(r.status === "repaired"){s.fixed++; s.names.push(r.function);} else s.failed.push(r.function);
     s.tries += a.length; s.blocked += a.filter((x) => x.gates.outcome !== "accepted").length; s.tok += r.tokens || 0; s.sec += r.seconds || 0;
   });
   return m;
@@ -422,7 +442,7 @@ function render(){
   if(!rows.length){const e = el("div", "empty"); e.appendChild(el("b", null, "▶")); e.appendChild(document.createTextNode("Pick a file, press Run")); b.appendChild(e); return;}
   const c = counts();
   const tiles = el("div", "tiles");
-  [["", c.n, "functions"], ["bad", c.differs, "differ"], ["ok", c.fixed, "fixed"], ["blue", c.blocked, "bad patches blocked"]].forEach(([cls, v, l]) => {
+  [["", c.n, "functions"], ["bad", c.differs, "differ"], ["ok", c.fixed, "fixed"], ["blue", c.blocked, "bad patches blocked"], ["wr", rows.filter((r) => r.applied).length, "written to files"]].forEach(([cls, v, l]) => {
     const t = el("div", "tile " + cls); t.appendChild(el("div", "v", String(v))); t.appendChild(el("div", "l", l)); tiles.appendChild(t);});
   const sr = el("div", "sumrow"), dn = el("div", "donut");
   const segs = [["var(--ok)", c.fixed, "Fixed"], ["var(--bad)", c.differs - c.fixed, "Differs"], ["var(--warn)", c.loud, "Raises"], ["var(--blue)", c.same, "Same"], ["var(--line)", c.pending, "Waiting"]];
@@ -436,19 +456,38 @@ function render(){
   if(sumb.line) b.appendChild(el("div", "hint", sumb.line));
   const ms = modelStats(), mk = Object.keys(ms);
   if(mk.length){
-    const mt = el("table", "mstats"), mh = el("tr");
-    ["Model", "Tried", "Fixed", "Patch tries", "Bad patches blocked", "Tokens", "Time", "Functions it fixed"].forEach((x) => mh.appendChild(el("th", null, x))); const mth = el("thead"); mth.appendChild(mh); mt.appendChild(mth);
-    const mb = el("tbody");
-    mk.forEach((k2) => {const v = ms[k2], tr2 = el("tr"), nm = el("td", null, mname(k2)); nm.title = k2; tr2.appendChild(nm);
-      [v.n, v.fixed + " / " + v.n, v.tries, v.blocked, v.tok ? v.tok.toLocaleString("en-US") : "–", v.sec ? Math.round(v.sec) + " s" : "–", v.names.join(", ") || "–"].forEach((x) => tr2.appendChild(el("td", null, String(x)))); mb.appendChild(tr2);});
-    mt.appendChild(mb); b.appendChild(mt);
-    b.appendChild(el("div", "hint", "Each function is counted under the model that worked on it last. This is one run on this set, not a success rate."));
+    const mx = (f) => Math.max(1, ...mk.map((k2) => ms[k2][f])), grid = el("div", "mcards");
+    const mrow = (lab, val, max, txt, cls) => {const r2 = el("div", "mrow"), tr3 = el("div", "mtrack"), fl = el("i", cls || ""); fl.style.width = Math.max(val ? 4 : 0, 100 * val / max) + "%"; tr3.appendChild(fl); r2.appendChild(el("span", "ml", lab)); r2.appendChild(tr3); r2.appendChild(el("span", "mv", txt)); return r2;};
+    mk.forEach((k2) => {
+      const v = ms[k2], c2 = el("div", "mcard"), hd = el("div", "mhead"), nm = el("b", null, mname(k2)); nm.title = k2; hd.appendChild(nm);
+      const big = el("div", "mbig", v.fixed + " / " + v.n); big.appendChild(el("small", null, " fixed")); hd.appendChild(big); c2.appendChild(hd);
+      const stack = el("div", "mstack"), g1 = el("i", "g"), r1 = el("i", "r"); g1.style.width = (100 * v.fixed / v.n) + "%"; r1.style.width = (100 * (v.n - v.fixed) / v.n) + "%"; stack.appendChild(g1); stack.appendChild(r1); c2.appendChild(stack);
+      c2.appendChild(mrow("Patch tries", v.tries, mx("tries"), String(v.tries)));
+      c2.appendChild(mrow("Bad patches blocked", v.blocked, mx("blocked"), String(v.blocked), "b"));
+      if(v.tok) c2.appendChild(mrow("Tokens", v.tok, mx("tok"), v.tok.toLocaleString("en-US"), "t"));
+      if(v.sec) c2.appendChild(mrow("Time", v.sec, mx("sec"), Math.round(v.sec) + " s", "t"));
+      const ch = el("div", "mchips");
+      v.names.forEach((n) => ch.appendChild(el("span", "mchip g", "✓ " + n))); v.failed.forEach((n) => ch.appendChild(el("span", "mchip r", "✕ " + n))); c2.appendChild(ch);
+      grid.appendChild(c2);
+    });
+    b.appendChild(grid);
+    b.appendChild(el("div", "hint", "Each function is counted under the model that worked on it last. One run on this set, not a success rate."));
+  }
+  {
+    const rep2 = rows.filter((r) => r.status === "repaired"), wr = rep2.filter((r) => r.applied), wait = rep2.filter((r) => !r.applied), und = rows.filter((r) => r.undone && !r.applied);
+    if(rep2.length || und.length){
+      const st = el("div", "wstrip" + (wr.length ? " on" : ""));
+      st.appendChild(el("b", null, wr.length ? "✓ " + wr.length + " file change" + (wr.length > 1 ? "s" : "") + " on disk" : "No file has been changed yet"));
+      const files = []; wr.forEach((r) => {const f = r.file || r.function; if(files.indexOf(f) < 0) files.push(f);});
+      let t = wr.length ? ": " + files.join(", ") : ""; if(wait.length) t += (wr.length ? " · " : " · ") + wait.length + " fix" + (wait.length > 1 ? "es" : "") + " waiting for Apply"; if(und.length) t += " · " + und.length + " restored to the original";
+      st.appendChild(document.createTextNode(t)); b.appendChild(st);
+    }
   }
   const tb = el("table"), th = el("thead"), hr = el("tr");
   [["Function"], ["Old lib"], ["New lib"], ["Result"], ["Tries"], [""]].forEach(([x], i) => hr.appendChild(el("th", i === 5 ? "r" : null, x))); th.appendChild(hr); tb.appendChild(th);
   const body = el("tbody");
   rows.forEach((r, i) => {
-    const tr = el("tr", "row"); tr.style.setProperty("--st", r.working ? "var(--blue)" : (STATUS[r.status] || [0, "transparent"])[1]); tr.tabIndex = 0; tr.setAttribute("aria-expanded", String(open === i));
+    const tr = el("tr", "row" + (r.applied ? " applied" : "")); tr.style.setProperty("--st", r.working ? "var(--blue)" : (STATUS[r.status] || [0, "transparent"])[1]); tr.tabIndex = 0; tr.setAttribute("aria-expanded", String(open === i));
     const c1 = el("td"); const f = el("div", "fn"); f.appendChild(el("span", "chev", "▸")); f.appendChild(document.createTextNode(r.function || "")); c1.appendChild(f); c1.appendChild(el("div", "file", r.file || "")); tr.appendChild(c1);
     if(r.example){tr.appendChild(el("td", "out", short(r.example.old, 60))); tr.appendChild(el("td", "out bad", short(r.example.new, 60)));}
     else {const x = el("td", "file", r.status ? (r.detail || "") : ""); x.colSpan = 2; tr.appendChild(x);}
@@ -458,6 +497,8 @@ function render(){
     else if(r.status){const [lab, fg, bg] = STATUS[r.status] || [r.status, "var(--dim)", "var(--surface)"]; const p = el("span", "pill", lab); p.style.color = fg; p.style.background = bg; c4.appendChild(p);}
     else c4.appendChild(el("span", "hint", "…"));
     if(r.ran_by && r.status && !["silent", "healthy", "loud"].includes(r.status)){const mn = el("div", "file", mname(r.ran_by)); mn.title = r.ran_by; c4.appendChild(mn);}
+    if(r.applied) c4.appendChild(el("div", "wbadge", "✓ written to disk"));
+    else if(r.undone) c4.appendChild(el("div", "wbadge undone", "↶ restored original"));
     tr.appendChild(c4);
     const c5 = el("td", "att");
     att(r).forEach((a) => {const d = el("span", "gdots" + (a.gates.outcome === "accepted" ? " acc" : "")); GATES.forEach(([g]) => d.appendChild(el("i", a.gates[g] === "ok" ? "ok" : a.gates[g] === "fail" ? "fail" : ""))); d.title = GATES.map(([g, n]) => n + " " + (ICON[a.gates[g]] || "–")).join("   "); c5.appendChild(d);});
@@ -469,7 +510,7 @@ function render(){
       c6.appendChild(el("span", "wrote" + (r.flash ? " pop" : ""), "✓ written"));
       if(!readonly && r.job){
         const ub = el("button", "btn small", "Undo");
-        ub.onclick = async (e) => {e.stopPropagation(); try{await api("/api/undo", {index: i, job: r.job}); r.applied = false; showErr("");}catch(er){showErr(er.message);} render(); loadState(true);};
+        ub.onclick = async (e) => {e.stopPropagation(); try{await api("/api/undo", {index: i, job: r.job}); r.applied = false; r.undone = true; showErr(""); toast("↶ Restored " + (r.file || "file") + " · " + r.function, "warn");}catch(er){showErr(er.message);} render(); loadState(true);};
         c6.appendChild(ub);
       }
     }
@@ -485,7 +526,7 @@ function render(){
       bt.onclick = async (e) => {e.stopPropagation();
         if(!r.armed){r.armed = true; setTimeout(() => {r.armed = false; render();}, 4000); render(); return;}
         r.armed = false; bt.disabled = true;
-        try{await api("/api/apply", {index: i, job: r.job}); r.applied = true; showErr("");}catch(er){showErr(er.message);} render(); loadState(true);};
+        try{await api("/api/apply", {index: i, job: r.job}); r.applied = true; r.undone = false; showErr(""); toast("✓ Written to " + (r.file || "file") + " · " + r.function);}catch(er){showErr(er.message);} render(); loadState(true);};
       c6.appendChild(bt);
     }
     tr.appendChild(c6);
@@ -560,7 +601,7 @@ async function pump(){
     await sleep(900);
     if(rows[k] !== r) continue;
     r.armed = false; r.anim = "writing"; render(); await sleep(700);
-    try{await api("/api/apply", {index: k, job: r.job}); r.applied = true; r.flash = true; showErr(""); setTimeout(() => {r.flash = false; render();}, 1500);}catch(er){showErr(er.message);}
+    try{await api("/api/apply", {index: k, job: r.job}); r.applied = true; r.undone = false; r.flash = true; showErr(""); toast("✓ Written to " + (r.file || "file") + " · " + r.function); setTimeout(() => {r.flash = false; render();}, 1500);}catch(er){showErr(er.message);}
     r.anim = ""; render(); loadState(true);
   }
   autoBusy = false;
@@ -568,7 +609,7 @@ async function pump(){
 $("reset").onclick = async () => {
   if(!resetArmed){resetArmed = true; autoUi(); setTimeout(() => {resetArmed = false; autoUi();}, 4000); return;}
   resetArmed = false; autoUi();
-  try{const d = await api("/api/reset", {}); showErr(d.skipped && d.skipped.length ? "Left alone (edited by hand): " + d.skipped.join(", ") : ""); if(curJob) await tick(); await loadState(true);}
+  try{const d = await api("/api/reset", {}); showErr(d.skipped && d.skipped.length ? "Left alone (edited by hand): " + d.skipped.join(", ") : ""); toast("↶ Written files restored to the original", "warn"); if(curJob) await tick(); await loadState(true);}
   catch(e){showErr(e.message);}
 };
 async function tick(){
