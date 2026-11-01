@@ -129,6 +129,7 @@ input[type=text]{width:210px;font-family:var(--mono);font-size:13px}
 .btn.stop{border-color:var(--bad);color:var(--bad)}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
 input.num{width:52px;text-align:center}
+.file.why{color:var(--red,#c0392b);white-space:normal;overflow-wrap:anywhere;max-width:190px}
 /* toolbar: three groups, each with a caption; one control height */
 .bar{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px 28px;padding:16px 20px}
 .bar .grp{display:flex;flex-direction:column;gap:6px;min-width:0}
@@ -348,6 +349,7 @@ td.wincell{box-shadow:inset 0 0 0 2px var(--ok);background:rgba(60,200,120,.10)}
     <div class="grp g-run"><span class="cap">&nbsp;</span>
       <div class="row">
         <select id="history" aria-label="Past runs"></select>
+        <button class="btn" id="racehist" hidden title="Look at earlier model races by date and compare them with the current table">🕘 Race history</button>
         <button class="btn" id="racefile" hidden title="Check the file once, then repair every function with every model you tick and compare them">⚡ Race file</button>
         <button class="btn" id="rep-html" hidden title="Download the results as one HTML file: models, fixed functions, blocked patches, patches">⬇ Report</button>
         <button class="btn" id="rep-md" hidden title="Same report as Markdown">⬇ .md</button>
@@ -478,7 +480,7 @@ document.addEventListener("keydown", (e) => {if(e.key !== "Escape") return; if(!
 /* ---------- model race: the same function, every model, one after the other ---------- */
 let racing = false, raceAbort = false, raceState = null, raceLog = loadRace();
 function loadRace(){try{const d = JSON.parse(localStorage.getItem("pp_race") || "{}"); return d && Array.isArray(d.records) ? d : {records: []};}catch(e){return {records: []};}}
-function saveRace(){try{localStorage.setItem("pp_race", JSON.stringify({records: raceLog.records.slice(-30)}));}catch(e){}}
+function saveRace(){try{localStorage.setItem("pp_race", JSON.stringify({records: raceLog.records.slice(-400)}));}catch(e){}}
 function raceAgg(){
   const m = {};
   raceLog.records.forEach((rec) => {
@@ -505,6 +507,7 @@ async function raceOpen(k){
   try{const h = await api("/api/health?endpoint=" + encodeURIComponent($("endpoint").value)); raceState.health = h;}catch(e){raceState.health = {ok: false, reason: "no answer"};}
   if(raceState && raceState.stage === "setup") raceDraw();
 }
+function triesBox(){const l = el("label", "hint"); l.appendChild(document.createTextNode("tries per function ")); const i = el("input", "num"); i.type = "text"; i.inputMode = "numeric"; i.value = $("attempts").value; i.title = "How many patches a model may try for each function (1 to 5)"; i.oninput = () => {$("attempts").value = i.value;}; i.onchange = () => {const n = Math.min(5, Math.max(1, parseInt(i.value, 10) || 3)); i.value = n; $("attempts").value = n;}; l.appendChild(i); return l;}
 const barPrev = {};
 function animBar(f, key, pct){const p = barPrev[key] !== undefined ? barPrev[key] : 0; f.style.width = p + "%"; f.style.transition = "width .7s ease"; barPrev[key] = pct; requestAnimationFrame(() => requestAnimationFrame(() => {f.style.width = pct + "%";}));}
 const fmtT = (sec) => Math.floor(sec / 60) + ":" + String(Math.floor(sec % 60)).padStart(2, "0");
@@ -520,6 +523,7 @@ function raceDraw(){
 function raceDraw1(){
   const rs = raceState, body = $("racebody"); body.textContent = ""; if(!rs) return;
   $("racetitle").textContent = "Model race · " + rs.fn;
+  if(rs.mode === "hist") return histDraw(rs, body);
   if(rs.mode === "file" && rs.stage !== "setup") return fileDraw(rs, body);
   if(rs.stage === "setup"){
     body.appendChild(el("p", "hint", rs.mode === "file" ? "The file is checked once (no model). Then every model you tick repairs every function that differs, one model after the other. The table is replaced by the result. Nothing is written to your files. Hosted models use API credit, one call set per function." : "Every model you tick gets the same function once, one after the other. Nothing is written to your files. Hosted models use API credit."));
@@ -531,7 +535,7 @@ function raceDraw1(){
       if(m === "local") lab.appendChild(el("small", null, !rs.health ? "checking…" : rs.health.ok ? "ready" : (rs.health.reason || "not running") + " · start llama-server"));
       list.appendChild(lab);
     });
-    body.appendChild(list);
+    body.appendChild(list); body.appendChild(triesBox());
     const go = el("button", "btn primary", "⚡ Start race"); go.title = "Run the race now. Nothing is written to your files."; go.onclick = () => {const ms = Array.from(list.querySelectorAll("input:checked")).map((c) => c.value); if(!ms.length) return; raceFile(ms, null, rs.mode === "file" ? null : [rs.k]);}; body.appendChild(go);
   }
 }
@@ -549,7 +553,7 @@ function raceOpenFile(){
 const RACE_KEY = "pp_race_run";
 let racePause = false;
 function raceSnapSave(fr, stage){
-  try{localStorage.setItem(RACE_KEY, JSON.stringify({v: 1, stage, manifest: $("manifest").value, root: S ? S.root : "", fr: {models: fr.models, keys: fr.keys, fns: fr.fns, cells: fr.cells, snaps: fr.snaps, part: fr.part, psnap: fr.psnap, state: fr.state}}));}catch(e){}
+  try{localStorage.setItem(RACE_KEY, JSON.stringify({v: 1, stage, manifest: $("manifest").value, root: S ? S.root : "", fr: {id: fr.id, models: fr.models, keys: fr.keys, fns: fr.fns, cells: fr.cells, snaps: fr.snaps, part: fr.part, psnap: fr.psnap, state: fr.state}}));}catch(e){}
 }
 function raceSnapClear(){try{localStorage.removeItem(RACE_KEY);}catch(e){}}
 function raceSnapLoad(){try{const d = JSON.parse(localStorage.getItem(RACE_KEY) || "null"); return d && d.v === 1 && d.fr && Array.isArray(d.fr.models) ? d : null;}catch(e){return null;}}
@@ -558,13 +562,18 @@ function capturePart(fr, m){
   const c = fr.part[m] || (fr.part[m] = {}), sn = fr.psnap[m] || (fr.psnap[m] = {}); let n = 0;
   fr.keys.forEach((k) => {const r = rows[k];
     if(!c[k] && r && r.ran_by === m && !r.working && FINAL.indexOf(r.status) >= 0){
-      c[k] = {status: r.status, fixed: r.status === "repaired", tries: att(r).length, sec: r.seconds || (fr.t0 && fr.t0[m] ? (Date.now() - fr.t0[m]) / 1000 / Math.max(1, fr.keys.length) : 0), tok: r.tokens || 0};
+      c[k] = {status: r.status, fixed: r.status === "repaired", tries: att(r).length, sec: r.seconds || (fr.t0 && fr.t0[m] ? (Date.now() - fr.t0[m]) / 1000 / Math.max(1, fr.keys.length) : 0), tok: r.tokens || 0, why: r.detail || whyRejected(r) || ""};
       sn[k] = JSON.parse(JSON.stringify(r)); n++;}});
   return n;
 }
 function raceIncomplete(fr){return fr.models.some((m) => !fr.cells[m] && fr.state[m] !== "skipped" && fr.state[m] !== "nostart");}
+function raceRetry(fr, ms){
+  ms.forEach((m) => {delete fr.cells[m]; delete fr.snaps[m]; delete fr.part[m]; delete fr.psnap[m]; delete fr.state[m]; fr.fns && fr.fns.forEach((f, i) => {delete fr.seen[m + "|" + i];});});
+  fr.log.unshift("↻ Running again: " + ms.map(mname).join(", ")); raceFile(fr.models, fr);
+}
 async function raceFile(models, saved, presetKeys){
-  const pm = pick.model, fr = saved || {models, keys: presetKeys ? presetKeys.slice() : [], fns: null, cells: {}, snaps: {}, part: {}, psnap: {}, state: {}};
+  const pm = pick.model, fr = saved || {id: Date.now() + "-" + Math.random().toString(36).slice(2, 6), models, keys: presetKeys ? presetKeys.slice() : [], fns: null, cells: {}, snaps: {}, part: {}, psnap: {}, state: {}};
+  if(!fr.id) fr.id = Date.now() + "-" + Math.random().toString(36).slice(2, 6);
   Object.assign(fr, {phase: "check", error: "", t0: {}, live: {}, seen: fr.seen || {}, fresh: {}, log: fr.log || []});
   racing = true; raceAbort = false; racePause = false; Object.keys(barPrev).forEach((q) => delete barPrev[q]);
   raceState = {mode: "file", stage: "run", fn: "", file: "", fr}; sync(); render(); raceDraw(); raceSnapSave(fr, "run");
@@ -611,11 +620,12 @@ async function raceFile(models, saved, presetKeys){
   }
   // the table keeps the fastest fixing patch of every function, ready to Apply
   const done = fr.models.filter((m) => fr.cells[m]);
+  if(done.length) raceLog.records = raceLog.records.filter((x) => x.race !== fr.id);   // a retry replaces the earlier record of this race
   fr.keys.forEach((k, idx) => {
     let best = null; done.forEach((m) => {const x = fr.cells[m][k]; if(x && x.fixed && (best === null || x.sec < fr.cells[best][k].sec)) best = m;});
     const m = best || done[0]; if(m && fr.snaps[m] && fr.snaps[m][k]){rows[k] = JSON.parse(JSON.stringify(fr.snaps[m][k])); rows[k].working = false;}
     const f = fr.fns ? fr.fns[idx] : {name: "", file: ""};
-    if(done.length) raceLog.records.push({key: (f.file || "") + "::" + f.name, fn: f.name, when: new Date().toISOString(), results: fr.models.map((mm) => fr.cells[mm] && fr.cells[mm][k] ? Object.assign({model: mm, state: "done"}, fr.cells[mm][k]) : {model: mm, state: "skipped"})});
+    if(done.length) raceLog.records.push({race: fr.id, key: (f.file || "") + "::" + f.name, fn: f.name, when: new Date().toISOString(), results: fr.models.map((mm) => fr.cells[mm] && fr.cells[mm][k] ? Object.assign({model: mm, state: "done"}, fr.cells[mm][k]) : {model: mm, state: "skipped"})});
   });
   if(done.length) saveRace();
   raceSnapClear(); racing = false; raceState.stage = "done"; pick.model = pm; sync(); render(); raceDraw(); loadState(true);
@@ -685,6 +695,7 @@ function rankMatrix(body, n, R, fr){
       if(fr && fr.fresh[m + "|" + i] && Date.now() - fr.fresh[m + "|" + i] < 1600) td.classList.add("pop2");
       const rk = R.rank[m][i], [lab, fg, bg] = STATUS[x.status] || [x.status, "var(--dim)", "var(--surface)"], p = el("span", "pill", x.fixed ? (MEDAL[rk] || "") + " " + ordinal(rk) : lab); p.style.color = fg; p.style.background = bg; td.appendChild(p);
       td.appendChild(el("div", "file", x.tries + (x.tries === 1 ? " try · " : " tries · ") + Math.round(x.sec) + " s"));
+      if(!x.fixed && x.why){const w = el("div", "file why", sh(x.why, 70)); w.title = String(x.why); td.appendChild(w);}
       if(x.fixed && rk === 1) td.classList.add("wincell");
       const t = el("div", "mtrack"), b = el("i", x.fixed ? (rk === 1 ? "g" : "t") : "r"); animBar(b, "mx|" + m + "|" + i, Math.max(4, 100 * (x.sec || 0) / R.maxSec[i])); t.appendChild(b); td.appendChild(t);
       if(x.fixed) td.appendChild(el("div", "file", rk === 1 ? "fastest" : "+" + Math.round(x.sec - R.bestSec[i]) + " s vs 1st"));
@@ -774,6 +785,11 @@ function fileDraw(rs, body){
   body.appendChild(el("div", "hint", "One run per model per function. Times include the model call and the three gates and change from run to run. This is not a success rate."));
   if(rs.stage === "done" && n.models.length){
     raceExportButtons(body, rs);
+    const rt = el("div", "rexp"); rt.appendChild(triesBox());
+    const bad = ms.filter((m) => fr.cells[m] && fr.keys.some((k) => fr.cells[m][k] && fr.cells[m][k].status === "error"));
+    if(bad.length){const b1 = el("button", "btn primary", "↻ Retry models that errored (" + bad.length + ")"); b1.title = "Run again only: " + bad.map(mname).join(", ") + ". Uses the tries value on the left."; b1.onclick = () => raceRetry(fr, bad); rt.appendChild(b1);}
+    const b2 = el("button", "btn small", "↻ Run every model again"); b2.title = "Repeat the whole race with the tries value on the left. The new result replaces this one in the history."; b2.onclick = () => raceRetry(fr, ms.slice()); rt.appendChild(b2);
+    body.appendChild(rt);
     const agg = raceAgg();
     if(agg.length){
       const ag = el("div", "raceagg"); ag.appendChild(el("b", null, "Across " + raceLog.records.length + " saved function race" + (raceLog.records.length > 1 ? "s" : "") + " (ranked by fixes, then average time to a fix)"));
@@ -783,6 +799,53 @@ function fileDraw(rs, body){
     }
   }
 }
+/* ---------- race history: earlier races by date, compared with the current table ---------- */
+function histGroups(){
+  const g = {}, order = [];
+  raceLog.records.forEach((rec) => {const id = rec.race || String(rec.when || "").slice(0, 19); if(!g[id]){g[id] = {id, when: rec.when, recs: []}; order.push(id);} g[id].recs.push(rec);});
+  return order.map((id) => g[id]).reverse();
+}
+function histDraw(rs, body){
+  $("racetitle").textContent = "Race history";
+  const gs = histGroups();
+  if(!gs.length){body.appendChild(el("p", "hint", "No saved race yet. A race is saved when it finishes.")); return;}
+  if(!(rs.sel >= 0 && rs.sel < gs.length)) rs.sel = 0;
+  const g = gs[rs.sel], head = el("div", "cmphead"), sel = el("select"); sel.setAttribute("aria-label", "Saved race"); sel.title = "Choose an earlier race by date";
+  gs.forEach((x, i) => {const ms = []; x.recs.forEach((r) => r.results.forEach((q) => {if(q.state === "done" && ms.indexOf(q.model) < 0) ms.push(q.model);}));
+    const o = el("option", null, new Date(x.when).toLocaleString() + " · " + (x.recs.length === 1 ? x.recs[0].fn : x.recs.length + " functions") + " · " + ms.length + " model" + (ms.length > 1 ? "s" : "")); o.value = i; sel.appendChild(o);});
+  sel.value = rs.sel; sel.onchange = () => {rs.sel = parseInt(sel.value, 10); raceDraw();}; head.appendChild(sel); body.appendChild(head);
+  const ms = []; g.recs.forEach((r) => r.results.forEach((q) => {if(q.state === "done" && ms.indexOf(q.model) < 0) ms.push(q.model);}));
+  const n = {models: ms, fns: g.recs.map((r) => ({name: r.fn, file: String(r.key || "").split("::")[0]})), cell: (m, i) => g.recs[i].results.find((q) => q.model === m && q.state === "done")}, R = raceRanks(n);
+  body.appendChild(el("p", "hint", "Saved " + new Date(g.when).toLocaleString() + ". One run per model per function, as it was then. Times change from run to run. This is not a success rate."));
+  rankBoard(body, n, R); rankMatrix(body, n, R, null);
+  // the same functions in the table on screen now
+  const nowB = el("div", "rboard"); nowB.appendChild(el("b", null, "This race compared with the table on screen now"));
+  const tb = el("table", "cmptab"), hr = el("tr"); ["Function", "Fastest fix then", "Now in the table", "Change"].forEach((t) => hr.appendChild(el("th", null, t))); tb.appendChild(hr);
+  n.fns.forEach((f, i) => {
+    const w = raceWinner(n, R, i), r = rows.find((x) => x.function === f.name && (x.file || "") === f.file), tr = el("tr"), c1 = el("td"); c1.appendChild(el("div", "fn", f.name)); if(f.file) c1.appendChild(el("div", "file", f.file)); tr.appendChild(c1);
+    const c2 = el("td"); if(w.none) c2.appendChild(el("span", "hint", "nobody fixed it")); else {c2.appendChild(el("b", null, MEDAL[1] + " " + w.models.map(mname).join(" = "))); c2.appendChild(el("div", "file", Math.round(w.sec) + " s"));} tr.appendChild(c2);
+    const c3 = el("td"), c4 = el("td");
+    if(!r || !r.status || ["healthy", "loud", "silent", "invalid"].indexOf(r.status) >= 0 && !r.ran_by){c3.appendChild(el("span", "hint", !r ? "not in the table" : "not repaired yet")); c4.appendChild(el("span", "hint", w.none ? "–" : "repair it with " + mname(w.models[0])));}
+    else {
+      const [lab, fg, bg] = STATUS[r.status] || [r.status, "var(--dim)", "var(--surface)"], p2 = el("span", "pill", lab + (r.applied ? " · written" : "")); p2.style.color = fg; p2.style.background = bg; c3.appendChild(p2);
+      if(r.ran_by) c3.appendChild(el("div", "file", mname(r.ran_by) + (r.seconds ? " · " + Math.round(r.seconds) + " s" : "") + (att(r).length ? " · " + att(r).length + (att(r).length === 1 ? " try" : " tries") : "")));
+      const then = r.ran_by ? n.cell(r.ran_by, i) : null, fixedNow = r.status === "repaired", bits = [];
+      if(fixedNow && w.none) bits.push("nobody fixed it then, fixed now");
+      else if(!fixedNow && !w.none) bits.push("fixed then by " + w.models.map(mname).join(" = ") + ", not fixed now");
+      else if(fixedNow && !w.none && r.ran_by && w.models.indexOf(r.ran_by) >= 0) bits.push("same model as the fastest then");
+      else if(fixedNow && !w.none && r.ran_by) bits.push("the fastest then was " + w.models.map(mname).join(" = "));
+      if(then && r.ran_by) bits.push("same model then: " + (then.fixed ? "fixed in " + Math.round(then.sec) + " s" : "not fixed"));
+      c4.appendChild(el("div", null, bits.join(" · ") || "–"));
+    }
+    tr.appendChild(c3); tr.appendChild(c4); tb.appendChild(tr);});
+  nowB.appendChild(tb); nowB.appendChild(el("div", "hint", "\"Now\" is the table on screen: the latest repair or race, or a run opened from the history. Reset or a new check clears it.")); body.appendChild(nowB);
+  const ctl = el("div", "rexp"), top = R.order[0];
+  if(top && R.st[top].fixed){const ub = el("button", "btn primary", "⚡ Use " + mname(top) + " (best in this race)"); ub.title = "Select this model in the Model panel"; ub.onclick = () => {pick.model = top; sync(); racePanel(false);}; ctl.appendChild(ub);}
+  const del = el("button", "btn small", "🗑 Delete this saved race"); del.title = "Remove this race from the saved history (does not touch your files)";
+  del.onclick = () => {raceLog.records = raceLog.records.filter((x) => (x.race || String(x.when || "").slice(0, 19)) !== g.id); saveRace(); rs.sel = 0; if(!raceLog.records.length) racePanel(false); fastUi(); raceDraw(); sync();}; ctl.appendChild(del);
+  body.appendChild(ctl);
+}
+$("racehist").onclick = () => {if(racing || (raceState && raceState.stage === "paused")) return; raceState = {mode: "hist", stage: "hist", sel: 0, fn: "history"}; racePanel(true); raceDraw();};
 $("racefile").onclick = () => {if(racing || (raceState && raceState.stage === "paused")) racePanel(true); else raceOpenFile();};
 let bulkBusy = false;
 // kind: apply = stage the fix (nothing written), write = save staged fixes to the files, undo = restore the written files
@@ -915,7 +978,7 @@ function progress(){
 function unfixed(){return rows.map((r, k) => (!r.status || ["not_repaired", "error", "case_failed", "silent"].includes(r.status)) ? k : -1).filter((k) => k >= 0);}
 function resumeUi(){
   const ks = unfixed(), show = !running && !readonly && jobRepair && ks.length > 0;
-  const rpaused = !!(raceState && raceState.stage === "paused"); $("racefile").hidden = (!racing && !rpaused && (running || readonly)) || !(S && S.manifests.length); $("racefile").textContent = racing ? "⚡ Race running…" : rpaused ? "⚡ Race paused · continue" : "⚡ Race file"; $("clear").hidden = running || !rows.length; $("rep-html").hidden = $("rep-md").hidden = running || !rows.some((r) => r.status); $("cmp-btn").hidden = running || !(S && S.previous && (S.previous.length > 1 || (S.previous.length && rows.some((r) => r.status)))); $("resume").hidden = !show; if(show) $("resume").textContent = "⏯ Resume (" + ks.length + ")";
+  const rpaused = !!(raceState && raceState.stage === "paused"); $("racefile").hidden = (!racing && !rpaused && (running || readonly)) || !(S && S.manifests.length); $("racehist").hidden = racing || rpaused || !raceLog.records.length; $("racefile").textContent = racing ? "⚡ Race running…" : rpaused ? "⚡ Race paused · continue" : "⚡ Race file"; $("clear").hidden = running || !rows.length; $("rep-html").hidden = $("rep-md").hidden = running || !rows.some((r) => r.status); $("cmp-btn").hidden = running || !(S && S.previous && (S.previous.length > 1 || (S.previous.length && rows.some((r) => r.status)))); $("resume").hidden = !show; if(show) $("resume").textContent = "⏯ Resume (" + ks.length + ")";
 }
 function render(){
   resumeUi();
@@ -1123,7 +1186,7 @@ async function startJob(mode, only, model, fromRace){
   else rows = [];
   jobRepair = mode === "repair";
   if(jobRepair){pick.mode = "repair"; if(model) pick.model = model; sync();}
-  const body = {manifest: $("manifest").value, mode, model: model || pick.model, endpoint: $("endpoint").value, effort: "low", max_attempts: parseInt($("attempts").value, 10) || 3};
+  const body = {manifest: $("manifest").value, mode, model: model || pick.model, endpoint: $("endpoint").value, effort: "low", max_attempts: Math.min(5, Math.max(1, parseInt($("attempts").value, 10) || 3))};
   if(only) body.only = only;
   try{const r = await api("/api/run", body); curJob = r.id; lastModel = body.model; follow();}
   catch(e){showErr(e.message); rows.forEach((r) => r.working = false); retain = {}; jobOnly = null; render();}
