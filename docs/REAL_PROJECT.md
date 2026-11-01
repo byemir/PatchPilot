@@ -29,6 +29,8 @@ Run again from the same manifest, for rehearsing the demo video: repaired, but i
 
 Unlike indsl, this function was not chosen because someone had reported it. The static count in `docs/CENSUS.md` (third count) flagged three `column.fillna(..., inplace=True)` sites in `traceml/processors/importance_processors.py`; the function `clean_values(params, metrics)` takes lists of records and numbers and returns two tables. We did not know whether it changed a result, and we did not look for a maintainer fix. Files: `examples/real_project_traceml/` (our manifest, our two inputs, the numbers). No traceml code is in this repository.
 
+To run the traceml function again in the app: `PYTHON312=/path/to/python3.12 bash scripts/setup_demo_root.sh /tmp/pp_demo`, then `python -m patchpilot.app --root /tmp/pp_demo` (the script clones traceml at the commit below into the demo folder and builds the two interpreters in `/tmp`; nothing is written into this repository).
+
 ## What was run (2026-10-31, same Mac)
 1. `git clone --depth 1` of `polyaxon/traceml` (Apache-2.0) into `/tmp`, commit `2452c1a8f2be742a8a3b8e379568a6ce3bf4394c` (the default branch that day; the commit is dated 2026-10-21). Nothing was written into the clone (no `--apply`).
 2. Two virtual environments, pandas 2.3.3 and 3.0.6, each with NumPy 2, `clipped` (its only import besides pandas and NumPy) and pytest.
