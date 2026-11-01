@@ -33,6 +33,7 @@ header{display:flex;align-items:center;gap:14px;padding:14px 32px;border-bottom:
 .brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:22px;letter-spacing:-.02em;margin-right:auto}
 .mark{width:36px;height:36px;border-radius:10px;display:block;box-shadow:0 4px 14px rgba(110,80,255,.35)}
 .mark svg{width:100%;height:100%;display:block}
+.brand .bt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;line-height:1.15}.soc{display:flex;gap:8px;line-height:0}.soc a{color:var(--dim);display:inline-flex;transition:color .15s,transform .15s}.soc a:hover,.soc a:focus-visible{color:var(--blue);transform:translateY(-1px)}.soc svg{width:16px;height:16px}
 .brand .name{background:linear-gradient(90deg,#1a8cff 0%,#7b5cff 55%,#ff5c9d 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
 .btn{border:1px solid var(--line);background:var(--raised);padding:8px 16px;border-radius:999px;cursor:pointer;font-weight:600;font-size:14px}
 .btn:hover{background:var(--surface)}
@@ -129,6 +130,13 @@ input[type=text]{width:210px;font-family:var(--mono);font-size:13px}
 .btn.stop{border-color:var(--bad);color:var(--bad)}
 .btn[disabled]{opacity:.45;cursor:not-allowed}
 input.num{width:52px;text-align:center}
+.dchip{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:700;margin:2px 5px 2px 0;white-space:nowrap;line-height:1.5;border:0;font-family:inherit}
+.dchip.ok{color:var(--ok);background:var(--ok-soft)}.dchip.warn{color:var(--warn);background:var(--warn-soft)}.dchip.bad{color:var(--bad);background:var(--bad-soft)}.dchip.nu{color:var(--dim);background:var(--surface)}
+button.dchip{cursor:pointer}button.dchip:hover,button.dchip:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+#pop{position:fixed;z-index:2000;max-width:360px;min-width:250px;padding:12px 14px;border-radius:12px;background:var(--bg);color:var(--ink);border:1px solid var(--line);box-shadow:0 10px 34px rgba(0,0,0,.4);font-size:13px;pointer-events:none}
+#pop b{display:block;font-size:13px}#pop .ps{color:var(--dim);font-size:12px;margin:2px 0 8px}
+#pop .pr{display:grid;grid-template-columns:62px 1fr auto;gap:6px;align-items:center;padding:3px 0}#pop .pr.me{background:var(--blue-soft);border-radius:6px;padding:3px 4px}
+#pop .pr small{color:var(--dim)}#pop .pf{color:var(--dim);font-size:12px;margin-top:8px}
 .file.why{color:var(--red,#c0392b);white-space:normal;overflow-wrap:anywhere;max-width:190px}
 /* toolbar: three groups, each with a caption; one control height */
 .bar{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px 28px;padding:16px 20px}
@@ -325,7 +333,10 @@ td.wincell{box-shadow:inset 0 0 0 2px var(--ok);background:rgba(60,200,120,.10)}
 </head>
 <body>
 <header>
-  <div class="brand"><span class="mark"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PatchPilot logo"><defs><linearGradient id="ppg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1A8CFF"/><stop offset=".55" stop-color="#7B5CFF"/><stop offset="1" stop-color="#FF5C9D"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#ppg)"/><rect x="13" y="13" width="38" height="38" rx="10" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="2.6" stroke-dasharray="4.2 4.2" stroke-linecap="round"/><path d="M22.5 33.5l6.8 6.8L42 26.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M35 25h7.5v7.5" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="name">PatchPilot</span></div>
+  <div class="brand"><span class="mark"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PatchPilot logo"><defs><linearGradient id="ppg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1A8CFF"/><stop offset=".55" stop-color="#7B5CFF"/><stop offset="1" stop-color="#FF5C9D"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#ppg)"/><rect x="13" y="13" width="38" height="38" rx="10" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="2.6" stroke-dasharray="4.2 4.2" stroke-linecap="round"/><path d="M22.5 33.5l6.8 6.8L42 26.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M35 25h7.5v7.5" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="bt"><span class="name">PatchPilot</span><span class="soc">
+    <a href="https://www.linkedin.com/in/emirhancam%C3%A7%C4%B1/" target="_blank" rel="noopener noreferrer" title="LinkedIn" aria-label="LinkedIn"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4" fill="currentColor"/><circle cx="7.6" cy="7.7" r="1.5" fill="var(--bg)"/><rect x="6.2" y="10" width="2.8" height="7.6" rx=".5" fill="var(--bg)"/><path d="M11 10h2.6v1.1c.5-.8 1.4-1.3 2.6-1.3 2.2 0 3 1.4 3 3.6v4.2h-2.8v-3.8c0-1-.3-1.6-1.2-1.6-.9 0-1.4.7-1.4 1.7v3.7H11z" fill="var(--bg)"/></svg></a>
+    <a href="https://x.com/emirhancamci3" target="_blank" rel="noopener noreferrer" title="X" aria-label="X"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="4" fill="currentColor"/><path d="M6.8 6.8l10.4 10.4M17.2 6.8L6.8 17.2" stroke="var(--bg)" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg></a>
+  </span></span></div>
   <span class="hint" id="rootname"></span>
   <button class="btn" id="theme" title="Light / dark">◐</button>
 </header>
@@ -513,6 +524,7 @@ function animBar(f, key, pct){const p = barPrev[key] !== undefined ? barPrev[key
 const fmtT = (sec) => Math.floor(sec / 60) + ":" + String(Math.floor(sec % 60)).padStart(2, "0");
 // redraw the race window; rows that changed place slide to the new place
 function raceDraw(){
+  if(raceState && raceState.mode === "hist"){$("racebody").textContent = ""; raceDraw1(); return;}   // no sliding animation for the saved-race view
   const body = $("racebody"), box = body.parentNode, prev = {}, sc = box.scrollTop;
   body.querySelectorAll("[data-flip]").forEach((e) => {prev[e.dataset.flip] = e.getBoundingClientRect().top;});
   raceDraw1();
@@ -800,6 +812,49 @@ function fileDraw(rs, body){
   }
 }
 /* ---------- race history: earlier races by date, compared with the current table ---------- */
+function dchip(cls, text, tip){const c = el("span", "dchip " + cls, text); if(tip) c.title = tip; return c;}
+// the newest saved race record of this function, and who was fastest in it
+function histFn(r){const key = (r.file || "") + "::" + (r.function || ""); for(let i = raceLog.records.length - 1; i >= 0; i--) if(raceLog.records[i].key === key) return raceLog.records[i]; return null;}
+function recRows(rec){
+  const dn = rec.results.filter((x) => x.state === "done"), fx = dn.filter((x) => x.fixed).sort((a, b) => a.sec - b.sec);
+  return fx.map((x, i) => Object.assign({rank: 1 + fx.filter((q) => q.sec < x.sec).length}, x)).concat(dn.filter((x) => !x.fixed).map((x) => Object.assign({rank: null}, x)));
+}
+let popEl = null;
+function hidePop(){if(popEl) popEl.hidden = true;}
+function showPop(chip, rec, me){
+  if(!popEl){popEl = el("div"); popEl.id = "pop"; popEl.setAttribute("role", "tooltip"); document.body.appendChild(popEl);}
+  popEl.textContent = ""; popEl.hidden = false;
+  popEl.appendChild(el("b", null, "Race of " + new Date(rec.when).toLocaleString())); popEl.appendChild(el("div", "ps", rec.fn + " · one run per model"));
+  const rs = recRows(rec), mx = Math.max(1, ...rs.map((x) => x.sec || 0));
+  rs.forEach((x) => {const row = el("div", "pr" + (x.model === me ? " me" : "")); row.appendChild(el("span", null, x.rank ? (MEDAL[x.rank] || "") + " " + ordinal(x.rank) : "✕"));
+    const nm = el("div"); nm.appendChild(el("div", null, mname(x.model) + (x.model === me ? "  ← this run" : ""))); const t = el("div", "mtrack"), f = el("i", x.fixed ? (x.rank === 1 ? "g" : "t") : "r"); f.style.width = Math.max(4, 100 * (x.sec || 0) / mx) + "%"; t.appendChild(f); nm.appendChild(t); row.appendChild(nm);
+    row.appendChild(el("small", null, x.fixed ? Math.round(x.sec) + " s" : "not fixed")); popEl.appendChild(row);});
+  popEl.appendChild(el("div", "pf", "Click to open the Race history"));
+  const b = chip.getBoundingClientRect(), pw = popEl.offsetWidth, ph = popEl.offsetHeight;
+  popEl.style.left = Math.max(8, Math.min(innerWidth - pw - 8, b.left)) + "px"; popEl.style.top = (b.bottom + ph + 12 < innerHeight ? b.bottom + 6 : Math.max(8, b.top - ph - 6)) + "px";
+}
+function histOpenAt(rec){
+  if(racing || (raceState && raceState.stage === "paused")) return;
+  const id = rec.race || String(rec.when || "").slice(0, 19), at = histGroups().findIndex((g) => g.id === id);
+  raceState = {mode: "hist", stage: "hist", sel: Math.max(0, at), fn: "history"}; racePanel(true); raceDraw();
+}
+// small chip under the model name in the table: the gap to the fastest model of the newest saved race of this function
+function gapChip(r){
+  if(!r.ran_by || r.working || ["repaired", "not_repaired", "error", "case_failed"].indexOf(r.status) < 0) return null;
+  const rec = histFn(r); if(!rec) return null;
+  const best = recRows(rec).find((x) => x.rank === 1); if(!best) return null;
+  const fixed = r.status === "repaired", mine = best.model === r.ran_by; let cls, txt;
+  if(fixed && mine){cls = "ok"; txt = "🥇 fastest";}
+  else if(!fixed){cls = "bad"; txt = "✕ vs 🥇";}
+  else {
+    const th = recRows(rec).find((x) => x.model === r.ran_by && x.fixed), sec = r.seconds || (th ? th.sec : 0);   // the row may carry no time: use this model's time in that race
+    if(sec){const d = Math.round(sec - best.sec); cls = d > 0 ? "warn" : "ok"; txt = (d > 0 ? "+" : "−") + Math.abs(d) + " s vs 🥇";}
+    else {cls = "nu"; txt = "vs 🥇";}
+  }
+  const c = el("button", "dchip " + cls, txt); c.type = "button"; c.setAttribute("aria-label", txt + ". Race of " + new Date(rec.when).toLocaleString() + ", fastest was " + mname(best.model));
+  c.onmouseenter = c.onfocus = () => showPop(c, rec, r.ran_by); c.onmouseleave = c.onblur = hidePop; c.onclick = (e) => {e.stopPropagation(); hidePop(); histOpenAt(rec);};
+  return c;
+}
 function histGroups(){
   const g = {}, order = [];
   raceLog.records.forEach((rec) => {const id = rec.race || String(rec.when || "").slice(0, 19); if(!g[id]){g[id] = {id, when: rec.when, recs: []}; order.push(id);} g[id].recs.push(rec);});
@@ -810,7 +865,7 @@ function histDraw(rs, body){
   const gs = histGroups();
   if(!gs.length){body.appendChild(el("p", "hint", "No saved race yet. A race is saved when it finishes.")); return;}
   if(!(rs.sel >= 0 && rs.sel < gs.length)) rs.sel = 0;
-  const g = gs[rs.sel], head = el("div", "cmphead"), sel = el("select"); sel.setAttribute("aria-label", "Saved race"); sel.title = "Choose an earlier race by date";
+  const g = gs[rs.sel], head = el("div", "cmphead"), sel = el("select"); sel.setAttribute("aria-label", "Saved race"); sel.style.maxWidth = "100%"; sel.title = "Choose an earlier race by date";
   gs.forEach((x, i) => {const ms = []; x.recs.forEach((r) => r.results.forEach((q) => {if(q.state === "done" && ms.indexOf(q.model) < 0) ms.push(q.model);}));
     const o = el("option", null, new Date(x.when).toLocaleString() + " · " + (x.recs.length === 1 ? x.recs[0].fn : x.recs.length + " functions") + " · " + ms.length + " model" + (ms.length > 1 ? "s" : "")); o.value = i; sel.appendChild(o);});
   sel.value = rs.sel; sel.onchange = () => {rs.sel = parseInt(sel.value, 10); raceDraw();}; head.appendChild(sel); body.appendChild(head);
@@ -825,20 +880,20 @@ function histDraw(rs, body){
     const w = raceWinner(n, R, i), r = rows.find((x) => x.function === f.name && (x.file || "") === f.file), tr = el("tr"), c1 = el("td"); c1.appendChild(el("div", "fn", f.name)); if(f.file) c1.appendChild(el("div", "file", f.file)); tr.appendChild(c1);
     const c2 = el("td"); if(w.none) c2.appendChild(el("span", "hint", "nobody fixed it")); else {c2.appendChild(el("b", null, MEDAL[1] + " " + w.models.map(mname).join(" = "))); c2.appendChild(el("div", "file", Math.round(w.sec) + " s"));} tr.appendChild(c2);
     const c3 = el("td"), c4 = el("td");
-    if(!r || !r.status || ["healthy", "loud", "silent", "invalid"].indexOf(r.status) >= 0 && !r.ran_by){c3.appendChild(el("span", "hint", !r ? "not in the table" : "not repaired yet")); c4.appendChild(el("span", "hint", w.none ? "–" : "repair it with " + mname(w.models[0])));}
+    if(!r || !r.status || ["healthy", "loud", "silent", "invalid"].indexOf(r.status) >= 0 && !r.ran_by){c3.appendChild(el("span", "hint", !r ? "not in table" : "not repaired yet")); if(!w.none) c4.appendChild(dchip("nu", "→ 🥇 " + mname(w.models[0]), "Fastest model in this race")); else c4.appendChild(el("span", "hint", "–"));}
     else {
       const [lab, fg, bg] = STATUS[r.status] || [r.status, "var(--dim)", "var(--surface)"], p2 = el("span", "pill", lab + (r.applied ? " · written" : "")); p2.style.color = fg; p2.style.background = bg; c3.appendChild(p2);
-      if(r.ran_by) c3.appendChild(el("div", "file", mname(r.ran_by) + (r.seconds ? " · " + Math.round(r.seconds) + " s" : "") + (att(r).length ? " · " + att(r).length + (att(r).length === 1 ? " try" : " tries") : "")));
-      const then = r.ran_by ? n.cell(r.ran_by, i) : null, fixedNow = r.status === "repaired", bits = [];
-      if(fixedNow && w.none) bits.push("nobody fixed it then, fixed now");
-      else if(!fixedNow && !w.none) bits.push("fixed then by " + w.models.map(mname).join(" = ") + ", not fixed now");
-      else if(fixedNow && !w.none && r.ran_by && w.models.indexOf(r.ran_by) >= 0) bits.push("same model as the fastest then");
-      else if(fixedNow && !w.none && r.ran_by) bits.push("the fastest then was " + w.models.map(mname).join(" = "));
-      if(then && r.ran_by) bits.push("same model then: " + (then.fixed ? "fixed in " + Math.round(then.sec) + " s" : "not fixed"));
-      c4.appendChild(el("div", null, bits.join(" · ") || "–"));
+      if(r.ran_by) c3.appendChild(el("div", "file", mname(r.ran_by) + (r.seconds ? " · " + Math.round(r.seconds) + " s" : "")));
+      const fixedNow = r.status === "repaired", then = r.ran_by ? n.cell(r.ran_by, i) : null;
+      if(fixedNow && w.none) c4.appendChild(dchip("ok", "✓ new fix", "Nobody fixed it in this race"));
+      else if(!fixedNow && !w.none) c4.appendChild(dchip("bad", "✕ lost", "Fixed in this race, not fixed now"));
+      else if(fixedNow && w.models.indexOf(r.ran_by) >= 0) c4.appendChild(dchip("ok", "🥇 same", "Same model as the fastest one in this race"));
+      else if(fixedNow && (r.seconds || (then && then.fixed))){const d = Math.round((r.seconds || then.sec) - w.sec); c4.appendChild(dchip(d > 0 ? "warn" : "ok", (d > 0 ? "+" : "−") + Math.abs(d) + " s vs 🥇", "Against the fastest fix in this race"));}
+      if(then && r.ran_by && (r.seconds || !fixedNow)){const ts = then.fixed ? "✓ " + Math.round(then.sec) + " s" : "✕", ns = fixedNow ? "✓ " + Math.round(r.seconds || 0) + " s" : "✕", better = fixedNow && (!then.fixed || (r.seconds || 0) <= then.sec), worse = !fixedNow && then.fixed;
+        c4.appendChild(dchip(worse ? "bad" : better ? "ok" : "warn", ts + " → " + ns, "The same model: in this race → now"));}
     }
     tr.appendChild(c3); tr.appendChild(c4); tb.appendChild(tr);});
-  nowB.appendChild(tb); nowB.appendChild(el("div", "hint", "\"Now\" is the table on screen: the latest repair or race, or a run opened from the history. Reset or a new check clears it.")); body.appendChild(nowB);
+  nowB.appendChild(tb); nowB.appendChild(el("div", "hint", "🥇 fastest then · green better now · red worse. “Now” is the table on screen.")); body.appendChild(nowB);
   const ctl = el("div", "rexp"), top = R.order[0];
   if(top && R.st[top].fixed){const ub = el("button", "btn primary", "⚡ Use " + mname(top) + " (best in this race)"); ub.title = "Select this model in the Model panel"; ub.onclick = () => {pick.model = top; sync(); racePanel(false);}; ctl.appendChild(ub);}
   const del = el("button", "btn small", "🗑 Delete this saved race"); del.title = "Remove this race from the saved history (does not touch your files)";
@@ -981,6 +1036,7 @@ function resumeUi(){
   const rpaused = !!(raceState && raceState.stage === "paused"); $("racefile").hidden = (!racing && !rpaused && (running || readonly)) || !(S && S.manifests.length); $("racehist").hidden = racing || rpaused || !raceLog.records.length; $("racefile").textContent = racing ? "⚡ Race running…" : rpaused ? "⚡ Race paused · continue" : "⚡ Race file"; $("clear").hidden = running || !rows.length; $("rep-html").hidden = $("rep-md").hidden = running || !rows.some((r) => r.status); $("cmp-btn").hidden = running || !(S && S.previous && (S.previous.length > 1 || (S.previous.length && rows.some((r) => r.status)))); $("resume").hidden = !show; if(show) $("resume").textContent = "⏯ Resume (" + ks.length + ")";
 }
 function render(){
+  hidePop();
   resumeUi();
   progress();
   const b = $("board"); b.textContent = "";
@@ -1048,7 +1104,7 @@ function render(){
     else if(r.status === "silent" && running && jobRepair && (!jobOnly || jobOnly.has(i))){const p = el("span", "pill", "Queued"); p.style.color = "var(--dim)"; p.style.background = "var(--surface)"; c4.appendChild(p);}
     else if(r.status){const [lab, fg, bg] = STATUS[r.status] || [r.status, "var(--dim)", "var(--surface)"]; const p = el("span", "pill", lab); p.style.color = fg; p.style.background = bg; c4.appendChild(p);}
     else c4.appendChild(el("span", "hint", "…"));
-    if(r.ran_by && r.status && !["silent", "healthy", "loud"].includes(r.status)){const mn = el("div", "file", mname(r.ran_by)); mn.title = r.ran_by; c4.appendChild(mn);}
+    if(r.ran_by && r.status && !["silent", "healthy", "loud"].includes(r.status)){const mn = el("div", "file", mname(r.ran_by)); mn.title = r.ran_by; c4.appendChild(mn); const gc = gapChip(r); if(gc) c4.appendChild(gc);}
     if(["error", "case_failed"].includes(r.status) && r.detail){const d2 = el("div", "file", short(r.detail, 90)); d2.title = r.detail; c4.appendChild(d2);}
     if(r.applied) c4.appendChild(el("div", "wbadge", "✓ written to disk"));
     else if(r.undone) c4.appendChild(el("div", "wbadge undone", "↶ restored original"));
